@@ -13,8 +13,12 @@ if (!defined('DIR_APPLICATION')) {
 	exit;
 }
 
-// Startup
-require_once(DIR_SYSTEM . 'startup.php');
+// VirtualQMOD
+require_once('./vqmod/vqmod.php');
+VQMod::bootup();
+
+// VQMODDED Startup
+require_once(VQMod::modCheck(DIR_SYSTEM . 'startup.php'));
 
 // Registry
 $registry = new Registry();
@@ -60,7 +64,20 @@ if (!$store_query->num_rows) {
 	$config->set('config_ssl', HTTPS_SERVER);
 }
 
-// Url
+//Unlimited colors theme
+$theme = $config->get( $config->get( 'config_template') . '_skin'  );
+$store = 'default';
+if($config->get( 'config_store_id' ) == 0) { 
+	$store = 'default';
+} else {
+	$store = $config->get( 'config_store_id' );
+}
+
+require_once(VQMod::modCheck(DIR_SYSTEM . 'library/themeoptions.php'));
+$theme_options = new ThemeOptions($config->get('config_template'), $store, $theme);
+$registry->set('theme_options', $theme_options);
+
+
 $url = new Url($config->get('config_url'), $config->get('config_secure') ? $config->get('config_ssl') : $config->get('config_url'));
 $registry->set('url', $url);
 
