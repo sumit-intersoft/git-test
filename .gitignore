@@ -8,4 +8,5 @@ download/
 image/data/
 image/cache/
 system/cache/
+system/storage/cache/
 system/logs/
