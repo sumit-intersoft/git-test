@@ -25,6 +25,7 @@ class ControllerCheckoutViewCheckout extends Controller {
             'text' => $this->language->get('text_home'),
             'separator' => false
         );
+        
 
         $data['breadcrumbs'][] = array(
             'href' => $this->url->link('checkout/cart_custom_two'),
