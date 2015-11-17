@@ -4,8 +4,11 @@ admin/config.php
 
 !index.html
 
-download/
-image/data/
-image/cache/
-system/storage/
+download/*
+image/data/*
+image/cache/*
+system/*
 
+vqmod/*
+!vqmod/xml/
+*.log
