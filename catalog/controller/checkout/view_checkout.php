@@ -16,7 +16,7 @@ class ControllerCheckoutViewCheckout extends Controller {
             $this->response->redirect($this->url->link('checkout/cart'));
         }
 
-
+        $this->language->load('checkout/checkout');
         $this->document->setTitle($this->language->get('heading_title'));
         $data['breadcrumbs'] = array();
 
@@ -55,11 +55,14 @@ class ControllerCheckoutViewCheckout extends Controller {
         $data['text_paypal'] = $this->language->get('text_paypal');
         $data['text_affirm'] = $this->language->get('text_affirm');
         $data['text_payment_info'] = $this->language->get('text_payment_info');
+        
+        
+        /* extra code  */
         $data['text_credit_card_type'] = $this->language->get('text_credit_card_type');
         $data['text_credit_card_number'] = $this->language->get('text_credit_card_number');
         $data['text_credit_card_verification'] = $this->language->get('text_credit_card_verification');
         $data['text_credit_card_expires'] = $this->language->get('text_credit_card_expires');
-
+        /* extra code  */
 
         $data['column_image'] = $this->language->get('column_image');
         $data['column_name'] = $this->language->get('column_name');
@@ -68,6 +71,26 @@ class ControllerCheckoutViewCheckout extends Controller {
         $data['column_price'] = $this->language->get('column_price');
         $data['column_total'] = $this->language->get('column_total');
         $data['heading_title'] = $this->language->get('heading_title');
+        
+        $data['text_address_existing'] = $this->language->get('text_address_existing');
+        $data['text_address_new'] = $this->language->get('text_address_new');
+        $data['text_select'] = $this->language->get('text_select');
+
+
+        $data['entry_firstname'] = $this->language->get('entry_firstname');
+        $data['entry_lastname'] = $this->language->get('entry_lastname');
+        $data['entry_company'] = $this->language->get('entry_company');
+        $data['entry_company_id'] = $this->language->get('entry_company_id');
+        $data['entry_tax_id'] = $this->language->get('entry_tax_id');
+        $data['entry_address_1'] = $this->language->get('entry_address_1');
+        $data['entry_address_2'] = $this->language->get('entry_address_2');
+        $data['entry_postcode'] = $this->language->get('entry_postcode');
+        $data['entry_city'] = $this->language->get('entry_city');
+        $data['entry_country'] = $this->language->get('entry_country');
+        $data['entry_zone'] = $this->language->get('entry_zone');
+        $data['text_shipping_method'] = $this->language->get('text_shipping_method');
+
+        $data['button_continue'] = $this->language->get('button_continue');
 
         // error message
         if (isset($this->session->data['error']['payment']) && !empty($this->session->data['error']['payment'])) {
@@ -77,47 +100,141 @@ class ControllerCheckoutViewCheckout extends Controller {
             $data['error_warning'] = '';
         }
 
+        
+        
         $data['logged'] = $logged = $this->customer->isLogged();
-$data['text_none'] = $this->language->get('text_none');
+        $data['addresses'] = array();
+        $data['text_none'] = $this->language->get('text_none');
         if ($logged) {
-
-            $this->language->load('checkout/checkout');
-            $data['text_address_existing'] = $this->language->get('text_address_existing');
-            $data['text_address_new'] = $this->language->get('text_address_new');
-            $data['text_select'] = $this->language->get('text_select');
-            
-
-            $data['entry_firstname'] = $this->language->get('entry_firstname');
-            $data['entry_lastname'] = $this->language->get('entry_lastname');
-            $data['entry_company'] = $this->language->get('entry_company');
-            $data['entry_company_id'] = $this->language->get('entry_company_id');
-            $data['entry_tax_id'] = $this->language->get('entry_tax_id');
-            $data['entry_address_1'] = $this->language->get('entry_address_1');
-            $data['entry_address_2'] = $this->language->get('entry_address_2');
-            $data['entry_postcode'] = $this->language->get('entry_postcode');
-            $data['entry_city'] = $this->language->get('entry_city');
-            $data['entry_country'] = $this->language->get('entry_country');
-            $data['entry_zone'] = $this->language->get('entry_zone');
-
-            $data['button_continue'] = $this->language->get('button_continue');
-
-            if (!$this->session->data['payment_address_id'])
-                $this->session->data['payment_address_id'] = $this->customer->getAddressId();
-
-            if (!$this->session->data['shipping_address_id'])
-                $this->session->data['shipping_address_id'] = $this->customer->getAddressId();
-
-            if (!$this->session->data['shipping_address_id'])
-                $data['address_id'] = $this->customer->getAddressId();
-            else
-                $data['address_id'] = $this->session->data['shipping_address_id'];
-
-
-            $data['addresses'] = array();
-
             $this->load->model('account/address');
+            
+            if (isset($this->session->data['payment_address']) && (!$this->session->data['payment_address']['address_id']) ) {
+                    unset($this->session->data['payment_address']);
+            }
+            
+            if (isset($this->session->data['payment_address']) && ($this->session->data['payment_address']['address_id']) ) {
+                $data['payment_address'] = $this->session->data['payment_address'];
+            } else {
+                $data['payment_address'] = $this->session->data['payment_address'] = $this->model_account_address->getAddress($this->customer->getAddressId());
+            }
+            
+            //----------------- Old code that need to be removed --------------------------------->
+                if (!$this->session->data['payment_address_id'])
+                    $this->session->data['payment_address_id'] = $this->customer->getAddressId();
 
-            $data['addresses'] = $this->model_account_address->getAddresses();
+                if (!$this->session->data['shipping_address_id'])
+                    $this->session->data['shipping_address_id'] = $this->customer->getAddressId();
+
+                if (!$this->session->data['shipping_address_id'])
+                    $data['address_id'] = $this->customer->getAddressId();
+                else
+                    $data['address_id'] = $this->session->data['shipping_address_id'];
+                $data['addresses'] = $this->model_account_address->getAddresses();
+                
+                /*--------------------------  Old code  ends here ------------------------------------- */
+            } else {
+                    $data['shipping'] = '';
+                    if ($this->config->get('shipping_status') && $this->cart->hasShipping() && ( (!isset($this->session->data['shipping_methods'])) || (!isset($this->session->data['shipping_method'])))) {
+                        $files = glob(DIR_APPLICATION . '/controller/total/shipping.php');
+                        if ($files) {
+				$extension = basename($files[0], '.php');
+                                $data['shipping'] = $this->load->controller('total/' . $extension. '/custom_checkout_shipping');
+                        }
+                    }
+            /* I think no need for this */
+            $this->request->post['country_id'] = $this->config->get('config_country_id');
+            $this->request->post['zone_id'] = $this->config->get('config_zone_id');
+            $this->request->post['postcode'] = '1111'; 
+            
+            $this->load->model('localisation/country');
+
+            $country_info = $this->model_localisation_country->getCountry($this->request->post['country_id']);
+
+            $this->tax->setShippingAddress($this->request->post['country_id'], $this->request->post['zone_id']);
+
+            if ($country_info) {
+                    $country = $country_info['name'];
+                    $iso_code_2 = $country_info['iso_code_2'];
+                    $iso_code_3 = $country_info['iso_code_3'];
+                    $address_format = $country_info['address_format'];
+            } else {
+                    $country = '';
+                    $iso_code_2 = '';
+                    $iso_code_3 = '';
+                    $address_format = '';
+            }
+
+            $this->load->model('localisation/zone');
+
+            $zone_info = $this->model_localisation_zone->getZone($this->request->post['zone_id']);
+
+            if ($zone_info) {
+                    $zone = $zone_info['name'];
+                    $zone_code = $zone_info['code'];
+            } else {
+                    $zone = '';
+                    $zone_code = '';
+            }
+
+            $this->session->data['shipping_address'] = array(
+                    'firstname'      => '',
+                    'lastname'       => '',
+                    'company'        => '',
+                    'address_1'      => '',
+                    'address_2'      => '',
+                    'postcode'       => $this->request->post['postcode'],
+                    'city'           => '',
+                    'zone_id'        => $this->request->post['zone_id'],
+                    'zone'           => $zone,
+                    'zone_code'      => $zone_code,
+                    'country_id'     => $this->request->post['country_id'],
+                    'country'        => $country,
+                    'iso_code_2'     => $iso_code_2,
+                    'iso_code_3'     => $iso_code_3,
+                    'address_format' => $address_format
+            );
+
+            $quote_data = array();
+
+            $this->load->model('extension/extension');
+
+            $results = $this->model_extension_extension->getExtensions('shipping');
+
+            foreach ($results as $result) {
+                    if ($this->config->get($result['code'] . '_status')) {
+                            $this->load->model('shipping/' . $result['code']);
+
+                            $quote = $this->{'model_shipping_' . $result['code']}->getQuote($this->session->data['shipping_address']);
+
+                            if ($quote) {
+                                    $quote_data[$result['code']] = array(
+                                            'title'      => $quote['title'],
+                                            'quote'      => $quote['quote'],
+                                            'sort_order' => $quote['sort_order'],
+                                            'error'      => $quote['error']
+                                    );
+                            }
+                    }
+            }
+
+            $sort_order = array();
+
+            foreach ($quote_data as $key => $value) {
+                    $sort_order[$key] = $value['sort_order'];
+            }
+
+            array_multisort($sort_order, SORT_ASC, $quote_data);
+
+            $this->session->data['shipping_methods'] = $quote_data;
+
+            if (isset($this->session->data['shipping_methods'])) {
+                $data['shipping_methods'] = $this->session->data['shipping_methods'];
+            } else {
+                $data['shipping_methods'] = array();
+            }
+            
+            
+		/*  Ends here*/
         }
 
 
@@ -184,11 +301,17 @@ $data['text_none'] = $this->language->get('text_none');
 
             array_multisort($sort_order, SORT_ASC, $quote_data);
             $this->session->data['shipping_methods'] = $quote_data;
+            
+            
+            
             if (isset($this->session->data['shipping_methods'])) {
                 $data['shipping_methods'] = $this->session->data['shipping_methods'];
             } else {
                 $data['shipping_methods'] = array();
             }
+            
+            
+            
             if (isset($this->session->data['shipping_method_selected'])) {
                 $data['code'] = $this->session->data['shipping_method_selected'];
             } else {
@@ -200,8 +323,83 @@ $data['text_none'] = $this->language->get('text_none');
             } else {
                 $data['error_warning_shipping'] = '';
             }
+            
+            /*  old code ends here*/
+            
+            $this->load->model('extension/extension');
+
+			$results = $this->model_extension_extension->getExtensions('shipping');
+
+			foreach ($results as $result) {
+				if ($this->config->get($result['code'] . '_status')) {
+					$this->load->model('shipping/' . $result['code']);
+
+					$quote = $this->{'model_shipping_' . $result['code']}->getQuote($this->session->data['shipping_address']);
+
+					if ($quote) {
+						$quote_data[$result['code']] = array(
+							'title'      => $quote['title'],
+							'quote'      => $quote['quote'],
+							'sort_order' => $quote['sort_order'],
+							'error'      => $quote['error']
+						);
+					}
+				}
+			}
+
+			$sort_order = array();
+
+			foreach ($quote_data as $key => $value) {
+				$sort_order[$key] = $value['sort_order'];
+			}
+
+			array_multisort($sort_order, SORT_ASC, $quote_data);
+
+			$this->session->data['shipping_methods'] = $quote_data;
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
         }
 
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 
         //// payment methods
 
@@ -418,346 +616,168 @@ $data['text_none'] = $this->language->get('text_none');
             $this->response->setOutput($this->load->view('default/template/checkout/view_checkout.tpl', $data));
         }
     }
-
-    protected function validateCoupon() {
-        $this->load->model('checkout/coupon');
-
-        $coupon_info = $this->model_checkout_coupon->getCoupon($this->request->post['coupon']);
-
-        if (!$coupon_info) {
-            $this->error['warning'] = $this->language->get('error_coupon');
-        }
-
-        if (!$this->error) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    protected function validateVoucher() {
-        $this->load->model('checkout/voucher');
-
-        $voucher_info = $this->model_checkout_voucher->getVoucher($this->request->post['voucher']);
-
-        if (!$voucher_info) {
-            $this->error['warning'] = $this->language->get('error_voucher');
-        }
-
-        if (!$this->error) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    protected function validateReward() {
-        $points = $this->customer->getRewardPoints();
-
-        $points_total = 0;
-
-        foreach ($this->cart->getProducts() as $product) {
-            if ($product['points']) {
-                $points_total += $product['points'];
-            }
-        }
-
-        if (empty($this->request->post['reward'])) {
-            $this->error['warning'] = $this->language->get('error_reward');
-        }
-
-        if ($this->request->post['reward'] > $points) {
-            $this->error['warning'] = sprintf($this->language->get('error_points'), $this->request->post['reward']);
-        }
-
-        if ($this->request->post['reward'] > $points_total) {
-            $this->error['warning'] = sprintf($this->language->get('error_maximum'), $points_total);
-        }
-
-        if (!$this->error) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    protected function validateShipping() {
-        if (!empty($this->request->post['shipping_method'])) {
-            $shipping = explode('.', $this->request->post['shipping_method']);
-
-            if (!isset($shipping[0]) || !isset($shipping[1]) || !isset($this->session->data['shipping_methods'][$shipping[0]]['quote'][$shipping[1]])) {
-                $this->error['warning'] = $this->language->get('error_shipping');
-            }
-        } else {
-            $this->error['warning'] = $this->language->get('error_shipping');
-        }
-
-        if (!$this->error) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public function add() {
-        $this->language->load('checkout/cart_custom');
+    
+    public function setpaymentshipping() {
 
         $json = array();
+        
+        $this->session->data['shipping-address-new'] = 1;
+        $this->session->data['shipping_address']['country_id'] =  $this->request->post['shipping_country_id'];
+        $this->session->data['shipping_address']['zone_id'] = $this->request->post['shipping_zone_id'];
 
-        if (isset($this->request->post['product_id'])) {
-            $product_id = $this->request->post['product_id'];
+        $this->response->setOutput(json_encode($json));
+    }
+
+    public function setPaymentAddress() {
+
+        $json = array();
+        
+        if (isset($this->request->post['payment_address']) && $this->request->post['payment_address'] == 'existing') {
+            $this->load->model('account/address');
+            if (in_array($this->request->post['payment_address_id'], array_keys($this->model_account_address->getAddresses()))) {
+                $this->session->data['payment_address'] = $this->model_account_address->getAddress($this->request->post['payment_address_id']);
+            }
         } else {
-            $product_id = 0;
+           
+                if (isset($this->request->post['country_id']) && !empty($this->request->post['country_id'])) {
+                   $country_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "country` WHERE country_id = '" . (int)$this->request->post['country_id'] . "'");
+
+                   if ($country_query->num_rows) {
+                           $country = $country_query->row['name'];
+                           $iso_code_2 = $country_query->row['iso_code_2'];
+                           $iso_code_3 = $country_query->row['iso_code_3'];
+                           $address_format = $country_query->row['address_format'];
+                   } else {
+                           $country = '';
+                           $iso_code_2 = '';
+                           $iso_code_3 = '';
+                           $address_format = '';
+                   }
+
+                   $zone_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "zone` WHERE zone_id = '" . (int)$this->request->post['zone_id'] . "'");
+
+                   if ($zone_query->num_rows) {
+                           $zone = $zone_query->row['name'];
+                           $zone_code = $zone_query->row['code'];
+                   } else {
+                           $zone = '';
+                           $zone_code = '';
+                   }
+
+                   $this->session->data['payment_address']  = array(
+                                           'address_id'     => 0,
+                                           'firstname'      => $this->request->post['firstname'],
+                                           'lastname'       => $this->request->post['lastname'],
+                                           'company'        => $this->request->post['company'],
+                                           'address_1'      => $this->request->post['address_1'],
+                                           'address_2'      => $this->request->post['address_2'],
+                                           'postcode'       => $this->request->post['postcode'],
+                                           'city'           => $this->request->post['city'],
+                                           'zone_id'        => $this->request->post['zone_id'],
+                                           'zone'           => $zone,
+                                           'zone_code'      => $zone_code,
+                                           'country_id'     => $this->request->post['country_id'],
+                                           'country'        => $country,
+                                           'iso_code_2'     => $iso_code_2,
+                                           'iso_code_3'     => $iso_code_3,
+                                           'address_format' => $address_format,
+                                           //'custom_field'   => json_decode($address_query->row['custom_field'], true)
+                                   );
+                }
+        }
+        $this->response->setOutput(json_encode($json));
+    }
+    
+     public function setShippingAddress() {
+
+        $json = array();
+        
+        if (isset($this->request->post['shipping_address']) && $this->request->post['shipping_address'] == 'existing') {
+            $this->load->model('account/address');
+            if (in_array($this->request->post['shipping_address_id'], array_keys($this->model_account_address->getAddresses()))) {
+                $this->session->data['shipping_address'] = $this->model_account_address->getAddress($this->request->post['shipping_address_id']);
+            }
+        } else {
+            
+                if (isset($this->request->post['shipping_country_id']) && !empty($this->request->post['shipping_country_id'])) {
+                   $country_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "country` WHERE country_id = '" . (int)$this->request->post['shipping_country_id'] . "'");
+
+                   if ($country_query->num_rows) {
+                           $country = $country_query->row['name'];
+                           $iso_code_2 = $country_query->row['iso_code_2'];
+                           $iso_code_3 = $country_query->row['iso_code_3'];
+                           $address_format = $country_query->row['address_format'];
+                   } else {
+                           $country = '';
+                           $iso_code_2 = '';
+                           $iso_code_3 = '';
+                           $address_format = '';
+                   }
+
+                   $zone_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "zone` WHERE zone_id = '" . (int)$this->request->post['shipping_zone_id'] . "'");
+
+                   if ($zone_query->num_rows) {
+                           $zone = $zone_query->row['name'];
+                           $zone_code = $zone_query->row['code'];
+                   } else {
+                           $zone = '';
+                           $zone_code = '';
+                   }
+
+                   $this->session->data['shipping_address']  = array(
+                                           'address_id'     => 0,
+                                           'firstname'      => $this->request->post['shipping_firstname'],
+                                           'lastname'       => $this->request->post['shipping_lastname'],
+                                           'company'        => $this->request->post['shipping_company'],
+                                           'address_1'      => $this->request->post['shipping_address_1'],
+                                           'address_2'      => $this->request->post['shipping_address_2'],
+                                           'postcode'       => $this->request->post['shipping_postcode'],
+                                           'city'           => $this->request->post['shipping_city'],
+                                           'zone_id'        => $this->request->post['shipping_zone_id'],
+                                           'zone'           => $zone,
+                                           'zone_code'      => $zone_code,
+                                           'country_id'     => $this->request->post['shipping_country_id'],
+                                           'country'        => $country,
+                                           'iso_code_2'     => $iso_code_2,
+                                           'iso_code_3'     => $iso_code_3,
+                                           'address_format' => $address_format,
+                                           //'custom_field'   => json_decode($address_query->row['custom_field'], true)
+                                   );
+                    }
+        }
+        $this->response->setOutput(json_encode($json));
+    }
+    
+    
+    public function validatePaymentShipping() {
+
+        $json = array();
+        $this->load->model('account/address');
+        if (isset($this->request->post['payment_address_id']) && !empty($this->request->post['payment_address_id'])) {
+            $this->session->data['payment_address_id'] = $this->request->post['payment_address_id'];
+            $payment_address = $this->model_account_address->getAddress($this->session->data['payment_address_id']);
+            if ($payment_address) {
+                $this->session->data['payment_country_id'] = $payment_address['country_id'];
+                $this->session->data['payment_zone_id'] = $payment_address['zone_id'];
+            }
+            unset($this->session->data['payment-address-new']);
         }
 
-        $this->load->model('catalog/product');
-
-        $product_info = $this->model_catalog_product->getProduct($product_id);
-
-        if ($product_info) {
-            if (isset($this->request->post['quantity'])) {
-                $quantity = $this->request->post['quantity'];
-            } else {
-                $quantity = 1;
+        if (isset($this->request->post['shipping_address_id']) && !empty($this->request->post['shipping_address_id'])) {
+            $this->session->data['shipping_address_id'] = $this->request->post['shipping_address_id'];
+            $shipping_address = $this->model_account_address->getAddress($this->session->data['shipping_address_id']);
+            if ($shipping_address) {
+                $this->session->data['shipping_country_id'] = $shipping_address['country_id'];
+                $this->session->data['shipping_zone_id'] = $shipping_address['zone_id'];
             }
-
-            if (isset($this->request->post['option'])) {
-                $option = array_filter($this->request->post['option']);
-            } else {
-                $option = array();
-            }
-
-            if (isset($this->request->post['profile_id'])) {
-                $profile_id = $this->request->post['profile_id'];
-            } else {
-                $profile_id = 0;
-            }
-
-            $product_options = $this->model_catalog_product->getProductOptions($this->request->post['product_id']);
-
-            foreach ($product_options as $product_option) {
-                if ($product_option['required'] && empty($option[$product_option['product_option_id']])) {
-                    $json['error']['option'][$product_option['product_option_id']] = sprintf($this->language->get('error_required'), $product_option['name']);
-                }
-            }
-
-            $profiles = $this->model_catalog_product->getProfiles($product_info['product_id']);
-
-            if ($profiles) {
-                $profile_ids = array();
-
-                foreach ($profiles as $profile) {
-                    $profile_ids[] = $profile['profile_id'];
-                }
-
-                if (!in_array($profile_id, $profile_ids)) {
-                    $json['error']['profile'] = $this->language->get('error_profile_required');
-                }
-            }
-
-            if (!$json) {
-                $this->cart->add($this->request->post['product_id'], $quantity, $option, $profile_id);
-
-                $json['success'] = sprintf($this->language->get('text_success'), $this->url->link('product/product', 'product_id=' . $this->request->post['product_id']), $product_info['name'], $this->url->link('checkout/cart'));
-
-                unset($this->session->data['shipping_method']);
-                unset($this->session->data['shipping_methods']);
-                unset($this->session->data['payment_method']);
-                unset($this->session->data['payment_methods']);
-
-                // Totals
-                $this->load->model('extension/extension');
-
-                $total_data = array();
-                $total = 0;
-                $taxes = $this->cart->getTaxes();
-
-                // Display prices
-                if (($this->config->get('config_customer_price') && $logged) || !$this->config->get('config_customer_price')) {
-                    $sort_order = array();
-
-                    $results = $this->model_extension_extension->getExtensions('total');
-
-                    foreach ($results as $key => $value) {
-                        $sort_order[$key] = $this->config->get($value['code'] . '_sort_order');
-                    }
-
-                    array_multisort($sort_order, SORT_ASC, $results);
-
-                    foreach ($results as $result) {
-                        if ($this->config->get($result['code'] . '_status')) {
-                            $this->load->model('total/' . $result['code']);
-
-                            $this->{'model_total_' . $result['code']}->getTotal($total_data, $total, $taxes);
-                        }
-
-                        $sort_order = array();
-
-                        foreach ($total_data as $key => $value) {
-                            $sort_order[$key] = $value['sort_order'];
-                        }
-
-                        array_multisort($sort_order, SORT_ASC, $total_data);
-                    }
-                }
-
-                $json['total'] = sprintf($this->language->get('text_items'), $this->cart->countProducts() + (isset($this->session->data['vouchers']) ? count($this->session->data['vouchers']) : 0), $this->currency->format($total));
-            } else {
-                $json['redirect'] = str_replace('&amp;', '&', $this->url->link('product/product', 'product_id=' . $this->request->post['product_id']));
-            }
+            unset($this->session->data['shipping-address-new']);
         }
 
         $this->response->setOutput(json_encode($json));
     }
 
-    public function quote() {
-        $this->language->load('checkout/cart_custom');
-
-        $json = array();
-
-        if (!$this->cart->hasProducts()) {
-            $json['error']['warning'] = $this->language->get('error_product');
-        }
-
-        if (!$this->cart->hasShipping()) {
-            $json['error']['warning'] = sprintf($this->language->get('error_no_shipping'), $this->url->link('information/contact'));
-        }
-
-        if ($this->request->post['country_id'] == '') {
-            $json['error']['country'] = $this->language->get('error_country');
-        }
-
-        if (!isset($this->request->post['zone_id']) || $this->request->post['zone_id'] == '') {
-            $json['error']['zone'] = $this->language->get('error_zone');
-        }
-
-        $this->load->model('localisation/country');
-
-        $country_info = $this->model_localisation_country->getCountry($this->request->post['country_id']);
-
-        if ($country_info && $country_info['postcode_required'] && (utf8_strlen($this->request->post['postcode']) < 2) || (utf8_strlen($this->request->post['postcode']) > 10)) {
-            $json['error']['postcode'] = $this->language->get('error_postcode');
-        }
-
-        if (!$json) {
-            $this->tax->setShippingAddress($this->request->post['country_id'], $this->request->post['zone_id']);
-
-            // Default Shipping Address
-            $this->session->data['shipping_country_id'] = $this->request->post['country_id'];
-            $this->session->data['shipping_zone_id'] = $this->request->post['zone_id'];
-            $this->session->data['shipping_postcode'] = $this->request->post['postcode'];
-
-            if ($country_info) {
-                $country = $country_info['name'];
-                $iso_code_2 = $country_info['iso_code_2'];
-                $iso_code_3 = $country_info['iso_code_3'];
-                $address_format = $country_info['address_format'];
-            } else {
-                $country = '';
-                $iso_code_2 = '';
-                $iso_code_3 = '';
-                $address_format = '';
-            }
-
-            $this->load->model('localisation/zone');
-
-            $zone_info = $this->model_localisation_zone->getZone($this->request->post['zone_id']);
-
-            if ($zone_info) {
-                $zone = $zone_info['name'];
-                $zone_code = $zone_info['code'];
-            } else {
-                $zone = '';
-                $zone_code = '';
-            }
-
-            $address_data = array(
-                'firstname' => '',
-                'lastname' => '',
-                'company' => '',
-                'address_1' => '',
-                'address_2' => '',
-                'postcode' => $this->request->post['postcode'],
-                'city' => '',
-                'zone_id' => $this->request->post['zone_id'],
-                'zone' => $zone,
-                'zone_code' => $zone_code,
-                'country_id' => $this->request->post['country_id'],
-                'country' => $country,
-                'iso_code_2' => $iso_code_2,
-                'iso_code_3' => $iso_code_3,
-                'address_format' => $address_format
-            );
-
-            $quote_data = array();
-
-            $this->load->model('extension/extension');
-
-            $results = $this->model_extension_extension->getExtensions('shipping');
-
-            foreach ($results as $result) {
-                if ($this->config->get($result['code'] . '_status')) {
-                    $this->load->model('shipping/' . $result['code']);
-
-                    $quote = $this->{'model_shipping_' . $result['code']}->getQuote($address_data);
-
-                    if ($quote) {
-                        $quote_data[$result['code']] = array(
-                            'title' => $quote['title'],
-                            'quote' => $quote['quote'],
-                            'sort_order' => $quote['sort_order'],
-                            'error' => $quote['error']
-                        );
-                    }
-                }
-            }
-
-            $sort_order = array();
-
-            foreach ($quote_data as $key => $value) {
-                $sort_order[$key] = $value['sort_order'];
-            }
-
-            array_multisort($sort_order, SORT_ASC, $quote_data);
-
-            $this->session->data['shipping_methods'] = $quote_data;
-
-            if ($this->session->data['shipping_methods']) {
-                $json['shipping_method'] = $this->session->data['shipping_methods'];
-            } else {
-                $json['error']['warning'] = sprintf($this->language->get('error_no_shipping'), $this->url->link('information/contact'));
-            }
-        }
-
-        $this->response->setOutput(json_encode($json));
-    }
-
-    public function country() {
-        $json = array();
-
-        $this->load->model('localisation/country');
-
-        $country_info = $this->model_localisation_country->getCountry($this->request->get['country_id']);
-
-        if ($country_info) {
-            $this->load->model('localisation/zone');
-
-            $json = array(
-                'country_id' => $country_info['country_id'],
-                'name' => $country_info['name'],
-                'iso_code_2' => $country_info['iso_code_2'],
-                'iso_code_3' => $country_info['iso_code_3'],
-                'address_format' => $country_info['address_format'],
-                'postcode_required' => $country_info['postcode_required'],
-                'zone' => $this->model_localisation_zone->getZonesByCountryId($this->request->get['country_id']),
-                'status' => $country_info['status']
-            );
-        }
-
-        $this->response->setOutput(json_encode($json));
-    }
-
-    public function getCart() {
+     public function getCart() {
+        $this->language->load('checkout/checkout');
         $this->language->load('checkout/cart_custom_two');
         if (!$this->cart->hasProducts() || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
             $this->response->redirect($this->url->link('checkout/cart_custom'));
@@ -1123,7 +1143,155 @@ $data['text_none'] = $this->language->get('text_none');
 
         /* end generating cart */
     }
+    
+    
+   /* protected function validateCoupon() {
+        $this->load->model('checkout/coupon');
 
+        $coupon_info = $this->model_checkout_coupon->getCoupon($this->request->post['coupon']);
+
+        if (!$coupon_info) {
+            $this->error['warning'] = $this->language->get('error_coupon');
+        }
+
+        if (!$this->error) {
+            return true;
+        } else {
+            return false;
+        }
+    }*/
+
+   /*protected function validateShipping() {
+        if (!empty($this->request->post['shipping_method'])) {
+            $shipping = explode('.', $this->request->post['shipping_method']);
+
+            if (!isset($shipping[0]) || !isset($shipping[1]) || !isset($this->session->data['shipping_methods'][$shipping[0]]['quote'][$shipping[1]])) {
+                $this->error['warning'] = $this->language->get('error_shipping');
+            }
+        } else {
+            $this->error['warning'] = $this->language->get('error_shipping');
+        }
+
+        if (!$this->error) {
+            return true;
+        } else {
+            return false;
+        }
+    }*/
+
+   /* public function add() {
+        $this->language->load('checkout/cart_custom');
+
+        $json = array();
+
+        if (isset($this->request->post['product_id'])) {
+            $product_id = $this->request->post['product_id'];
+        } else {
+            $product_id = 0;
+        }
+
+        $this->load->model('catalog/product');
+
+        $product_info = $this->model_catalog_product->getProduct($product_id);
+
+        if ($product_info) {
+            if (isset($this->request->post['quantity'])) {
+                $quantity = $this->request->post['quantity'];
+            } else {
+                $quantity = 1;
+            }
+
+            if (isset($this->request->post['option'])) {
+                $option = array_filter($this->request->post['option']);
+            } else {
+                $option = array();
+            }
+
+            if (isset($this->request->post['profile_id'])) {
+                $profile_id = $this->request->post['profile_id'];
+            } else {
+                $profile_id = 0;
+            }
+
+            $product_options = $this->model_catalog_product->getProductOptions($this->request->post['product_id']);
+
+            foreach ($product_options as $product_option) {
+                if ($product_option['required'] && empty($option[$product_option['product_option_id']])) {
+                    $json['error']['option'][$product_option['product_option_id']] = sprintf($this->language->get('error_required'), $product_option['name']);
+                }
+            }
+
+            $profiles = $this->model_catalog_product->getProfiles($product_info['product_id']);
+
+            if ($profiles) {
+                $profile_ids = array();
+
+                foreach ($profiles as $profile) {
+                    $profile_ids[] = $profile['profile_id'];
+                }
+
+                if (!in_array($profile_id, $profile_ids)) {
+                    $json['error']['profile'] = $this->language->get('error_profile_required');
+                }
+            }
+
+            if (!$json) {
+                $this->cart->add($this->request->post['product_id'], $quantity, $option, $profile_id);
+
+                $json['success'] = sprintf($this->language->get('text_success'), $this->url->link('product/product', 'product_id=' . $this->request->post['product_id']), $product_info['name'], $this->url->link('checkout/cart'));
+
+                unset($this->session->data['shipping_method']);
+                unset($this->session->data['shipping_methods']);
+                unset($this->session->data['payment_method']);
+                unset($this->session->data['payment_methods']);
+
+                // Totals
+                $this->load->model('extension/extension');
+
+                $total_data = array();
+                $total = 0;
+                $taxes = $this->cart->getTaxes();
+
+                // Display prices
+                if (($this->config->get('config_customer_price') && $logged) || !$this->config->get('config_customer_price')) {
+                    $sort_order = array();
+
+                    $results = $this->model_extension_extension->getExtensions('total');
+
+                    foreach ($results as $key => $value) {
+                        $sort_order[$key] = $this->config->get($value['code'] . '_sort_order');
+                    }
+
+                    array_multisort($sort_order, SORT_ASC, $results);
+
+                    foreach ($results as $result) {
+                        if ($this->config->get($result['code'] . '_status')) {
+                            $this->load->model('total/' . $result['code']);
+
+                            $this->{'model_total_' . $result['code']}->getTotal($total_data, $total, $taxes);
+                        }
+
+                        $sort_order = array();
+
+                        foreach ($total_data as $key => $value) {
+                            $sort_order[$key] = $value['sort_order'];
+                        }
+
+                        array_multisort($sort_order, SORT_ASC, $total_data);
+                    }
+                }
+
+                $json['total'] = sprintf($this->language->get('text_items'), $this->cart->countProducts() + (isset($this->session->data['vouchers']) ? count($this->session->data['vouchers']) : 0), $this->currency->format($total));
+            } else {
+                $json['redirect'] = str_replace('&amp;', '&', $this->url->link('product/product', 'product_id=' . $this->request->post['product_id']));
+            }
+        }
+
+        $this->response->setOutput(json_encode($json));
+    }
+    */
+   
+   /*
     public function apllyCoupon() {
         $this->language->load('checkout/cart_custom_two');
         $json = array();
@@ -1137,57 +1305,8 @@ $data['text_none'] = $this->language->get('text_none');
 
         $this->response->setOutput(json_encode($json));
     }
-
-    public function validatePaymentShipping() {
-
-        $json = array();
-        $this->load->model('account/address');
-        if (isset($this->request->post['payment_address_id']) && !empty($this->request->post['payment_address_id'])) {
-            $this->session->data['payment_address_id'] = $this->request->post['payment_address_id'];
-            $payment_address = $this->model_account_address->getAddress($this->session->data['payment_address_id']);
-            if ($payment_address) {
-                $this->session->data['payment_country_id'] = $payment_address['country_id'];
-                $this->session->data['payment_zone_id'] = $payment_address['zone_id'];
-            }
-            unset($this->session->data['payment-address-new']);
-        }
-
-        if (isset($this->request->post['shipping_address_id']) && !empty($this->request->post['shipping_address_id'])) {
-            $this->session->data['shipping_address_id'] = $this->request->post['shipping_address_id'];
-            $shipping_address = $this->model_account_address->getAddress($this->session->data['shipping_address_id']);
-            if ($shipping_address) {
-                $this->session->data['shipping_country_id'] = $shipping_address['country_id'];
-                $this->session->data['shipping_zone_id'] = $shipping_address['zone_id'];
-            }
-            unset($this->session->data['shipping-address-new']);
-        }
-
-        $this->response->setOutput(json_encode($json));
-    }
-
-    public function setpaymentshipping() {
-
-        $json = array();
-        
-        $this->session->data['shipping-address-new'] = 1;
-        $this->session->data['shipping_address']['country_id'] =  $this->request->post['shipping_country_id'];
-        $this->session->data['shipping_address']['zone_id'] = $this->request->post['shipping_zone_id'];
-
-        $this->response->setOutput(json_encode($json));
-    }
-
-    public function setpaymentbilling() {
-
-        $json = array();
-
-        $this->session->data['payment-address-new'] = 1;
-        
-        $this->session->data['payment_address']['country_id'] =  $this->request->post['country_id'];
-        $this->session->data['payment_address']['zone_id'] = $this->request->post['zone_id'];;
-        
-        $this->response->setOutput(json_encode($json));
-    }
-
+*/
+    
 }
 
 ?>

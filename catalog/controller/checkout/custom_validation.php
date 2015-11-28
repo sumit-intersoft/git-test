@@ -563,7 +563,7 @@ class ControllerCheckoutCustomValidation extends Controller {
                        $card_detail['card_expiry_year'] = $this->request->post['card_expiry_year'];
                    }
                   
-                    if( !($json['error']['validity']) )
+                    if(!isset($json['error']['validity']))
                     {
                       if((strtotime(date($this->request->post['card_expiry_year']."/".$this->request->post['card_expiry_month']."/01"))) < (strtotime(date('Y/m/01')))) {
                         $json['error']['validity'] = 'Credit Card is  expired!';
