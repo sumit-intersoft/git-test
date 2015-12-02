@@ -77,11 +77,11 @@ class ControllerCheckoutCartCustomConfirm extends Controller {
 			$total = 0;
 			$taxes = $this->cart->getTaxes();
 
-			$this->load->model('setting/extension');
+			$this->load->model('extension/extension');
 
 			$sort_order = array(); 
 
-			$results = $this->model_setting_extension->getExtensions('total');
+			$results = $this->model_extension_extension->getExtensions('total');
 
 			foreach ($results as $key => $value) {
 				$sort_order[$key] = $this->config->get($value['code'] . '_sort_order');
@@ -120,17 +120,37 @@ class ControllerCheckoutCartCustomConfirm extends Controller {
 			}
 
 			if ($this->customer->isLogged()) {
+//				$data['customer_id'] = $this->customer->getId();
+//				$data['customer_group_id'] = $this->customer->getCustomerGroupId();
+//				$data['firstname'] = $this->customer->getFirstName();
+//				$data['lastname'] = $this->customer->getLastName();
+//				$data['email'] = $this->customer->getEmail();
+//				$data['telephone'] = $this->customer->getTelephone();
+//				$data['fax'] = $this->customer->getFax();
+//
+//				$this->load->model('account/address');
+//
+//				$payment_address = $this->model_account_address->getAddress($this->session->data['payment_address_id']);
+//                                
+//                                $this->load->model('account/customer');
+
+                                /* new code */
+                            $this->load->model('account/customer');
+				$customer_info = $this->model_account_customer->getCustomer($this->customer->getId());
+
 				$data['customer_id'] = $this->customer->getId();
-				$data['customer_group_id'] = $this->customer->getCustomerGroupId();
-				$data['firstname'] = $this->customer->getFirstName();
-				$data['lastname'] = $this->customer->getLastName();
-				$data['email'] = $this->customer->getEmail();
-				$data['telephone'] = $this->customer->getTelephone();
-				$data['fax'] = $this->customer->getFax();
-
-				$this->load->model('account/address');
-
-				$payment_address = $this->model_account_address->getAddress($this->session->data['payment_address_id']);
+				$data['customer_group_id'] = $customer_info['customer_group_id'];
+				$data['firstname'] = $customer_info['firstname'];
+				$data['lastname'] = $customer_info['lastname'];
+				$order_data['email'] = $customer_info['email'];
+				$data['telephone'] = $customer_info['telephone'];
+				$data['fax'] = $customer_info['fax'];
+				$data['custom_field'] = json_decode($customer_info['custom_field'], true);
+                                
+                                 /* new code  ends here*/
+                                
+                                
+                                
 			} elseif (isset($this->session->data['guest'])) {
 				$data['customer_id'] = 0;
 				$data['customer_group_id'] = $this->session->data['guest']['customer_group_id'];
@@ -225,70 +245,66 @@ class ControllerCheckoutCartCustomConfirm extends Controller {
 			$product_data = array();
 			$products_main = array();
 
-//			foreach ($this->cart->getProducts() as $product) {
-//				$option_data = array();
-//
-//				foreach ($product['option'] as $option) {
-//					if ($option['type'] != 'file') {
-//						$value = $option['option_value'];	
-//					} else {
-//						$value = $this->encryption->decrypt($option['option_value']);
-//					}	
-//
-//					$option_data[] = array(
-//						'product_option_id'       => $option['product_option_id'],
-//						'product_option_value_id' => $option['product_option_value_id'],
-//						'option_id'               => $option['option_id'],
-//						'option_value_id'         => $option['option_value_id'],								   
-//						'name'                    => $option['name'],
-//						'value'                   => $value,
-//						'type'                    => $option['type']
-//					);					
-//				}
-//
-//				$product_data[] = array(
-//					'product_id' => $product['product_id'],
-//					'name'       => $product['name'],
-//					'model'      => $product['model'],
-//					'option'     => $option_data,
-//					'download'   => $product['download'],
-//					'quantity'   => $product['quantity'],
-//					'subtract'   => $product['subtract'],
-//					'price'      => $product['price'],
-//					'total'      => $product['total'],
-//					'tax'        => $this->tax->getTax($product['price'], $product['tax_class_id']),
-//					'reward'     => $product['reward']
-//				); 
-//			}
-                     
-            foreach ($this->cart->getProducts() as $main_product_key => $mainproduct) {
-                foreach ($mainproduct as $keys => $subproducts_list) {
-                    $j = 1;
-                    foreach ($subproducts_list as $product) {
+			foreach ($this->cart->getProducts() as $product) {
+				$option_data = array();
 
-                        $products_main[$main_product_key][$keys]['main_product_name'] = $product['main_product_name'];
-                        $products_main[$main_product_key][$keys]['name'] .= $product['name'];
-                        if ($j < count($subproducts_list)) {
-                            $products_main[$main_product_key][$keys]['name'] .= ',';
-                        }
-                        $products_main[$main_product_key][$keys]['option'] = $product['option'];
-                        $products_main[$main_product_key][$keys]['subproducts'][] = array(
-                            'key' => $product['key'],
-                            'product_id' => $product['product_id'],
-                            'name' => $product['name'],
-                            'quantity' => $product['quantity'],
-                            'download' => $product['download'],
-                            'model' => $product['model'],
-                            'subtract' => $product['subtract'],
-                            'price' => $product['price'],
-                            'total' => $product['total'],
-                            'tax' => $this->tax->getTax($product['price'], $product['tax_class_id']),
-                            'reward' => $product['reward']
-                        );
-                        $j++;
-                    }
-                }
-            }
+				foreach ($product['option'] as $option) {
+					$option_data[] = array(
+						'product_option_id'       => $option['product_option_id'],
+						'product_option_value_id' => $option['product_option_value_id'],
+						'option_id'               => $option['option_id'],
+						'option_value_id'         => $option['option_value_id'],
+						'name'                    => $option['name'],
+						'value'                   => $option['value'],
+						'type'                    => $option['type']
+					);
+				}
+
+				$order_data['products'][] = array(
+					'product_id' => $product['product_id'],
+					'name'       => $product['name'],
+					'model'      => $product['model'],
+					'option'     => $option_data,
+					'download'   => $product['download'],
+					'quantity'   => $product['quantity'],
+					'subtract'   => $product['subtract'],
+					'price'      => $product['price'],
+					'total'      => $product['total'],
+					'tax'        => $this->tax->getTax($product['price'], $product['tax_class_id']),
+					'reward'     => $product['reward']
+				);
+			}
+
+                     
+//            foreach ($this->cart->getProducts() as $main_product_key => $mainproduct) {
+//                foreach ($mainproduct as $keys => $subproducts_list) {
+//                    $j = 1;
+//                    foreach ($subproducts_list as $product) {
+//
+//                        $products_main[$main_product_key][$keys]['main_product_name'] = $product['main_product_name'];
+//                        $products_main[$main_product_key][$keys]['name'] .= $product['name'];
+//                        if ($j < count($subproducts_list)) {
+//                            $products_main[$main_product_key][$keys]['name'] .= ',';
+//                        }
+//                        $products_main[$main_product_key][$keys]['option'] = $product['option'];
+//                        $products_main[$main_product_key][$keys]['subproducts'][] = array(
+//                            'key' => $product['key'],
+//                            'product_id' => $product['product_id'],
+//                            'name' => $product['name'],
+//                            'quantity' => $product['quantity'],
+//                            'download' => $product['download'],
+//                            'model' => $product['model'],
+//                            'subtract' => $product['subtract'],
+//                            'price' => $product['price'],
+//                            'total' => $product['total'],
+//                            'tax' => $this->tax->getTax($product['price'], $product['tax_class_id']),
+//                            'reward' => $product['reward']
+//                        );
+//                        $j++;
+//                    }
+//                }
+//            }
+            
 
             // Gift Voucher
 			$voucher_data = array();
@@ -365,32 +381,64 @@ class ControllerCheckoutCartCustomConfirm extends Controller {
 				$data['accept_language'] = '';
 			}
 
-			$this->load->model('checkout/customorder');
+			$this->load->model('checkout/order');
+                        
+                        $order_data['products'] = array();
+
+			foreach ($this->cart->getProducts() as $product) {
+				$option_data = array();
+
+				foreach ($product['option'] as $option) {
+					$option_data[] = array(
+						'product_option_id'       => $option['product_option_id'],
+						'product_option_value_id' => $option['product_option_value_id'],
+						'option_id'               => $option['option_id'],
+						'option_value_id'         => $option['option_value_id'],
+						'name'                    => $option['name'],
+						'value'                   => $option['value'],
+						'type'                    => $option['type']
+					);
+				}
+
+				$data['products'][] = array(
+					'product_id' => $product['product_id'],
+					'name'       => $product['name'],
+					'model'      => $product['model'],
+					'option'     => $option_data,
+					'download'   => $product['download'],
+					'quantity'   => $product['quantity'],
+					'subtract'   => $product['subtract'],
+					'price'      => $product['price'],
+					'total'      => $product['total'],
+					'tax'        => $this->tax->getTax($product['price'], $product['tax_class_id']),
+					'reward'     => $product['reward']
+				);
+			}
                        
-			$this->session->data['order_id'] = $this->model_checkout_customorder->addOrder($data);
+			$this->session->data['order_id'] = $this->model_checkout_order->addOrder($data);
                          
-                        if($data['payment_code'] == 'cod')
-                        { 
-                            if($this->session->data['order_id']){
-                              $this->model_checkout_customorder->confirm($this->session->data['order_id'], $this->config->get('config_order_status_id'));
-                          }
-                        } 
-                        
-                        if($data['payment_code'] == 'pp_standard')
-                        { 
-                            if($this->session->data['order_id']){
-                                $this->model_checkout_customorder->update_order_status($this->session->data['order_id'], 87);    //set order status to 'paypal pending' in case of paypal payment method
-                            }
-                        }
-                        
-                        
-                        
-                        if($data['payment_code'] == 'affirm')
-                        { 
-                            if($this->session->data['order_id']){
-                                $this->model_checkout_customorder->update_order_status($this->session->data['order_id'], $this->config->get('affirm_pending_status_id'));    //set order status to 'affirm pending' in case of affirm payment method
-                            }
-                        }
+//                        if($data['payment_code'] == 'cod')
+//                        { 
+//                            if($this->session->data['order_id']){
+//                              $this->model_checkout_customorder->confirm($this->session->data['order_id'], $this->config->get('config_order_status_id'));
+//                          }
+//                        } 
+//                        
+//                        if($data['payment_code'] == 'pp_standard')
+//                        { 
+//                            if($this->session->data['order_id']){
+//                                $this->model_checkout_customorder->update_order_status($this->session->data['order_id'], 87);    //set order status to 'paypal pending' in case of paypal payment method
+//                            }
+//                        }
+//                        
+//                        
+//                        
+//                        if($data['payment_code'] == 'affirm')
+//                        { 
+//                            if($this->session->data['order_id']){
+//                                $this->model_checkout_customorder->update_order_status($this->session->data['order_id'], $this->config->get('affirm_pending_status_id'));    //set order status to 'affirm pending' in case of affirm payment method
+//                            }
+//                        }
                         
                         
                         
@@ -405,66 +453,7 @@ class ControllerCheckoutCartCustomConfirm extends Controller {
 
 			$this->data['products'] = array();
 
-			foreach ($this->cart->getProducts() as $product) {
-				$option_data = array();
-
-				foreach ($product['option'] as $option) {
-					if ($option['type'] != 'file') {
-						$value = $option['option_value'];
-					} else {
-						$filename = $this->encryption->decrypt($option['option_value']);
-
-						$value = utf8_substr($filename, 0, utf8_strrpos($filename, '.'));
-					}
-
-					$option_data[] = array(
-						'name'  => $option['name'],
-						'value' => (utf8_strlen($value) > 20 ? utf8_substr($value, 0, 20) . '..' : $value)
-					);
-				}
-
-
-				$profile_description = '';
-
-				if ($product['recurring']) {
-					$frequencies = array(
-						'day' => $this->language->get('text_day'),
-						'week' => $this->language->get('text_week'),
-						'semi_month' => $this->language->get('text_semi_month'),
-						'month' => $this->language->get('text_month'),
-						'year' => $this->language->get('text_year'),
-					);
-
-					if ($product['recurring_trial']) {
-						$recurring_price = $this->currency->format($this->tax->calculate($product['recurring_trial_price'] * $product['quantity'], $product['tax_class_id'], $this->config->get('config_tax')));
-						$profile_description = sprintf($this->language->get('text_trial_description'), $recurring_price, $product['recurring_trial_cycle'], $frequencies[$product['recurring_trial_frequency']], $product['recurring_trial_duration']) . ' ';
-					}
-
-					$recurring_price = $this->currency->format($this->tax->calculate($product['recurring_price'] * $product['quantity'], $product['tax_class_id'], $this->config->get('config_tax')));
-
-					if ($product['recurring_duration']) {
-						$profile_description .= sprintf($this->language->get('text_payment_description'), $recurring_price, $product['recurring_cycle'], $frequencies[$product['recurring_frequency']], $product['recurring_duration']);
-					} else {
-						$profile_description .= sprintf($this->language->get('text_payment_until_canceled_description'), $recurring_price, $product['recurring_cycle'], $frequencies[$product['recurring_frequency']], $product['recurring_duration']);
-					}
-				}
-
-				$this->data['products'][] = array(
-					'key'                 => $product['key'],
-					'product_id'          => $product['product_id'],
-					'name'                => $product['name'],
-					'model'               => $product['model'],
-					'option'              => $option_data,
-					'quantity'            => $product['quantity'],
-					'subtract'            => $product['subtract'],
-					'price'               => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax'))),
-					'total'               => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')) * $product['quantity']),
-					'href'                => $this->url->link('product/product', 'product_id=' . $product['product_id']),
-					'recurring'           => $product['recurring'],
-					'profile_name'        => $product['profile_name'],
-					'profile_description' => $profile_description,
-				);
-			}
+			
 
 			// Gift Voucher
 			$this->data['vouchers'] = array();

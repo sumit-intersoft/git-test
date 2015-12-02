@@ -101,12 +101,12 @@ class ControllerCheckoutViewCheckout extends Controller {
         }
 
         
-        
+        $this->load->model('account/address');
         $data['logged'] = $logged = $this->customer->isLogged();
         $data['addresses'] = array();
         $data['text_none'] = $this->language->get('text_none');
         if ($logged) {
-            $this->load->model('account/address');
+            $data['addresses'] = $this->model_account_address->getAddresses();
             
             if (isset($this->session->data['payment_address']) && (!$this->session->data['payment_address']['address_id']) ) {
                     unset($this->session->data['payment_address']);
@@ -118,123 +118,31 @@ class ControllerCheckoutViewCheckout extends Controller {
                 $data['payment_address'] = $this->session->data['payment_address'] = $this->model_account_address->getAddress($this->customer->getAddressId());
             }
             
-            //----------------- Old code that need to be removed --------------------------------->
-                if (!$this->session->data['payment_address_id'])
-                    $this->session->data['payment_address_id'] = $this->customer->getAddressId();
+            if ($this->config->get('shipping_status') && $this->cart->hasShipping()) {
+                if (isset($this->session->data['shipping_address']) && (!$this->session->data['shipping_address']['address_id']) ) {
+                        unset($this->session->data['shipping_address']);
+                }
 
-                if (!$this->session->data['shipping_address_id'])
-                    $this->session->data['shipping_address_id'] = $this->customer->getAddressId();
-
-                if (!$this->session->data['shipping_address_id'])
-                    $data['address_id'] = $this->customer->getAddressId();
-                else
-                    $data['address_id'] = $this->session->data['shipping_address_id'];
-                $data['addresses'] = $this->model_account_address->getAddresses();
-                
-                /*--------------------------  Old code  ends here ------------------------------------- */
-            } else {
-                    $data['shipping'] = '';
-                    if ($this->config->get('shipping_status') && $this->cart->hasShipping() && ( (!isset($this->session->data['shipping_methods'])) || (!isset($this->session->data['shipping_method'])))) {
-                        $files = glob(DIR_APPLICATION . '/controller/total/shipping.php');
-                        if ($files) {
-				$extension = basename($files[0], '.php');
-                                $data['shipping'] = $this->load->controller('total/' . $extension. '/custom_checkout_shipping');
-                        }
-                    }
-            /* I think no need for this */
-            $this->request->post['country_id'] = $this->config->get('config_country_id');
-            $this->request->post['zone_id'] = $this->config->get('config_zone_id');
-            $this->request->post['postcode'] = '1111'; 
+                if (isset($this->session->data['shipping_address']) && ($this->session->data['shipping_address']['address_id']) ) {
+                    $data['shipping_address'] = $this->session->data['shipping_address'];
+                } else {
+                    $data['shipping_address'] = $this->session->data['shipping_address'] = $this->model_account_address->getAddress($this->customer->getAddressId());
+                }
+            }
             
-            $this->load->model('localisation/country');
-
-            $country_info = $this->model_localisation_country->getCountry($this->request->post['country_id']);
-
-            $this->tax->setShippingAddress($this->request->post['country_id'], $this->request->post['zone_id']);
-
-            if ($country_info) {
-                    $country = $country_info['name'];
-                    $iso_code_2 = $country_info['iso_code_2'];
-                    $iso_code_3 = $country_info['iso_code_3'];
-                    $address_format = $country_info['address_format'];
-            } else {
-                    $country = '';
-                    $iso_code_2 = '';
-                    $iso_code_3 = '';
-                    $address_format = '';
-            }
-
-            $this->load->model('localisation/zone');
-
-            $zone_info = $this->model_localisation_zone->getZone($this->request->post['zone_id']);
-
-            if ($zone_info) {
-                    $zone = $zone_info['name'];
-                    $zone_code = $zone_info['code'];
-            } else {
-                    $zone = '';
-                    $zone_code = '';
-            }
-
-            $this->session->data['shipping_address'] = array(
-                    'firstname'      => '',
-                    'lastname'       => '',
-                    'company'        => '',
-                    'address_1'      => '',
-                    'address_2'      => '',
-                    'postcode'       => $this->request->post['postcode'],
-                    'city'           => '',
-                    'zone_id'        => $this->request->post['zone_id'],
-                    'zone'           => $zone,
-                    'zone_code'      => $zone_code,
-                    'country_id'     => $this->request->post['country_id'],
-                    'country'        => $country,
-                    'iso_code_2'     => $iso_code_2,
-                    'iso_code_3'     => $iso_code_3,
-                    'address_format' => $address_format
-            );
-
-            $quote_data = array();
-
-            $this->load->model('extension/extension');
-
-            $results = $this->model_extension_extension->getExtensions('shipping');
-
-            foreach ($results as $result) {
-                    if ($this->config->get($result['code'] . '_status')) {
-                            $this->load->model('shipping/' . $result['code']);
-
-                            $quote = $this->{'model_shipping_' . $result['code']}->getQuote($this->session->data['shipping_address']);
-
-                            if ($quote) {
-                                    $quote_data[$result['code']] = array(
-                                            'title'      => $quote['title'],
-                                            'quote'      => $quote['quote'],
-                                            'sort_order' => $quote['sort_order'],
-                                            'error'      => $quote['error']
-                                    );
+        } else {
+                    if ($this->config->get('shipping_status') && $this->cart->hasShipping()) { 
+                            $files = glob(DIR_APPLICATION . '/controller/total/custom_shipping_payment.php');
+                            if ($files) {
+                                    
+                                    $extension = basename($files[0], '.php');
+                                    
+                                    $this->load->controller('total/' . $extension. '/set_shipping_method');
+                                    $data['shipping'] = $this->load->controller('total/' . $extension. '/get_shipping_methods');
                             }
+                        
                     }
-            }
-
-            $sort_order = array();
-
-            foreach ($quote_data as $key => $value) {
-                    $sort_order[$key] = $value['sort_order'];
-            }
-
-            array_multisort($sort_order, SORT_ASC, $quote_data);
-
-            $this->session->data['shipping_methods'] = $quote_data;
-
-            if (isset($this->session->data['shipping_methods'])) {
-                $data['shipping_methods'] = $this->session->data['shipping_methods'];
-            } else {
-                $data['shipping_methods'] = array();
-            }
             
-            
-		/*  Ends here*/
         }
 
 
@@ -269,63 +177,10 @@ class ControllerCheckoutViewCheckout extends Controller {
         }
 
         if (!empty($shipping_address)) {
+            
             // Shipping Methods
             $quote_data = array();
 
-            $this->load->model('extension/extension');
-
-            $results = $this->model_extension_extension->getExtensions('shipping');
-
-            foreach ($results as $result) {
-                if ($this->config->get($result['code'] . '_status')) {
-                    $this->load->model('shipping/' . $result['code']);
-
-                    $quote = $this->{'model_shipping_' . $result['code']}->getQuote($shipping_address);
-
-                    if ($quote) {
-                        $quote_data[$result['code']] = array(
-                            'title' => $quote['title'],
-                            'quote' => $quote['quote'],
-                            'sort_order' => $quote['sort_order'],
-                            'error' => $quote['error']
-                        );
-                    }
-                }
-            }
-
-            $sort_order = array();
-
-            foreach ($quote_data as $key => $value) {
-                $sort_order[$key] = $value['sort_order'];
-            }
-
-            array_multisort($sort_order, SORT_ASC, $quote_data);
-            $this->session->data['shipping_methods'] = $quote_data;
-            
-            
-            
-            if (isset($this->session->data['shipping_methods'])) {
-                $data['shipping_methods'] = $this->session->data['shipping_methods'];
-            } else {
-                $data['shipping_methods'] = array();
-            }
-            
-            
-            
-            if (isset($this->session->data['shipping_method_selected'])) {
-                $data['code'] = $this->session->data['shipping_method_selected'];
-            } else {
-                $data['code'] = '';
-            }
-
-            if (empty($this->session->data['shipping_methods'])) {
-                $data['error_warning_shipping'] = sprintf($this->language->get('error_no_shipping'), $this->url->link('information/contact'));
-            } else {
-                $data['error_warning_shipping'] = '';
-            }
-            
-            /*  old code ends here*/
-            
             $this->load->model('extension/extension');
 
 			$results = $this->model_extension_extension->getExtensions('shipping');
@@ -357,32 +212,17 @@ class ControllerCheckoutViewCheckout extends Controller {
 
 			$this->session->data['shipping_methods'] = $quote_data;
             
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-        }
+          }
 
         
         
-        
+        if (isset($this->session->data['shipping_methods'])) {
+            
+			$data['shipping_methods'] = $this->session->data['shipping_methods']; 
+                       
+		} else {
+			$data['shipping_methods'] = array();
+		}
         
         
         
@@ -1308,5 +1148,46 @@ class ControllerCheckoutViewCheckout extends Controller {
 */
     
 }
+
+/*
+ * 
+ * OST http://10.10.10.147/projects/opencart-2.1.0.1/index.php?route=checkout/payment_address/save
+	
+200 OK
+		95ms	
+jquery.min.js (line 4)
+ParamsHeadersPostResponseJSONCookies
+
+[]
+
+GET http://10.10.10.147/projects/opencart-2.1.0.1/index.php?route=checkout/payment_method
+	
+200 OK
+		120ms	
+jquery.min.js (line 4)
+GET http://10.10.10.147/projects/opencart-2.1.0.1/index.php?route=checkout/payment_address
+	
+200 OK
+		173ms	
+jquery.min.js (line 4)
+GET http://10.10.10.147/projects/opencart-2.1.0.1/ind...hp?route=checkout/checkout/country&country_id=99
+	
+200 OK
+		84ms
+ * 
+ * 
+ * AFte choosing payment method
+ http://10.10.10.147/projects/opencart-2.1.0.1/index.php?route=checkout/payment_method/save
+	
+200 OK
+		105ms	
+jquery.min.js (line 4)
+GET http://10.10.10.147/projects/opencart-2.1.0.1/index.php?route=checkout/confirm
+	
+200 OK
+		146ms
+
+
+lst was i tink payment/cod */
 
 ?>

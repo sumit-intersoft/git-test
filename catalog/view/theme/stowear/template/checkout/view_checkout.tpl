@@ -215,7 +215,7 @@ $session = $registry->get('session');
                     <div id="shipping-existing">
                         <select name="shipping_address_id" class="form-control">
                             <?php foreach ($addresses as $address) { ?>
-                            <?php if ($address['address_id'] == $address_id) { ?>
+                            <?php if( (isset($shipping_address['address_id']))  && ($address['address_id'] == $shipping_address['address_id'])) { ?>
                             <option value="<?php echo $address['address_id']; ?>" selected="selected"><?php echo $address['firstname']; ?> <?php echo $address['lastname']; ?>, <?php echo $address['address_1']; ?>, <?php echo $address['city']; ?>, <?php echo $address['zone']; ?>, <?php echo $address['country']; ?></option>
                             <?php } else { ?>
                             <option value="<?php echo $address['address_id']; ?>"><?php echo $address['firstname']; ?> <?php echo $address['lastname']; ?>, <?php echo $address['address_1']; ?>, <?php echo $address['city']; ?>, <?php echo $address['zone']; ?>, <?php echo $address['country']; ?></option>
@@ -396,12 +396,12 @@ $session = $registry->get('session');
                 <h5>Your Comments<span>(Optional)</span> </h5>  
                 <textarea maxlength="300" style="width: 100%;" rows="4" name="comment"></textarea>
             </div> 
-            <div class="place-order">
+            <div class="place-order" style="display:none">
                 <div class="coupon-code">
                     <?php if ($error_warning_shipping) { ?>
                     <div class="warning-custom-module"><?php echo $error_warning_shipping; ?></div>
                     <?php } ?>
-                    <div id="shipping-method-div" style="display: none;">
+                    <div id="shipping-method-div">
 
                         <?php if ($shipping_methods) { ?>
                         <label> Please select the preferred shipping method to use on this order.</label>
@@ -839,9 +839,10 @@ $('#billing-information select[name=\'country_id\']').bind('change', function() 
                                 }
 
                             } else {
+                                
                                 $.ajax({
-                                    url: 'index.php?route=checkout/cart_custom_confirm',
-                                    dataType: 'json',
+                                    url: 'index.php?route=checkout/confirm',
+                                    //dataType: 'json',
                                     async: false,
                                     beforeSend: function() {
                                         order_payment_method.attr('disabled', true);
@@ -851,15 +852,18 @@ $('#billing-information select[name=\'country_id\']').bind('change', function() 
 
                                     },
                                     success: function(json) {
-
+                                        
                                         if (json['redirect']) {
                                             location = json['redirect'];
                                         } else {
-                                            if (order_payment_method.hasClass('place-order-btn'))
-                                            {
-                                                location = 'index.php?route=checkout/custom_success';
-                                            }
-                                            if (order_payment_method.hasClass('paypal-place-order-btn'))
+                                           
+                                            //if (order_payment_method.hasClass('place-order-btn'))
+                                            //{
+                                               // location = 'index.php?route=checkout/custom_success';
+                                                $('#get-cart-content').prepend(json);
+                                                $('#button-confirm').trigger('click');
+                                            //}
+                                            /*if (order_payment_method.hasClass('paypal-place-order-btn'))
                                             {
                                                 $('.pay-pall').append(json['payment']);
                                                 $('.pay-pall .button').trigger('click');
@@ -868,7 +872,7 @@ $('#billing-information select[name=\'country_id\']').bind('change', function() 
                                             {
                                                 $('.affirm').append(json['payment']);
                                                 affirm.checkout.post();
-                                            }
+                                            } */
                                         }
                                     }
                                 });

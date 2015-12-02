@@ -320,36 +320,36 @@ class ControllerCheckoutCustomValidation extends Controller {
                 if($this->request->post['card_type']){
                      $card_detail['card_type'] = $this->request->post['card_type'];
                 }
-                    if ((utf8_strlen($card_no) < 13) || (utf8_strlen($card_no) > 32)) {
-                        $json['error']['card'] ='Card number is Invalid!';
-                    } elseif(!($this->creditcardValidate($card_detail['card_type'],$card_no, true))) {
-                         $json['error']['card'] ='Card number is Invalid!';
-                    }
-                    else {
-                        $card_detail['card_no'] = $card_no;
-                    }
-                    if ((utf8_strlen($this->request->post['cvv']) < 3) || (utf8_strlen($this->request->post['cvv']) > 4)) {
-                        $json['error']['cvv'] = 'Cvv number is Invalid!';
-                    } else {
-                        $card_detail['cvv'] = $this->request->post['cvv'];
-                    }
-                    if ((utf8_strlen($this->request->post['card_expiry_month']) < 1)) {
-                       $json['error']['validity'] = 'Validity required';
-                    } else {
-                       $card_detail['card_expiry_month'] = $this->request->post['card_expiry_month'];
-                    }
-                    if ((utf8_strlen($this->request->post['card_expiry_year']) < 1)) {
-                       $json['error']['validity'] = 'Validity required';
-                    } else {
-                       $card_detail['card_expiry_year'] = $this->request->post['card_expiry_year'];
-                    }
-                  
-                    if( !($json['error']['validity']) )
-                    {
-                      if((strtotime(date($this->request->post['card_expiry_year']."/".$this->request->post['card_expiry_month']."/01"))) < (strtotime(date('Y/m/01')))) {
-                        $json['error']['validity'] = 'Credit Card is  expired!';
-                        }                    
-                    }
+//                    if ((utf8_strlen($card_no) < 13) || (utf8_strlen($card_no) > 32)) {
+//                        $json['error']['card'] ='Card number is Invalid!';
+//                    } elseif(!($this->creditcardValidate($card_detail['card_type'],$card_no, true))) {
+//                         $json['error']['card'] ='Card number is Invalid!';
+//                    }
+//                    else {
+//                        $card_detail['card_no'] = $card_no;
+//                    }
+//                    if ((utf8_strlen($this->request->post['cvv']) < 3) || (utf8_strlen($this->request->post['cvv']) > 4)) {
+//                        $json['error']['cvv'] = 'Cvv number is Invalid!';
+//                    } else {
+//                        $card_detail['cvv'] = $this->request->post['cvv'];
+//                    }
+//                    if ((utf8_strlen($this->request->post['card_expiry_month']) < 1)) {
+//                       $json['error']['validity'] = 'Validity required';
+//                    } else {
+//                       $card_detail['card_expiry_month'] = $this->request->post['card_expiry_month'];
+//                    }
+//                    if ((utf8_strlen($this->request->post['card_expiry_year']) < 1)) {
+//                       $json['error']['validity'] = 'Validity required';
+//                    } else {
+//                       $card_detail['card_expiry_year'] = $this->request->post['card_expiry_year'];
+//                    }
+//                  
+//                    if( !($json['error']['validity']) )
+//                    {
+//                      if((strtotime(date($this->request->post['card_expiry_year']."/".$this->request->post['card_expiry_month']."/01"))) < (strtotime(date('Y/m/01')))) {
+//                        $json['error']['validity'] = 'Credit Card is  expired!';
+//                        }                    
+//                    }
                     $this->session->data['card_detail'] = $card_detail;
             }    
                 
@@ -540,35 +540,35 @@ class ControllerCheckoutCustomValidation extends Controller {
                 if($this->request->post['card_type']){
                     $card_detail['card_type'] = $this->request->post['card_type'];
                 }
-                if ((utf8_strlen($card_no) < 13) || (utf8_strlen($card_no) > 32)) {
-                       $json['error']['card'] ='Card number is Invalid!';
-                   }  elseif(!($this->creditcardValidate($card_detail['card_type'],$card_no, true))) {
-                         $json['error']['card'] ='Card number is Invalid!';
-                    }   else {
-                       $card_detail['card_no'] = $card_no;
-                   }
-                   if ((utf8_strlen($this->request->post['cvv']) < 3) || (utf8_strlen($this->request->post['cvv']) > 4)) {
-                       $json['error']['cvv'] = 'Cvv number is Invalid!';
-                   } else {
-                       $card_detail['cvv'] = $this->request->post['cvv'];
-                   }
-                   if ((utf8_strlen($this->request->post['card_expiry_month']) < 1)) {
-                       $json['error']['validity'] = 'Validity required';
-                   } else {
-                       $card_detail['card_expiry_month'] = $this->request->post['card_expiry_month'];
-                   }
-                    if ((utf8_strlen($this->request->post['card_expiry_year']) < 1)) {
-                       $json['error']['validity'] = 'Validity required';
-                   } else {
-                       $card_detail['card_expiry_year'] = $this->request->post['card_expiry_year'];
-                   }
-                  
-                    if(!isset($json['error']['validity']))
-                    {
-                      if((strtotime(date($this->request->post['card_expiry_year']."/".$this->request->post['card_expiry_month']."/01"))) < (strtotime(date('Y/m/01')))) {
-                        $json['error']['validity'] = 'Credit Card is  expired!';
-                        }                    
-                    }  
+//                if ((utf8_strlen($card_no) < 13) || (utf8_strlen($card_no) > 32)) {
+//                       $json['error']['card'] ='Card number is Invalid!';
+//                   }  elseif(!($this->creditcardValidate($card_detail['card_type'],$card_no, true))) {
+//                         $json['error']['card'] ='Card number is Invalid!';
+//                    }   else {
+//                       $card_detail['card_no'] = $card_no;
+//                   }
+//                   if ((utf8_strlen($this->request->post['cvv']) < 3) || (utf8_strlen($this->request->post['cvv']) > 4)) {
+//                       $json['error']['cvv'] = 'Cvv number is Invalid!';
+//                   } else {
+//                       $card_detail['cvv'] = $this->request->post['cvv'];
+//                   }
+//                   if ((utf8_strlen($this->request->post['card_expiry_month']) < 1)) {
+//                       $json['error']['validity'] = 'Validity required';
+//                   } else {
+//                       $card_detail['card_expiry_month'] = $this->request->post['card_expiry_month'];
+//                   }
+//                    if ((utf8_strlen($this->request->post['card_expiry_year']) < 1)) {
+//                       $json['error']['validity'] = 'Validity required';
+//                   } else {
+//                       $card_detail['card_expiry_year'] = $this->request->post['card_expiry_year'];
+//                   }
+//                  
+//                    if(!isset($json['error']['validity']))
+//                    {
+//                      if((strtotime(date($this->request->post['card_expiry_year']."/".$this->request->post['card_expiry_month']."/01"))) < (strtotime(date('Y/m/01')))) {
+//                        $json['error']['validity'] = 'Credit Card is  expired!';
+//                        }                    
+//                    }  
                     $this->session->data['card_detail'] = $card_detail;
             }    
                  if (isset($this->request->post['comment'])) {
