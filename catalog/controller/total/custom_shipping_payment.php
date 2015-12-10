@@ -2,29 +2,29 @@
 
 class ControllerTotalCustomShippingPayment extends Controller {
 
-    public function set_shipping_method($args = array()) {
+    private function set_address($args = array()) {
 
         if (isset($args[0]) && !empty($args[0])) {
-            $this->request->post['country_id'] = $args[0];
+            $country_id = $args[0];
         } else {
-            $this->request->post['country_id'] = $this->config->get('config_country_id');
+            $country_id = $this->config->get('config_country_id');
         }
 
         if (isset($args[1]) && !empty($args[1])) {
-            $this->request->post['zone_id'] = $args[1];
+            $zone_id = $args[1];
         } else {
-            $this->request->post['zone_id'] = $this->config->get('config_zone_id');
+            $zone_id = $this->config->get('config_zone_id');
         }
 
         if (isset($args[2]) && !empty($args[2])) {
-            $this->request->post['postcode'] = $args[2];
+            $postcode = $args[2];
         } else {
-            $this->request->post['postcode'] = '1111'; //because some shipping method need to have postcode set
+            $postcode = '1111'; //because some shipping method need to have postcode set
         }
 
         $this->load->model('localisation/country');
 
-        $country_info = $this->model_localisation_country->getCountry($this->request->post['country_id']);
+        $country_info = $this->model_localisation_country->getCountry($country_id);
 
         if ($country_info) {
             $country = $country_info['name'];
@@ -40,7 +40,7 @@ class ControllerTotalCustomShippingPayment extends Controller {
 
         $this->load->model('localisation/zone');
 
-        $zone_info = $this->model_localisation_zone->getZone($this->request->post['zone_id']);
+        $zone_info = $this->model_localisation_zone->getZone($zone_id);
 
         if ($zone_info) {
             $zone = $zone_info['name'];
@@ -50,25 +50,35 @@ class ControllerTotalCustomShippingPayment extends Controller {
             $zone_code = '';
         }
 
-        $this->session->data['shipping_address'] = array(
+        return  array(
             'firstname' => '',
             'lastname' => '',
             'company' => '',
             'address_1' => '',
             'address_2' => '',
-            'postcode' => $this->request->post['postcode'],
+            'postcode' => $postcode,
             'city' => '',
-            'zone_id' => $this->request->post['zone_id'],
+            'zone_id' => $zone_id,
             'zone' => $zone,
             'zone_code' => $zone_code,
-            'country_id' => $this->request->post['country_id'],
+            'country_id' => $country_id,
             'country' => $country,
             'iso_code_2' => $iso_code_2,
             'iso_code_3' => $iso_code_3,
             'address_format' => $address_format
         );
 
-        $this->tax->setShippingAddress($this->request->post['country_id'], $this->request->post['zone_id']);
+       
+    }
+    
+    public function set_shipping_address($args = array()) {
+            $this->session->data['shipping_address'] =$this->set_address($args);
+            $this->tax->setShippingAddress($this->session->data['shipping_address']['country_id'], $this->session->data['shipping_address']['zone_id']);
+    }
+    
+    public function set_payment_address($args = array()) {
+            $this->session->data['payment_address'] = $this->set_address($args);
+            $this->tax->setPaymentAddress($this->session->data['payment_address']['country_id'], $this->session->data['payment_address']['zone_id']);
     }
 
     public function get_shipping_methods() {

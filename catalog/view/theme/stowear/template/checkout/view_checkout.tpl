@@ -11,9 +11,9 @@ include('catalog/view/theme/' . $config->get('config_template') . '/template/new
 <div class="success"><?php echo $success; ?><img src="catalog/view/theme/default/image/close.png" alt="" class="close" /></div>
 <?php } ?>-->
 
-<?php if ($error_warning) { ?>
+<!--<?php if ($error_warning) { ?>
 <div class="warning"><?php echo $error_warning; ?><img src="catalog/view/theme/default/image/close.png" alt="" class="close" /></div>
-<?php } ?>
+<?php } ?>-->
 
 <?php //echo $column_left; ?><?php //echo $column_right; ?>
 <?PHP //$customer->isLogged();
@@ -57,47 +57,11 @@ $session = $registry->get('session');
        
        
 ?>
-<div id="content" class="sc-page">
+<div class="sc-page">
+    
     <?php //echo $content_top; ?>
-    <?php if(!$logged) { ?>
-    <div  class="sign-up">    
-        <div id="sign-up" class="login-sign-up">
-            <h4>New Customers</h4>
-            <p>
-                <label>Email Address<strong style="color:red">*</strong>:</label>
-                <input type="text" id="email-address" name="email" class="form_textField">
-            </p>
-            <p>   
-                <label>Password<strong style="color:red">*</strong>:</label>
-                <input type="password" id="password-new" name="password" class="form_textField">
-            </p>
-            <p>
-                <label>Confirm Password<strong style="color:red">*</strong>:</label>
-                <input type="password" id="password-confirm" name="confirm" class="form_textField">
-            </p>
-        </div>
-        <div class="login-login">
-            <span>
-                <h4>Existing Customers</h4>
-                <p>
-                    If you are an existing customer. Please click the sign in below to checkout<br><br>
-                <div id="checkout">
-                    <div id="login">
-                        <label>E-Mail:</label>
-                        <input type="text" value="" name="email">
-                        <label>Password:</label>
-                        &nbsp;&nbsp;&nbsp;&nbsp; <input type="password" value="" name="password">
-                        <br><br>
-                        <input type="button" class="button" id="button-login" value="Login">
-                    </div>
-                </div>
-                </p>
-            </span>
-        </div>
-    </div>
-    <?php } ?>
+    <?php if(!$logged) { echo $login_module;  } ?>
 
-    <div class="clearfix"></div>
     <div id="cart-2">
         <div class="cart-2-Formbox" id="cart-2-Formbox">
             <div class="Frombox-left">
@@ -105,48 +69,58 @@ $session = $registry->get('session');
                 <h2><?php echo $text_heading_billing; ?></h2>
                 <form class="form-horizontal" id="billing-information">
                     <?php if ($addresses) { ?>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="payment_address" value="existing" checked="checked" />
-                            <?php echo $text_address_existing; ?></label>
-                    </div>
-                    <div id="payment-existing">
-                        <select name="payment_address_id" class="form-control">
-                            <?php 
-                            
-                            foreach ($addresses as $address) { ?>
-                            <?php if( (isset($payment_address['address_id']))  && ($address['address_id'] == $payment_address['address_id'])) { ?>
-                            <option value="<?php echo $address['address_id']; ?>" selected="selected"><?php echo $address['firstname']; ?> <?php echo $address['lastname']; ?>, <?php echo $address['address_1']; ?>, <?php echo $address['city']; ?>, <?php echo $address['zone']; ?>, <?php echo $address['country']; ?></option>
-                            <?php } else { ?>
-                            <option value="<?php echo $address['address_id']; ?>"><?php echo $address['firstname']; ?> <?php echo $address['lastname']; ?>, <?php echo $address['address_1']; ?>, <?php echo $address['city']; ?>, <?php echo $address['zone']; ?>, <?php echo $address['country']; ?></option>
-                            <?php } ?>
-                            <?php } ?>
-                        </select>
-                    </div>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="payment_address" value="new" />
-                            <?php echo $text_address_new; ?></label>
-                    </div>
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="payment_address" value="existing" checked="checked" />
+                                <?php echo $text_address_existing; ?></label>
+                        </div>
+                        <div id="payment-existing">
+                            <select name="payment_address_id" class="form-control">
+                                <?php 
+
+                                foreach ($addresses as $address) { ?>
+                                <?php if( (isset($payment_address['address_id']))  && ($address['address_id'] == $payment_address['address_id'])) { ?>
+                                <option value="<?php echo $address['address_id']; ?>" selected="selected"><?php echo $address['firstname']; ?> <?php echo $address['lastname']; ?>, <?php echo $address['address_1']; ?>, <?php echo $address['city']; ?>, <?php echo $address['zone']; ?>, <?php echo $address['country']; ?></option>
+                                <?php } else { ?>
+                                <option value="<?php echo $address['address_id']; ?>"><?php echo $address['firstname']; ?> <?php echo $address['lastname']; ?>, <?php echo $address['address_1']; ?>, <?php echo $address['city']; ?>, <?php echo $address['zone']; ?>, <?php echo $address['country']; ?></option>
+                                <?php } ?>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="payment_address" value="new" />
+                                <?php echo $text_address_new; ?></label>
+                        </div>
                     <?php } ?>
                     <br />
-                    <div id="payment-new" style="display: <?php echo ($addresses ? 'none' : 'block'); ?>;">
+                    <div id="payment-new" <?php echo  ($addresses) ? 'style="display:none"' : 'style="display:block"'; ?>>
                         <div class="form-group required">
                             <label class="col-sm-2 control-label" for="input-payment-firstname"><?php echo $entry_firstname; ?></label>
                             <div class="col-sm-10">
-                                <input type="text" name="firstname" value="" placeholder="<?php echo $entry_firstname; ?>" id="input-payment-firstname" class="form-control" />
+                                <input type="text" name="firstname" value="" placeholder="<?php echo $entry_firstname; ?>" id="input-payment-firstname" class="form-control address_details" />
                             </div>
                         </div>
                         <div class="form-group required">
                             <label class="col-sm-2 control-label" for="input-payment-lastname"><?php echo $entry_lastname; ?></label>
                             <div class="col-sm-10">
-                                <input type="text" name="lastname" value="" placeholder="<?php echo $entry_lastname; ?>" id="input-payment-lastname" class="form-control" />
+                                <input type="text" name="lastname" value="" placeholder="<?php echo $entry_lastname; ?>" id="input-payment-lastname" class="form-control address_details" />
                             </div>
                         </div>
+                        
+                        <?php if(!$logged) { ?> 
+                            <div class="form-group required">
+                                <label class="col-sm-2 control-label" for="input-payment-telephone"><?php echo $entry_telephone; ?></label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="telephone" value="" placeholder="<?php echo $entry_telephone; ?>" id="input-payment-telephone" class="form-control address_details" />
+                                </div>
+                            </div>
+                        <?php } ?>
+                        
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="input-payment-company"><?php echo $entry_company; ?></label>
                             <div class="col-sm-10">
-                                <input type="text" name="company" value="" placeholder="<?php echo $entry_company; ?>" id="input-payment-company" class="form-control" />
+                                <input type="text" name="company" value="" placeholder="<?php echo $entry_company; ?>" id="input-payment-company" class="form-control address_details" />
                             </div>
                         </div>
                         <div class="form-group required">
@@ -158,28 +132,28 @@ $session = $registry->get('session');
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="input-payment-address-2"><?php echo $entry_address_2; ?></label>
                             <div class="col-sm-10">
-                                <input type="text" name="address_2" value="" placeholder="<?php echo $entry_address_2; ?>" id="input-payment-address-2" class="form-control" />
+                                <input type="text" name="address_2" value="" placeholder="<?php echo $entry_address_2; ?>" id="input-payment-address-2" class="form-control address_details" />
                             </div>
                         </div>
                         <div class="form-group required">
                             <label class="col-sm-2 control-label" for="input-payment-city"><?php echo $entry_city; ?></label>
                             <div class="col-sm-10">
-                                <input type="text" name="city" value="" placeholder="<?php echo $entry_city; ?>" id="input-payment-city" class="form-control" />
+                                <input type="text" name="city" value="" placeholder="<?php echo $entry_city; ?>" id="input-payment-city" class="form-control address_details" />
                             </div>
                         </div>
                         <div class="form-group required">
                             <label class="col-sm-2 control-label" for="input-payment-postcode"><?php echo $entry_postcode; ?></label>
                             <div class="col-sm-10">
-                                <input type="text" name="postcode" value="" placeholder="<?php echo $entry_postcode; ?>" id="input-payment-postcode" class="form-control" />
+                                <input type="text" name="postcode" value="" placeholder="<?php echo $entry_postcode; ?>" id="input-payment-postcode" class="form-control address_details" />
                             </div>
                         </div>
                         <div class="form-group required">
                             <label class="col-sm-2 control-label" for="input-payment-country"><?php echo $entry_country; ?></label>
                             <div class="col-sm-10">
-                                <select name="country_id" id="input-payment-country" class="form-control">
+                                <select name="country_id" id="input-payment-country" class="form-control address_details">
                                     <option value=""><?php echo $text_select; ?></option>
                                     <?php foreach ($countries as $country) { ?>
-                                    <?php if ($country['country_id'] == $country_id) { ?>
+                                    <?php if ($country['country_id'] == $data['payment_address']['country_id']) { ?>
                                     <option value="<?php echo $country['country_id']; ?>" selected="selected"><?php echo $country['name']; ?></option>
                                     <?php } else { ?>
                                     <option value="<?php echo $country['country_id']; ?>"><?php echo $country['name']; ?></option>
@@ -191,7 +165,7 @@ $session = $registry->get('session');
                         <div class="form-group required">
                             <label class="col-sm-2 control-label" for="input-payment-zone"><?php echo $entry_zone; ?></label>
                             <div class="col-sm-10">
-                                <select name="zone_id" id="input-payment-zone" class="form-control">
+                                <select name="zone_id" id="input-payment-zone" class="form-control address_details">
                                 </select>
                             </div>
                         </div>
@@ -231,56 +205,58 @@ $session = $registry->get('session');
                     </div>
                     <?php } ?>
                     <br />
-                    <div id="shipping-new" style="display: <?php echo ($addresses ? 'none' : 'block'); ?>;">
+                    
+                    <div id="shipping-new" <?php echo  ($addresses) ? 'style="display:none"' : 'style="display:block"'; ?>>
+                         <span><input type="checkbox" name="is_shipping_same" id="is_shipping_same" value="1"> (same as billing information)</span>
                         <div class="form-group required">
                             <label class="col-sm-2 control-label" for="input-shipping-firstname"><?php echo $entry_firstname; ?></label>
                             <div class="col-sm-10">
-                                <input type="text" name="shipping_firstname" value="" placeholder="<?php echo $entry_firstname; ?>" id="input-shipping-firstname" class="form-control" />
+                                <input type="text" name="shipping_firstname" value="" placeholder="<?php echo $entry_firstname; ?>" id="input-shipping-firstname" class="form-control shipping_address_details" />
                             </div>                       
                         </div>
                         <div class="form-group required">
                             <label class="col-sm-2 control-label" for="input-shipping-lastname"><?php echo $entry_lastname; ?></label>
                             <div class="col-sm-10">
-                                <input type="text" name="shipping_lastname" value="" placeholder="<?php echo $entry_lastname; ?>" id="input-shipping-lastname" class="form-control" />
+                                <input type="text" name="shipping_lastname" value="" placeholder="<?php echo $entry_lastname; ?>" id="input-shipping-lastname" class="form-control shipping_address_details" />
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="input-shipping-company"><?php echo $entry_company; ?></label>
                             <div class="col-sm-10">
-                                <input type="text" name="shipping_company" value="" placeholder="<?php echo $entry_company; ?>" id="input-shipping-company" class="form-control" />
+                                <input type="text" name="shipping_company" value="" placeholder="<?php echo $entry_company; ?>" id="input-shipping-company" class="form-control shipping_address_details" />
                             </div>
                         </div>
                         <div class="form-group required">
                             <label class="col-sm-2 control-label" for="input-shipping-address-1"><?php echo $entry_address_1; ?></label>
                             <div class="col-sm-10">
-                                <input type="text" name="shipping_address_1" value="" placeholder="<?php echo $entry_address_1; ?>" id="input-shipping-address-1" class="form-control" />
+                                <input type="text" name="shipping_address_1" value="" placeholder="<?php echo $entry_address_1; ?>" id="input-shipping-address-1" class="form-control shipping_address_details" />
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="input-shipping-address-2"><?php echo $entry_address_2; ?></label>
                             <div class="col-sm-10">
-                                <input type="text" name="shipping_address_2" value="" placeholder="<?php echo $entry_address_2; ?>" id="input-shipping-address-2" class="form-control" />
+                                <input type="text" name="shipping_address_2" value="" placeholder="<?php echo $entry_address_2; ?>" id="input-shipping-address-2" class="form-control shipping_address_details" />
                             </div>
                         </div>
                         <div class="form-group required">
                             <label class="col-sm-2 control-label" for="input-shipping-city"><?php echo $entry_city; ?></label>
                             <div class="col-sm-10">
-                                <input type="text" name="shipping_city" value="" placeholder="<?php echo $entry_city; ?>" id="input-shipping-city" class="form-control" />
+                                <input type="text" name="shipping_city" value="" placeholder="<?php echo $entry_city; ?>" id="input-shipping-city" class="form-control shipping_address_details" />
                             </div>
                         </div>
                         <div class="form-group required">
                             <label class="col-sm-2 control-label" for="input-shipping-postcode"><?php echo $entry_postcode; ?></label>
                             <div class="col-sm-10">
-                                <input type="text" name="shipping_postcode" value="" placeholder="<?php echo $entry_postcode; ?>" id="input-shipping-postcode" class="form-control" />
+                                <input type="text" name="shipping_postcode" value="" placeholder="<?php echo $entry_postcode; ?>" id="input-shipping-postcode" class="form-control shipping_address_details" />
                             </div>
                         </div>
                         <div class="form-group required">
                             <label class="col-sm-2 control-label" for="input-shipping-country"><?php echo $entry_country; ?></label>
                             <div class="col-sm-10">
-                                <select name="shipping_country_id" id="input-shipping-country" class="form-control">
+                                <select name="shipping_country_id" id="input-shipping-country" class="form-control shipping_address_details">
                                     <option value=""><?php echo $text_select; ?></option>
                                     <?php foreach ($countries as $country) { ?>
-                                    <?php if ($country['country_id'] == $country_id) { ?>
+                                    <?php if ($country['country_id'] == $data['shipping_address']['country_id']) { ?>
                                     <option value="<?php echo $country['country_id']; ?>" selected="selected"><?php echo $country['name']; ?></option>
                                     <?php } else { ?>
                                     <option value="<?php echo $country['country_id']; ?>"><?php echo $country['name']; ?></option>
@@ -292,7 +268,7 @@ $session = $registry->get('session');
                         <div class="form-group required">
                             <label class="col-sm-2 control-label" for="input-shipping-zone"><?php echo $entry_zone; ?></label>
                             <div class="col-sm-10">
-                                <select name="shipping_zone_id" id="input-shipping-zone" class="form-control">
+                                <select name="shipping_zone_id" id="input-shipping-zone" class="form-control shipping_address_details">
                                 </select>
                             </div>
                         </div>
@@ -311,31 +287,37 @@ $session = $registry->get('session');
             <ul class="clearfix">
                 <li id="li-1"  data-index="credit" data-place_order="place-order-btn"  class="payments_method"><a href="javascript:void(0);"><?php echo 'Cash on Delivery' //$text_credit_cart;  ?></a></li>
             </ul>
-            <!--input type="hidden" id="cod" value="cod" name="payment_method">-->
-            <input type="hidden" id="custom_payment_method" value="credit" name="custom_payment_method">
-            <?php if($payment_methods) { ?>
-            <div class="" style="display:none">
-                <?php foreach ($payment_methods as $payment_method) { ?>
-                <?php if ($payment_method['code'] == $code || !$code) {
-                $code = $payment_method['code'] ?>
-                <input type="radio" class="payment_method_div" name="payment_method" value="<?php echo $payment_method['code']; ?>" id="<?php echo $payment_method['code']; ?>" checked="checked" />
-                <?php } else { ?>
-                <input type="radio" class="payment_method_div" name="payment_method" value="<?php echo $payment_method['code']; ?>" id="<?php echo $payment_method['code']; ?>" />
-                <?php }  ?>
-                <?php } ?>
+           
+            <?php
+           if($payment_methods) { ?>
+            <div class="" >
+                <ul class="clearfix">
+                    <?php 
+                    $i = 1;
+                    foreach ($payment_methods as $payment_method) { ?>
+                        <li class="payments_method">
+                            <a href="javascript:void(0);"><?php echo $payment_method['title'] ;//$text_credit_cart;  ?>
+                                <?php
+                                  if($i == 1){                ?>
+                                <input type="radio" class="payment_methods" name="payment_method" value="<?php echo $payment_method['code']; ?>" id="<?php echo $payment_method['code']; ?>" checked="checked" />
+                                <?php } else { ?>
+                                <input type="radio" class="payment_methods" name="payment_method" value="<?php echo $payment_method['code']; ?>" id="<?php echo $payment_method['code']; ?>" />
+                                <?php }  
+                                $i++;
+                                ?>
+                            </a>
+                        </li>
+                    <?php } ?>
+                </ul>
             </div>
 
             <?php } else{ ?>
+                <script type="text/javascript"><!--
+                    location = '<?php echo $shopping_cart; ?>';
+                //--></script>
             <?php } ?>
 
-            <div id="payment-div1" class="payment_method_content payment-form">
-
-               
-            </div>   
-           
-
-
-        </div>
+         </div>
         <div>
 
             <div class="comment">
@@ -395,38 +377,6 @@ $session = $registry->get('session');
     <div id="put-cart"></div>
     <?php echo $content_bottom; ?></div>
 
-<?php if($payment_methods) { ?>
-<script type="text/javascript">
-    $('input[name=\'payment_method\']').live('click', function() {
-
-        $.ajax({
-            url: 'index.php?route=payment/' + $(this).val(),
-            dataType: 'html',
-            beforeSend: function() {
-
-                $('.place-order-btn').attr('disabled', true);
-                $('#payment-div').html('<span class="custom-wait">&nbsp;<img src="catalog/view/theme/default/image/loading.gif" alt="" /></span>');
-            },
-            complete: function() {
-                $('.place-order-btn').attr('disabled', false);
-
-            },
-            success: function(html) {
-
-                $('#payment-div').html(html);
-
-
-            },
-            error: function(xhr, ajaxOptions, thrownError) {
-                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-            }
-        });
-
-    });
-    $('input[name=\'payment_method\']:first').trigger('click');
-</script>
-<?php } ?>
-
 <script type="text/javascript"><!--
 $('#billing-information select[name=\'country_id\']').bind('change', function() {
         $.ajax({
@@ -440,16 +390,16 @@ $('#billing-information select[name=\'country_id\']').bind('change', function() 
             },
             success: function(json) {
                 if (json['postcode_required'] == '1') {
-                    $('#payment-postcode-required').show();
-                } else {
-                    $('#payment-postcode-required').hide();
-                }
+				$('#billing-information input[name=\'postcode\']').parent().parent().addClass('required');
+		} else {
+				$('#billing-information input[name=\'postcode\']').parent().parent().removeClass('required');
+		}
 
                 html = '<option value=""><?php echo $text_select; ?></option>';
                 if ((typeof json['zone'] !== 'undefined') && json['zone'] != '') {
                     for (i = 0; i < json['zone'].length; i++) {
                         html += '<option value="' + json['zone'][i]['zone_id'] + '"';
-                        if (json['zone'][i]['zone_id'] == '<?php echo $zone_id; ?>') {
+                        if (json['zone'][i]['zone_id'] == '<?php echo $data["payment_address"]["zone_id"]; ?>') {
                             html += ' selected="selected"';
                         }
 
@@ -458,7 +408,7 @@ $('#billing-information select[name=\'country_id\']').bind('change', function() 
                 }
 
                 $('#billing-information select[name=\'zone_id\']').html(html).trigger('change');
-                setpaymentbilling();
+                
             },
             error: function(xhr, ajaxOptions, thrownError) {
                 alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
@@ -486,32 +436,68 @@ $('#billing-information select[name=\'country_id\']').bind('change', function() 
             }
 
         });
-        setpaymentbilling();
+        
 
     });
-    function setpaymentbilling()
-    {
-
-    }
+    
     $('#billing-information input[type=\'text\']').bind('blur', function() {
         $('#billing-information select[name=\'zone_id\']').html(html).trigger('change');
     }); 
     $('#billing-information select[name=\'country_id\']').trigger('change');
 //--></script>
+
+
+
 <?php  if ($shipping_required) { ?>
-<script type="text/javascript">
 
-    $('#shipping-information select[name=\'shipping_zone_id\']').bind('change', function() {
-        setpaymentshipping();
+<script type="text/javascript"><!--
+$('#shipping-information select[name=\'shipping_country_id\']').bind('change', function() {
+        $.ajax({
+            url: 'index.php?route=checkout/checkout/country&country_id=' + this.value,
+            dataType: 'json',
+            async: ($('#is_shipping_same').is(':checked') ? false : true) ,
+            beforeSend: function() {
+                $('#shipping-information select[name=\'shipping_country_id\']').after('<span class="wait">&nbsp;<img src="catalog/view/theme/default/image/loading.gif" alt="" /></span>');
+            },
+            complete: function() {
+                $('.wait').remove();
+            },
+            success: function(json) {
+                if (json['postcode_required'] == '1') {
+                    $('#shipping-information input[name=\'shipping_postcode\']').parent().parent().addClass('required');
+		} else {
+                    $('#shipping-information input[name=\'shipping_postcode\']').parent().parent().removeClass('required');
+		}
 
+                
+                html = '<option value=""><?php echo $text_select; ?></option>';
+                if ((typeof json['zone'] !== 'undefined') && json['zone'] != '') {
+                    for (i = 0; i < json['zone'].length; i++) {
+                        html += '<option value="' + json['zone'][i]['zone_id'] + '"';
+                        if (json['zone'][i]['zone_id'] == '<?php echo $data["shipping_address"]["zone_id"]; ?>') {
+                            html += ' selected="selected"';
+                        }
+
+                        html += '>' + json['zone'][i]['name'] + '</option>';
+                    }
+                }
+
+                $('#shipping-information select[name=\'shipping_zone_id\']').html(html).trigger('change');
+               
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
     });
 
-    function setpaymentshipping()
-    {
+    $('#shipping-information select[name=\'shipping_zone_id\']').bind('change', function() {
+        //if (this.value == '')
+        //  return;
         $.ajax({
             url: 'index.php?route=checkout/view_checkout/setShippingAddress',
             type: 'post',
-            data: $('form#shipping-information').serialize(), // $('.address-options #shipping-address-new, #shipping-information #is_shipping   , #shipping-information select[name=\'shipping_country_id\'],#shipping-information select[name=\'shipping_zone_id\']'),
+            data: $("#shipping-information").serialize(),
             dataType: 'html',
             beforeSend: function() {
                 $('.order-buttons').attr('disabled', true);
@@ -525,111 +511,20 @@ $('#billing-information select[name=\'country_id\']').bind('change', function() 
             }
 
         });
-    }
+        
 
-    $('#shipping-information select[name=\'shipping_country_id\']').bind('change', function() {
-        $.ajax({
-            url: 'index.php?route=checkout/checkout/country&country_id=' + this.value,
-            dataType: 'json',
-            beforeSend: function() {
-                $('.place-order-btn').attr('disabled', true);
-                $('#shipping-information select[name=\'shipping_country_id\']').after('<span class="wait">&nbsp;<img src="catalog/view/theme/default/image/loading.gif" alt="" /></span>');
-            },
-            complete: function() {
-                $('.place-order-btn').attr('disabled', false);
-                $('.wait').remove();
-            },
-            success: function(json) {
-                if (json['postcode_required'] == '1') {
-                    $('#payment-postcode-required').show();
-                } else {
-                    $('#payment-postcode-required').hide();
-                }
-
-                html = '<option value=""><?php echo $text_select; ?></option>';
-                if ((typeof json['zone'] !== 'undefined') && json['zone'] != '') {
-
-                    for (i = 0; i < json['zone'].length; i++) {
-                        html += '<option value="' + json['zone'][i]['zone_id'] + '"';
-                        if (json['zone'][i]['zone_id'] == '<?php echo $shipping_zone_id; ?>') {
-                            html += ' selected="selected"';
-                        }
-
-                        html += '>' + json['zone'][i]['name'] + '</option>';
-                    }
-                }
-
-                $('#shipping-information select[name=\'shipping_zone_id\']').html(html);
-                $("select[name=\'shipping_zone_id\']").val($("select[name=\'zone_id\']").val());
-                setpaymentshipping();
-            },
-            error: function(xhr, ajaxOptions, thrownError) {
-                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-            }
-        });
     });
+    
+    $('#shipping-information input[type=\'text\']').bind('blur', function() {
+        $('#billing-information select[name=\'zone_id\']').html(html).trigger('change');
+    }); 
+    $('#shipping-information select[name=\'shipping_country_id\']').trigger('change');
+//--></script>
 
-    function get_ship_country_zones(country_id) {
 
-        if (country_id.val() == '')
-            return;
-        $.ajax({
-            url: 'index.php?route=checkout/checkout/country&country_id=' + country_id.val(),
-            dataType: 'json',
-            beforeSend: function() {
-                $('.order-buttons').attr('disabled', true);
-                $('#shipping-information select[name=\'shipping_country_id\']').after('<span class="wait">&nbsp;<img src="catalog/view/theme/default/image/loading.gif" alt="" /></span>');
-            },
-            complete: function() {
-                $('.' + ($('.payments_method:not(".active")').data('place_order'))).attr('disabled', false);
-                $('.wait').remove();
-            },
-            success: function(json) {
-
-                if (json['postcode_required'] == '1') {
-                    $('#payment-postcode-required').show();
-                } else {
-                    $('#payment-postcode-required').hide();
-                }
-
-                html = '<option value=""><?php echo $text_select; ?></option>';
-                if (json['zone'] && json['zone'] != '') {
-
-                    for (i = 0; i < json['zone'].length; i++) {
-                        html += '<option value="' + json['zone'][i]['zone_id'] + '"';
-                        if (json['zone'][i]['zone_id'] == '<?php echo $shipping_zone_id; ?>') {
-                            html += ' selected="selected"';
-                        }
-
-                        html += '>' + json['zone'][i]['name'] + '</option>';
-                    }
-                } else {
-                    html += '<option value="0" selected="selected"><?php echo $text_none; ?></option>';
-                }
-
-                $('#shipping-information select[name=\'shipping_zone_id\']').html(html);
-                $("select[name=\'shipping_zone_id\']").val($("select[name=\'zone_id\']").val());
-                if ($("#shipping_method").is(':checked')) {
-
-                } else {
-                    $('#shipping_method').trigger('click');
-                }
-            },
-            error: function(xhr, ajaxOptions, thrownError) {
-                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-            }
-        });
-    }
-    get_ship_country_zones($('#shipping-information select[name=\'shipping_country_id\']'));
-</script>
-<?php  if(!$logged){ ?>
-<script type="text/javascript"><!--
-        $('#shipping-information select[name=\'shipping_zone_id\']').trigger('change');
-//--></script> 
-<?php } ?>
 <?php } ?>
 <script>
-    $('.place-order-btn, .paypal-place-order-btn, .afirm-submit_btn').live('click', function(e) {
+    $('.place-order-btn').live('click', function(e) {
 
         e.preventDefault();
         var cur_loader = $($(this).parent().siblings('.loading_id'));
@@ -830,17 +725,21 @@ $('#billing-information select[name=\'country_id\']').bind('change', function() 
         });
     });
 
-    $('#is_shipping').live('click', function() {
+    $('#is_shipping_same').on('click', function() {
 
         if ($(this).is(':checked')) {
             $('.address_details').each(function(i, obj) {
-                $("input[name=\'shipping_" + obj.name + "\']").val(obj.value);
+                if($("input[name=\'shipping_" + obj.name + "\']").length) {
+                    $("input[name=\'shipping_" + obj.name + "\']").val(obj.value);
+                }
             });
             $("select[name=\'shipping_country_id\']").val($("select[name=\'country_id\']").val());
             $('#shipping-information select[name=\'shipping_country_id\']').trigger('change');
+            //$("select[name=\'shipping_zone_id\']").val($("select[name=\'zone_id\']").val());
+             $("select[name=\'shipping_zone_id\'] option[value='"+ $("select[name=\'zone_id\']").val() + "']").prop('selected', true).trigger('change');
         } else {
             $('.shipping_address_details').val('');
-            setpaymentshipping();
+            $('#shipping-information select[name=\'shipping_country_id\']').trigger('change');
         }
     });
 
@@ -865,55 +764,12 @@ $('#billing-information select[name=\'country_id\']').bind('change', function() 
             }
         });
     });
-    $('#put-cart').trigger('click');
+   // $('#put-cart').trigger('click');
 
-    $('#coupon-checkbox').live('click', function() {
-
-        if ($(this).is(':checked')) {
-            $("#coupon-div").slideDown('slow');
-        } else {
-
-            $("#coupon-div").slideUp('slow');
-        }
-    });
-
-
-    $('#validate-coupon').live('click', function() {
-
-
-        $.ajax({
-            url: 'index.php?route=checkout/view_checkout/apllyCoupon',
-            type: 'post',
-            data: $('#coupon-div input[type=\'text\']'),
-            dataType: 'json',
-            beforeSend: function() {
-                $('#validate-coupon').attr('disabled', true);
-                $('#validate-coupon').after('<span class="custom-wait">&nbsp;<img src="catalog/view/theme/default/image/loading.gif" alt="" /></span>');
-            },
-            complete: function() {
-                $('#validate-coupon').attr('disabled', false);
-                $('.custom-wait').remove();
-            },
-            success: function(json) {
-
-                $('.success, .warning, .attention, .error').remove();
-                if (json['sucess']) {
-                    $('#validate-coupon').after('<span class="success">' + json['sucess'] + '</span>');
-                    $('#put-cart').trigger('click');
-                }
-                if (json['error']) {
-                    $('#validate-coupon').after('<span class="error">' + json['error'] + '</span>');
-                    $('#put-cart').trigger('click');
-                }
-            }
-
-        });
-
-
-    });
+   
 </script>
 <script type="text/javascript"><!--
-$('input[name=\'payment_address\']').live('change', function() {
+$('input[name=\'payment_address\']').on('change', function() {
         if (this.value == 'new') {
             $('#payment-existing').slideUp('slow');
             $('#payment-new').slideDown('slow');
@@ -928,7 +784,7 @@ $('input[name=\'payment_address\']').live('change', function() {
 //--></script> 
 
 <script type="text/javascript"><!--
-$('input[name=\'shipping_address\']').live('change', function() {
+$('input[name=\'shipping_address\']').on('change', function() {
         if (this.value == 'new') {
             $('#shipping-existing').slideUp('slow');
             $('#shipping-new').slideDown('slow');
@@ -940,51 +796,6 @@ $('input[name=\'shipping_address\']').live('change', function() {
         }
     });
 //--></script> 
-
-
-<?php if($free_shipping_method) { ?>
-
-<?php if(isset($this->session->data['shipping_method']) && $this->session->data['shipping_method']['code']!='free.free'){ ?>
-<script type="text/javascript"><!--
-$('#shipping_method').attr('checked', false);
-//--></script> 
-<?php } ?>
-
-<script type="text/javascript"><!--
-$('#shipping_method').live('click', function() {
-        if ($(this).is(':checked')) {
-            $('#shipping-method-div').slideUp('slow');
-            $('#shipping-method-div').html('');
-        } else {
-
-            $.ajax({
-                url: 'index.php?route=checkout/cart_custom_shipping_method',
-                type: 'post',
-                data: $('#shipping-information select,input[name=\shipping_address\]:checked'),
-                dataType: 'html',
-                beforeSend: function() {
-                    $('.place-order-btn').attr('disabled', true);
-                    $('#shipping_method').attr('disabled', true);
-                    $('#shipping-method-div').html('<span class="custom-wait">&nbsp;<img src="catalog/view/theme/default/image/loading.gif" alt="" /></span>');
-                    $('#shipping-method-div').slideDown('slow');
-                },
-                complete: function() {
-                    $('#shipping_method').attr('disabled', false);
-                    $('.place-order-btn').attr('disabled', false);
-
-                },
-                success: function(html) {
-
-                    $('.success, .warning, .attention, .error').remove();
-                    $('#shipping-method-div').html(html);
-
-                }
-
-            });
-        }
-    });
-//--></script> 
-<?php } ?>
 
 <script>
     $('#payment-existing select[name=\'payment_address_id\']').bind('change', function() {
@@ -1027,13 +838,6 @@ $('#shipping_method').live('click', function() {
 
             },
             success: function(html) {
-
-
-                if ($("#shipping_method").is(':checked')) {
-
-                } else {
-                    $('#shipping_method').trigger('click');
-                }
                 $('#put-cart').trigger('click');
 
             }
@@ -1043,57 +847,39 @@ $('#shipping_method').live('click', function() {
 </script>
 <script>
 
-
-    $('.payments_method').live('click', function() {
-        $('#custom_payment_method').val($(this).data('index'));
-        $('.payment_method_div:eq(' + $('.payment li').index(this) + ')').prop('checked', true);
-        //$("#payment-div" + ($('.payment li').index(this) + 1)).show();
-        $(".payments_method").addClass("active");
-        $(this).removeClass("active");
-        $(".payment_method_content").hide();
-
-        $("#payment-div" + ($('.payment li').index(this) + 1)).show();
-        $('.order-buttons').attr('disabled', true);
-        $('.' + ($('.payments_method:not(".active")').data('place_order'))).attr('disabled', false);
-
-    });
-
-    $(document).ready(function() {
-        $('.payment_method_content').not($('.payment_method_content').first()).hide();
-    });
-
-// Login
-    $('#button-login').live('click', function() {
+    
+    // Login
+    $(document).delegate('#button-login', 'click', function() {
         $.ajax({
             url: 'index.php?route=checkout/login/save',
             type: 'post',
-            data: $('#checkout #login :input'),
+            data: $('.login-section :input'),
             dataType: 'json',
             beforeSend: function() {
-                $('#button-login').attr('disabled', true);
-                $('#button-login').after('<span class="wait">&nbsp;<img src="catalog/view/theme/default/image/loading.gif" alt="" /></span>');
-            },
+                    $('#button-login').button('loading');
+                    },  
             complete: function() {
-                $('#button-login').attr('disabled', false);
-                $('.wait').remove();
-            },
+                $('#button-login').button('reset');
+            },              
             success: function(json) {
-                $('.warning, .error').remove();
+                $('.alert, .text-danger').remove();
+                $('.form-group').removeClass('has-error');
 
                 if (json['redirect']) {
                     location = json['redirect'];
                 } else if (json['error']) {
-                    if (json['error']['warning']) {
-                        $('#login input[name=\'password\']').after('<span class="error">' + json['error']['warning'] + '</span>');
-                    }
-                    //$('#checkout .checkout-content').prepend('<div class="warning" style="display: none;">' + json['error']['warning'] + '</div>');
-                    //$('.warning').fadeIn('slow');
-                }
+                    $('.login-section').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+                                    // Highlight any found errors
+                                    $('.login-section input[name=\'email\']').parent().addClass('has-error');	
+                                    $('.login-section input[name=\'password\']').parent().addClass('has-error');	   
+                       }
             },
             error: function(xhr, ajaxOptions, thrownError) {
                 alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
             }
-        });
+        }); 
     });
-</script>
+    
+ </script>
 <?php echo $footer; ?>

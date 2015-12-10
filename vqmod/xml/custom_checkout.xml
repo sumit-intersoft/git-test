@@ -25,17 +25,11 @@
             <search position="before"><![CDATA[$products = $this->cart->getProducts();]]></search>
             <add><![CDATA[  $data['shipping'] = '';
                             if ($this->config->get('shipping_status') && $this->cart->hasShipping()) {
-                                
-                                $files = glob(DIR_APPLICATION . '/controller/total/custom_shipping_payment.php');
-                                
-                                if ($files) {
-                                    $extension = basename($files[0], '.php');
+                                if (file_exists(DIR_APPLICATION . '/controller/total/custom_shipping_payment.php')) {
                                     if(!$this->customer->isLogged()) {
-                                        $this->load->controller('total/' . $extension. '/set_shipping_method');
+                                        $this->load->controller('total/custom_shipping_payment/set_shipping_address');
                                     } 
-                
-                                    $data['shipping'] = $this->load->controller('total/' . $extension. '/get_shipping_methods');
-                                    
+                                    $data['shipping'] = $this->load->controller('total/custom_shipping_payment/get_shipping_methods');
                                 }
                             } elseif(!$this->customer->isLogged()){
                                     if(isset($this->session->data['shipping_address'])) {    
