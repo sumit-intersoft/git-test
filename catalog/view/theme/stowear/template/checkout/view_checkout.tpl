@@ -126,7 +126,7 @@ $session = $registry->get('session');
                         <div class="form-group required">
                             <label class="col-sm-2 control-label" for="input-payment-address-1"><?php echo $entry_address_1; ?></label>
                             <div class="col-sm-10">
-                                <input type="text" name="address_1" value="" placeholder="<?php echo $entry_address_1; ?>" id="input-payment-address-1" class="form-control" />
+                                <input type="text" name="address_1" value="" placeholder="<?php echo $entry_address_1; ?>" id="input-payment-address-1" class="form-control address_details" />
                             </div>
                         </div>
                         <div class="form-group">
