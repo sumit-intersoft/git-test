@@ -1,0 +1,17 @@
+<modification>
+	<id>Small change for save and upgarde</id>
+	<version>2.0.0</version>
+	<vqmver>2.3.0</vqmver>
+	<author>ISP</author>
+            <file name="catalog/controller/checkout/cart.php">
+                <operation>
+                    <search position="after"><![CDATA[$this->cart->add($this->request->post['product_id'], $quantity, $option, $recurring_id);]]></search>
+                    <add><![CDATA[
+                           $json['redirect'] = $this->url->link('checkout/cart');
+                        ]]>
+                    </add>
+                </operation>	
+    </file>
+	
+	
+</modification>

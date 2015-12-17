@@ -1,0 +1,53 @@
+<modification>
+	<id>CSV Product Import ver.3.7 - OpenCart 1.5.1.x - 1.5.6.x core file modifications</id>
+	<version>3.7.5</version>
+	<vqmver>2.1.7</vqmver>
+	<author>karapuz (support@ka-station.com)</author>
+	<file name="admin/controller/common/menu.php">
+		<operation>
+			<search position="after" index="1"><![CDATA[$this->url->link('tool/backup']]></search>
+			<add><![CDATA[			//karapuz
+			$data['text_ka_import'] = $this->language->get('CSV Product Import');
+			$this->load->model('tool/ka_import');
+			$data['is_ka_import_installed'] = $this->model_tool_ka_import->isInstalled();
+			$data['ka_import'] = $this->url->link('tool/ka_import', 'token=' . $this->session->data['token'], 'SSL');
+			///karapuz]]></add>
+		</operation>
+	</file>
+	<file name="admin/language/english/common/menu.php">
+		<operation>
+			<search position="after" index="1"><![CDATA[$_['text_backup']]]></search>
+			<add><![CDATA[//karapuz
+$_['CSV Product Import'] = 'CSV Product Import';
+///karapuz]]></add>
+		</operation>
+	</file>
+	<file name="admin/model/catalog/product.php">
+		<operation>
+			<search position="after" index="1"><![CDATA[ModelCatalogProduct extends]]></search>
+			<add><![CDATA[//karapuz
+	protected $last_product_id = false;
+	
+	public function getLastProductId() {
+		return $this->last_product_id;
+	}
+///karapuz]]></add>
+		</operation>
+		<operation>
+			<search position="after" index="1"><![CDATA[$product_id = $this->db->getLastId()]]></search>
+			<add><![CDATA[		//karapuz
+		$this->last_product_id = $product_id;
+		///karapuz]]></add>
+		</operation>
+	</file>
+	<file name="admin/view/template/common/menu.tpl">
+		<operation>
+			<search position="after" index="1"><![CDATA[<li><a href="<?php echo $backup;]]></search>
+			<add><![CDATA[          <?php /* //karapuz */?>
+          <?php if (!empty($is_ka_import_installed)) { ?>
+          <li><a href="<?php echo $ka_import; ?>"><?php echo $text_ka_import; ?></a></li>
+          <?php } ?>
+          <?php ///karapuz ?>]]></add>
+		</operation>
+	</file>
+</modification>
