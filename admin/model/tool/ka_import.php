@@ -1765,24 +1765,38 @@ class ModelToolKaImport extends Model {
                 $attribute_list_keys = array_column($this->params['matches']['attributes'], 'attribute_id');
 
                 $attribute_list_keys = array_flip($attribute_list_keys);
-
+                
+                
+                $attriubute_group = array();
                 foreach ($this->params['matches']['attribute_groups'] as $ak => $av) {
                     
 			if (empty($av['column']))
 				continue;
 
-			$val = $row[$av['column']];
+			$col_val = $row[$av['column']];
                        
 			if (!$is_first_product) {
 				continue;
 			}
-			
-                        $val = explode(';',$val);
+                        $val = array();
+			if($av['name'] == 'Attributes') {
+                            $attribute_group_attributes = explode(';',$col_val);
+                            $val=array_fill_keys($attribute_group_attributes,"");    
+                        } elseif($av['name'] == 'ListOfSpecs') {
+                            $sepe = explode('|',$col_val);
+                           
+                            foreach($sepe as $value) {
+                                $sep = strrpos($value, ":") ;
+                                if($sep !== false) {
+                                    $val[substr($value, 0,$sep)] = substr($value,($sep+1));
+                                }
+                            }
+                        }
                         
                         foreach($val as $key=>$value){
                             
                             $filter_data = array(
-				'filter_name' => $value,
+				'filter_name' => $key,
 				'filter_attribute_group_id' => $av['attribute_group_id'],
 				
                             );
@@ -1794,7 +1808,7 @@ class ModelToolKaImport extends Model {
                                 
                                 foreach ($results as $key=>$result) {
                                     
-                                    $this->params['matches']['attributes'][$attribute_list_keys[$result['attribute_id']]] = array(
+                                    ($attribute_list_keys[$result['attribute_id']]) ? $this->params['matches']['attributes'][$attribute_list_keys[$result['attribute_id']]] :  $this->params['matches']['attributes'][] = array(
                                         'attribute_id' => $result['attribute_id'],  
                                         'attribute_group_id' => $av['attribute_group_id'],
                                         'sort_order'         => $result['sort_order'],
@@ -1802,18 +1816,18 @@ class ModelToolKaImport extends Model {
                                         'name'               => $result['name'],
                                         'attribute_group'    => $result['attribute_group'],
                                         'column'            => $av['column']. 'custom_attribute_group',
-                                        'attribute_value'             => 'empty'
+                                        'attribute_value'             => ($value ?: 'empty' )
 
                                     );
                                   break;
                                 }
                             }  else {
-                                    $this->addImportMessage("Attribute '$value' does not exist in Attribute group '$result[attribute_group]'in  the store. ");
+                                    $this->addImportMessage("Attribute '$key' does not exist in Attribute group '$result[attribute_group]'in  the store. ");
                             }
                             
                         }
-                    
-		}
+                }
+                
                 
                 if (empty($this->params['matches']['attributes'])) {
 			return true;

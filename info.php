@@ -1,15 +1,37 @@
 <?php
 
+"Product Type:Jewelry|"
+. "Jewelry Type:Rings"
+        . "|Material: Primary:Gold"
+        . "|Material: Primary - Color:Two-Tone"
+        . "|Material: Primary - Purity:10K"
+        . "|Width of Item:2 to 11 mm (tapered)|"
+        . "Sold By Unit:Each|"
+        . "Stone Type_1:Cubic Zirconia (CZ)|"
+        . "Stone Creation Method_1:Synthetic|"
+        . "Stone Treatment_1:Synthetic";
 
 
+$val = array();
+$a[2] = 'sumitwerwre';
 
 
+        for($i=1;$i<=6; $i++) {
+            
+          //  $test['abc']($a[$i] ? '['.$a[$i].']': '[]') = 'dsfdsd';
+            
+          //  $test['abc'][$a[$i]] = 'dsfdsd';
+        }
+echo '<pre>'; print_r($test); echo '</pre>';
 
-$test2= ' sdfd, dfsd';
-$arr = explode('|',$test2);
-echo '<pre>';
-print_r($arr);
-echo '</pre>';
+
+exit;
+
+//$test2= ' sdfd, dfsd';
+//$arr = explode('|',$test2);
+//echo '<pre>';
+//print_r($arr);
+//echo '</pre>';
 
 
 
@@ -19,8 +41,31 @@ echo '</pre>';
 
 $test ="Product Type:Jewelry|Jewelry Type:Necklaces|Chain Type:Rope Chains|Material: Primary:Gold|Material: Primary - Color:Yellow|Material: Primary - Purity:14K|Sold By Unit:Each|Chain Length:20 in|Chain Width:1.5 mm|Clasp /Connector:Lobste";
 $arr = explode('|',$test);
-echo '<pre>'; print_r($arr); echo '</pre>';
 
+foreach($arr as $value){
+    
+   $sep = strrpos($value, ":") ;
+   if($sep !== false) {
+//   echo  substr($value, 0,$sep);
+//   echo " :: ";
+//   echo substr($value,($sep+1));
+//    echo "<br/>";    
+    $val[substr($value, 0,$sep)] = substr($value,($sep+1));
+   }
+}
+
+echo '<pre>'; print_r($val); echo '</pre>';
+
+$test2 = "Solid;Diamond-cut;14k Yellow gold;Lobster;Special lengths avail.";
+$result1= explode(';', $test2);
+$val2=array_fill_keys($result1,"");
+
+
+
+echo '<pre>'; 
+$val = array_merge($val,$val2); 
+print_r($val);
+echo '</pre>';
 
 exit;
 

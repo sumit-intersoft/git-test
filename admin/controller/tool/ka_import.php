@@ -417,7 +417,7 @@ class ControllerToolKaImport extends KaController {
 						$this->addTopMessage("Profile has been saved succesfully");
 					}
 				}
-			
+                                
 				return $this->response->redirect($this->url->link('tool/ka_import/step2', 'token=' . $this->session->data['token'], 'SSL'));
 			}
 						
