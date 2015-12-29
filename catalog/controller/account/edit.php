@@ -20,6 +20,7 @@ class ControllerAccountEdit extends Controller {
 		$this->load->model('account/customer');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
+                     $this->model_extension_event->addEvent('mymodule', 'post.customer.add', 'module/mymodule/on_customer_edit');
 			$this->model_account_customer->editCustomer($this->request->post);
 
 			$this->session->data['success'] = $this->language->get('text_success');

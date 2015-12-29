@@ -580,7 +580,7 @@ class ControllerCheckoutViewCheckout extends Controller {
 
 /*
  * 
- * OST http://10.10.10.147/projects/opencart-2.1.0.1/index.php?route=checkout/payment_address/save
+ * OST http://10.10.10.58/projects/opencart-2.1.0.1/index.php?route=checkout/payment_address/save
 	
 200 OK
 		95ms	
@@ -589,29 +589,29 @@ ParamsHeadersPostResponseJSONCookies
 
 []
 
-GET http://10.10.10.147/projects/opencart-2.1.0.1/index.php?route=checkout/payment_method
+GET http://10.10.10.58/projects/opencart-2.1.0.1/index.php?route=checkout/payment_method
 	
 200 OK
 		120ms	
 jquery.min.js (line 4)
-GET http://10.10.10.147/projects/opencart-2.1.0.1/index.php?route=checkout/payment_address
+GET http://10.10.10.58/projects/opencart-2.1.0.1/index.php?route=checkout/payment_address
 	
 200 OK
 		173ms	
 jquery.min.js (line 4)
-GET http://10.10.10.147/projects/opencart-2.1.0.1/ind...hp?route=checkout/checkout/country&country_id=99
+GET http://10.10.10.58/projects/opencart-2.1.0.1/ind...hp?route=checkout/checkout/country&country_id=99
 	
 200 OK
 		84ms
  * 
  * 
  * AFte choosing payment method
- http://10.10.10.147/projects/opencart-2.1.0.1/index.php?route=checkout/payment_method/save
+ http://10.10.10.58/projects/opencart-2.1.0.1/index.php?route=checkout/payment_method/save
 	
 200 OK
 		105ms	
 jquery.min.js (line 4)
-GET http://10.10.10.147/projects/opencart-2.1.0.1/index.php?route=checkout/confirm
+GET http://10.10.10.58/projects/opencart-2.1.0.1/index.php?route=checkout/confirm
 	
 200 OK
 		146ms

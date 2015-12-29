@@ -145,23 +145,24 @@ class ControllerFeedKaImport extends KaController {
 				
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
 
-			$val = max(5, $this->request->post['ka_pi_update_interval']);
-			$this->request->post['ka_pi_update_interval'] = min(25, $val);
-			if (!isset($this->request->post['ka_pi_create_options'])) {
-				$this->request->post['ka_pi_create_options'] = '';
+			$val = max(5, $this->request->post['ka_import_pi_update_interval']);
+			$this->request->post['ka_import_pi_update_interval'] = min(25, $val);
+			if (!isset($this->request->post['ka_import_pi_create_options'])) {
+				$this->request->post['ka_import_pi_create_options'] = '';
 			}
-			if (!isset($this->request->post['ka_pi_enable_product_id'])) {
-				$this->request->post['ka_pi_enable_product_id'] = '';
+			if (!isset($this->request->post['ka_import_pi_enable_product_id'])) {
+				$this->request->post['ka_import_pi_enable_product_id'] = '';
 			}
-			if (!isset($this->request->post['ka_pi_skip_img_download'])) {
-				$this->request->post['ka_pi_skip_img_download'] = '';
+			if (!isset($this->request->post['ka_import_pi_skip_img_download'])) {
+				$this->request->post['ka_import_pi_skip_img_download'] = '';
 			}
 
 			$this->request->post['ka_import_status'] = 'Y';
-
+                       
 			$this->model_setting_setting->editSetting('ka_import', $this->request->post);
+                        
 			$this->session->data['success'] = $this->language->get('Settings have been stored sucessfully.');
-			$this->redirect($this->url->link('extension/feed', 'token=' . $this->session->data['token'], 'SSL'));
+			$this->response->redirect($this->url->link('extension/feed', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 				
 		$data['heading_title']         = $heading_title;
@@ -170,20 +171,20 @@ class ControllerFeedKaImport extends KaController {
 		$data['button_save']           = $this->language->get('button_save');
 		$data['button_cancel']         = $this->language->get('button_cancel');
 
-		$data['ka_pi_update_interval']    = $this->config->get('ka_pi_update_interval');
-		$data['ka_pi_general_separator']         = $this->config->get('ka_pi_general_separator');
-		$data['ka_pi_multicat_separator']         = $this->config->get('ka_pi_multicat_separator');
-		$data['ka_pi_related_products_separator'] = $this->config->get('ka_pi_related_products_separator');
-		$data['ka_pi_options_separator']          = $this->config->get('ka_pi_options_separator');
-		$data['ka_pi_image_separator']            = $this->config->get('ka_pi_image_separator');
+		$data['ka_import_pi_update_interval']    = $this->config->get('ka_import_pi_update_interval');
+		$data['ka_import_pi_general_separator']         = $this->config->get('ka_import_pi_general_separator');
+		$data['ka_import_pi_multicat_separator']         = $this->config->get('ka_import_pi_multicat_separator');
+		$data['ka_import_pi_related_products_separator'] = $this->config->get('ka_import_pi_related_products_separator');
+		$data['ka_import_pi_options_separator']          = $this->config->get('ka_import_pi_options_separator');
+		$data['ka_import_pi_image_separator']            = $this->config->get('ka_import_pi_image_separator');
 		
-		$data['ka_pi_create_options']     = $this->config->get('ka_pi_create_options');
-		$data['ka_pi_enable_product_id']  = $this->config->get('ka_pi_enable_product_id');
-		$data['ka_pi_skip_img_download']  = $this->config->get('ka_pi_skip_img_download');
+		$data['ka_import_pi_create_options']     = $this->config->get('ka_import_pi_create_options');
+		$data['ka_import_pi_enable_product_id']  = $this->config->get('ka_import_pi_enable_product_id');
+		$data['ka_import_pi_skip_img_download']  = $this->config->get('ka_import_pi_skip_img_download');
 		
-		$data['ka_pi_key_fields']         = $this->config->get('ka_pi_key_fields');		
-		if (!is_array($data['ka_pi_key_fields']) || empty($data['ka_pi_key_fields'])) {
-			$data['ka_pi_key_fields'] = array('model');
+		$data['ka_import_pi_key_fields']         = $this->config->get('ka_import_pi_key_fields');		
+		if (!is_array($data['ka_import_pi_key_fields']) || empty($data['ka_import_pi_key_fields'])) {
+			$data['ka_import_pi_key_fields'] = array('model');
 		}
 		$data['key_fields'] = array(
 			array(
@@ -200,8 +201,8 @@ class ControllerFeedKaImport extends KaController {
 			),
 		);
 		
-		$data['ka_pi_status_for_new_products']      = $this->config->get('ka_pi_status_for_new_products');
-		$data['ka_pi_status_for_existing_products'] = $this->config->get('ka_pi_status_for_existing_products');
+		$data['ka_import_pi_status_for_new_products']      = $this->config->get('ka_import_pi_status_for_new_products');
+		$data['ka_import_pi_status_for_existing_products'] = $this->config->get('ka_import_pi_status_for_existing_products');
 
  		$data['breadcrumbs'] = array();
 
@@ -250,7 +251,7 @@ class ControllerFeedKaImport extends KaController {
 			$this->addTopMessage($this->language->get('error_permission'), 'E');
 			return false;
 			
-		} elseif (empty($this->request->post['ka_pi_key_fields'])) {
+		} elseif (empty($this->request->post['ka_import_pi_key_fields'])) {
 			$this->addTopMessage($this->language->get('Key fields cannot be empty'), 'E');
 			return false;
 		}
@@ -449,16 +450,16 @@ class ControllerFeedKaImport extends KaController {
 				$this->model_user_user_group->addPermission($this->user->getId(), 'modify', 'tool/ka_import');
 
 				$settings = array(
-					'ka_pi_update_interval'            => 10,
-					'ka_pi_related_products_separator' => ':::',
-					'ka_pi_options_separator'          => ':::',
-					'ka_pi_image_separator'            => ':::',
-					'ka_pi_multicat_separator'         => ':::',
-					'ka_pi_general_separator'          => ':::',
+					'ka_import_pi_update_interval'            => 10,
+					'ka_import_pi_related_products_separator' => ':::',
+					'ka_import_pi_options_separator'          => ':::',
+					'ka_import_pi_image_separator'            => ':::',
+					'ka_import_pi_multicat_separator'         => ':::',
+					'ka_import_pi_general_separator'          => ':::',
 					'ka_import_status'                 => 'Y',
-					'ka_pi_create_options'             => 'Y',
-					'ka_pi_key_fields'                 => array('model'),
-					'ka_pi_skip_img_download'          => '',
+					'ka_import_pi_create_options'             => 'Y',
+					'ka_import_pi_key_fields'                 => array('model'),
+					'ka_import_pi_skip_img_download'          => '',
 				);
 				$this->model_setting_setting->editSetting('ka_import', $settings);
 			}

@@ -23,13 +23,13 @@ class ControllerToolKaImport extends KaController {
 		$this->store_images_dir = dirname(DIR_IMAGE) . DIRECTORY_SEPARATOR . basename(DIR_IMAGE);
 
 		if (!$this->validate()) {
-			return $this->redirect($this->url->link('error/permission', 'token=' . $this->session->data['token'], 'SSL'));
+			return $this->response->redirect($this->url->link('error/permission', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
 		$this->load->model('tool/ka_import');
 
 		if (!$this->model_tool_ka_import->isInstalled()) {
-			return $this->redirect($this->url->link('extension/feed', 'token=' . $this->session->data['token'], 'SSL'));
+			return $this->response->redirect($this->url->link('extension/feed', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
  		$this->loadLanguage('tool/ka_import');
@@ -114,7 +114,7 @@ class ControllerToolKaImport extends KaController {
 		if (empty($this->params) || ($this->request->server['REQUEST_METHOD'] == 'GET' && empty($this->session->data['save_params']))) {
 			$this->params = array(
 				'update_mode'         => 'add',
-				'cat_separator'       => '///',
+				'cat_separator'       => '\\',
 				'location'            => 'local',
 				'language_id'         => $this->config->get('config_language_id'),
 				'store_ids'           => array(0),
@@ -124,7 +124,7 @@ class ControllerToolKaImport extends KaController {
 				'default_category_id' => 0,
 				'charset'             => 'ISO-8859-1',
 				'charset_option'      => 'predefined',
-				'delimiter'           => ';',
+				'delimiter'           => ',',
 				'delimiter_option'    => 'predefined',
 				'profile_name'        => '', // for the second step
 				'profile_id'          => '', // for the first step
@@ -145,7 +145,7 @@ class ControllerToolKaImport extends KaController {
 				$this->params['image_urls_allowed'] = true;
 			}
 
-			$this->params['create_options'] = $this->config->get('ka_pi_create_options');
+			$this->params['create_options'] = $this->config->get('ka_import_pi_create_options');
 	 	}
 
 		$profiles = $this->model_tool_ka_import->getProfiles();
@@ -166,7 +166,7 @@ class ControllerToolKaImport extends KaController {
 					$this->addTopMessage("Operation failed", 'E');
 				}
 				
-				return $this->redirect($this->url->link('tool/ka_import', 'token=' . $this->session->data['token'], 'SSL'));
+				return $this->response->redirect($this->url->link('tool/ka_import', 'token=' . $this->session->data['token'], 'SSL'));
 				
 			} elseif ($this->request->post['mode'] == 'delete_profile') {
 			
@@ -174,13 +174,13 @@ class ControllerToolKaImport extends KaController {
 				$this->session->data['save_params'] = true;
 				$this->addTopMessage("Profile has been deleted succesfully");
 				
-				return $this->redirect($this->url->link('tool/ka_import', 'token=' . $this->session->data['token'], 'SSL'));
+				return $this->response->redirect($this->url->link('tool/ka_import', 'token=' . $this->session->data['token'], 'SSL'));
 			}
 		
 			if (!isset($this->request->post['images_dir'])) {
 				$this->addTopMessage("Wrong post parameters. Please verify that the file size is less than the maximum upload limit.", 'E');
 				$this->session->data['save_params'] = true;
-			 	return $this->redirect($this->url->link('tool/ka_import', 'token=' . $this->session->data['token'], 'SSL'));
+			 	return $this->response->redirect($this->url->link('tool/ka_import', 'token=' . $this->session->data['token'], 'SSL'));
 			}
 
 			$this->params['images_dir']          = $this->request->post['images_dir'];
@@ -258,6 +258,7 @@ class ControllerToolKaImport extends KaController {
 
 		 	if (empty($msg)) {
 				$params = $this->params;
+                                
 				if ($this->model_tool_ka_import->loadFile($params)) {
 					$this->params['columns'] = $this->model_tool_ka_import->getColumns();
 					if (count($this->params['columns']) == 1) {
@@ -271,11 +272,11 @@ class ControllerToolKaImport extends KaController {
 			if (!empty($msg)) {
 				$this->addTopMessage($msg, 'E');
 				$this->session->data['save_params'] = true;
-			 	//return $this->redirect($this->url->link('tool/ka_import', 'token=' . $this->session->data['token'], 'SSL'));
+			 	//return $this->response->redirect($this->url->link('tool/ka_import', 'token=' . $this->session->data['token'], 'SSL'));
                                 return $this->response->redirect($this->url->link('tool/ka_import', 'token=' . $this->session->data['token'], 'SSL'));
 			}
 
-			//return $this->redirect($this->url->link('tool/ka_import/step2', 'token=' . $this->session->data['token'], 'SSL'));
+			//return $this->response->redirect($this->url->link('tool/ka_import/step2', 'token=' . $this->session->data['token'], 'SSL'));
 			return $this->response->redirect($this->url->link('tool/ka_import/step2', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
@@ -348,6 +349,9 @@ class ControllerToolKaImport extends KaController {
 				} elseif ($sk == 'attributes') {
 					$f_key = $f_data['attribute_id'];
 					
+				} elseif ($sk == 'attribute_groups') {
+					$f_key = $f_data['attribute_group_id'];
+					
 				} elseif ($sk == 'options') {
 					$f_key = $f_data['option_id'];
 					
@@ -368,7 +372,7 @@ class ControllerToolKaImport extends KaController {
 		$matches['required_options'] = (isset($this->request->post['required_options'])) ? $this->request->post['required_options'] : array();
 		
 		$this->params['matches'] = $matches;
-
+                
 		return true;
 	}
 
@@ -378,6 +382,7 @@ class ControllerToolKaImport extends KaController {
 		$this->params['step'] = 2;
 
 		$this->data['columns']    = $this->params['columns'];
+                
 		array_unshift($this->data['columns'], '');
 		
 		if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
@@ -396,7 +401,7 @@ class ControllerToolKaImport extends KaController {
 			}
 			
 			if ($errors_found) {
-				return $this->redirect($this->url->link('tool/ka_import/step2', 'token=' . $this->session->data['token'], 'SSL'));
+				return $this->response->redirect($this->url->link('tool/ka_import/step2', 'token=' . $this->session->data['token'], 'SSL'));
 			}
 			
 			if ($this->request->post['mode'] == 'save_profile') {
@@ -413,15 +418,16 @@ class ControllerToolKaImport extends KaController {
 					}
 				}
 			
-				return $this->redirect($this->url->link('tool/ka_import/step2', 'token=' . $this->session->data['token'], 'SSL'));
+				return $this->response->redirect($this->url->link('tool/ka_import/step2', 'token=' . $this->session->data['token'], 'SSL'));
 			}
 						
-			//return $this->redirect($this->url->link('tool/ka_import/step3', 'token=' . $this->session->data['token'], 'SSL'));
+			//return $this->response->redirect($this->url->link('tool/ka_import/step3', 'token=' . $this->session->data['token'], 'SSL'));
+                        
                         return $this->response->redirect($this->url->link('tool/ka_import/step3', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 				
 		$sets = $this->model_tool_ka_import->getFieldSets();
-
+                
 		if (version_compare(VERSION, '1.5.5', '>=')) {
 			$this->data['filters_enabled'] = true;
 		} else {
@@ -444,7 +450,8 @@ class ControllerToolKaImport extends KaController {
 
 		$this->model_tool_ka_import->findMatches($sets, $this->data['columns']);
 		$this->data['matches'] = $sets;
-		
+		//echo '<pre>'; print_r($sets); echo '</pre>';
+		//echo '<pre>'; print_r($this->data['matches']); echo '</pre>';
 		$this->data['attribute_page_url'] = $this->url->link('catalog/attribute', 'token=' . $this->session->data['token'], 'SSL');		
 		$this->data['filter_page_url']    = $this->url->link('catalog/filter', 'token=' . $this->session->data['token'], 'SSL');
 		$this->data['option_page_url']    = $this->url->link('catalog/option', 'token=' . $this->session->data['token'], 'SSL');
@@ -468,7 +475,7 @@ class ControllerToolKaImport extends KaController {
 		$params = $this->params;
 		if (!$this->model_tool_ka_import->initImport($params)) {
 			$this->addTopMessage($this->model_tool_ka_import->getLastError(), 'E');
-			return $this->redirect($this->url->link('tool/ka_import/step2', 'token=' . $this->session->data['token'], 'SSL'));
+			return $this->response->redirect($this->url->link('tool/ka_import/step2', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
 		$this->data['done_action']        = $this->url->link('tool/ka_import', 'token=' . $this->session->data['token'], 'SSL');
@@ -495,7 +502,7 @@ class ControllerToolKaImport extends KaController {
 
 		if ($this->params['step'] != 3) {
 			$this->addTopMessage('This script can be requested at step 3 only', 'E');
-			return $this->redirect($this->url->link('tool/ka_import/step2', 'token=' . $this->session->data['token'], 'SSL'));
+			return $this->response->redirect($this->url->link('tool/ka_import/step2', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
 		$this->load->model('tool/ka_import');

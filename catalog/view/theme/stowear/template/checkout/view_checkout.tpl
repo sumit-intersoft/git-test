@@ -3,17 +3,17 @@ $theme_options = $this->registry->get('theme_options');
 $config = $this->registry->get('config'); 
 include('catalog/view/theme/' . $config->get('config_template') . '/template/new_elements/wrapper_top.tpl'); ?>
 
-<!--<?php if ($attention) { ?>
-<div class="attention"><?php echo $attention; ?><img src="catalog/view/theme/default/image/close.png" alt="" class="close" /></div>
-<?php } ?>
+<!--<?php //if ($attention) { ?>
+<div class="attention"><?php //echo $attention; ?><img src="catalog/view/theme/default/image/close.png" alt="" class="close" /></div>
+<?php //} ?>
 
-<?php if ($success) { ?>
-<div class="success"><?php echo $success; ?><img src="catalog/view/theme/default/image/close.png" alt="" class="close" /></div>
-<?php } ?>-->
+<?php //if ($success) { ?>
+<div class="success"><?php //echo $success; ?><img src="catalog/view/theme/default/image/close.png" alt="" class="close" /></div>
+<?php //} ?>-->
 
-<!--<?php if ($error_warning) { ?>
-<div class="warning"><?php echo $error_warning; ?><img src="catalog/view/theme/default/image/close.png" alt="" class="close" /></div>
-<?php } ?>-->
+<!--<?php //if ($error_warning) { ?>
+<div class="warning"><?php //echo $error_warning; ?><img src="catalog/view/theme/default/image/close.png" alt="" class="close" /></div>
+<?php //} ?>-->
 
 <?php //echo $column_left; ?><?php //echo $column_right; ?>
 <?PHP //$customer->isLogged();
@@ -324,45 +324,7 @@ $session = $registry->get('session');
                 <h5>Your Comments<span>(Optional)</span> </h5>  
                 <textarea maxlength="300" style="width: 100%;" rows="4" name="comment"></textarea>
             </div> 
-            <div class="place-order" style="display:none">
-                <div class="coupon-code">
-                    <?php if ($error_warning_shipping) { ?>
-                    <div class="warning-custom-module"><?php echo $error_warning_shipping; ?></div>
-                    <?php } ?>
-                    <div id="shipping-method-div">
-
-                        <?php if ($shipping_methods) { ?>
-                        <label> Please select the preferred shipping method to use on this order.</label>
-                        <table class="radio">
-                            <?php $i=0; foreach ($shipping_methods as $shipping_method) { ?>
-
-                            <?php if (!$shipping_method['error']) { ?>
-                            <?php foreach ($shipping_method['quote'] as $quote) { ?>
-                            <tr class="highlight">
-                                <td><?php if ($quote['code'] == $code || !$code) { ?>
-                                    <?php $code = $quote['code']; ?>
-                                    <input type="radio" name="shipping_method" value="<?php echo $quote['code']; ?>" id="<?php echo $quote['code']; ?>" checked="checked" />
-                                    <?php } else { ?>
-                                    <input type="radio" <?php if($i==0) { echo 'checked="checked"'; } ?> name="shipping_method" value="<?php echo $quote['code']; ?>" id="<?php echo $quote['code']; ?>" />
-                                           <?php } ?></td>
-                                <td><label for="<?php echo $quote['code']; ?>"><?php echo $quote['title']; ?></label></td>
-                                <td style="text-align: right;"><label for="<?php echo $quote['code']; ?>"><?php echo $quote['text']; ?></label></td>
-                            </tr>
-                            <?php } ?>
-                            <?php } else { ?>
-                            <tr>
-                                <td colspan="3"><div class="error"><?php echo $shipping_method['error']; ?></div></td>
-                            </tr>
-                            <?php } ?>
-                            <?php $i++; } ?>
-                        </table>
-                        <br />
-                        <?php } ?></div>
-
-                </div>
-
-                <div class="clear"></div>        
-            </div>
+            
             <div class="clear"></div>
             <div class="btn clearfix">
                 <span class="right-arw"><input type="submit" class="place-order-btn order-buttons btn btn-primary" value="Place your order" /></span><a class="" href="<?php echo $shopping_cart; ?>">
@@ -416,7 +378,7 @@ $('#billing-information select[name=\'country_id\']').bind('change', function() 
         });
     });
 
-    $('#billing-information select[name=\'zone_id\']').bind('change', function() {
+$('#billing-information select[name=\'zone_id\']').bind('change', function() {
         //if (this.value == '')
         //  return;
         $.ajax({
@@ -440,10 +402,10 @@ $('#billing-information select[name=\'country_id\']').bind('change', function() 
 
     });
     
-    $('#billing-information input[type=\'text\']').bind('blur', function() {
+$('#billing-information input[type=\'text\']').bind('blur', function() {
         $('#billing-information select[name=\'zone_id\']').html(html).trigger('change');
     }); 
-    $('#billing-information select[name=\'country_id\']').trigger('change');
+$('#billing-information select[name=\'country_id\']').trigger('change');
 //--></script>
 
 

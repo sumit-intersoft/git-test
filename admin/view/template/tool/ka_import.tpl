@@ -486,7 +486,7 @@ function clearTplProduct() {
       <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form">
         <input type="hidden" name="mode" value="" />
 
-        <table style="padding-bottom: 10px">
+        <div style="padding-bottom: 10px">
           <tr>
             <td width="100px">Profile</td>
             <td width="150px">
@@ -502,24 +502,27 @@ function clearTplProduct() {
               File size: <?php echo $filesize; ?>
             </td>
           </tr>
-        </table>
+        </div>
     
-      <div id="tabs" class="htabs">
-        <a href="#tab-general">General</a>
-        <a href="#tab-attributes">Attributes</a>
-        <?php if ($filters_enabled) { ?>
-          <a href="#tab-filters">Filters</a>
-        <?php } ?>
-        <a href="#tab-options">Options</a>
-        <a href="#tab-discounts">Discounts</a>
-        <a href="#tab-specials">Specials</a>
-        <a href="#tab-reward_points">Reward Points</a>
-        <?php if ($product_profiles_enabled) { ?>
-          <a href="#tab-product_profiles">Product Profiles</a>
-        <?php } ?>
-      </div>
       
-        <div id="tab-general">
+         <ul class="nav nav-tabs"> 
+             <li class="active"><a data-toggle="tab" href="#tab-general">General</a></li>
+         <li><a data-toggle="tab" href="#tab-attributes">Attributes</a></li>
+         <li><a data-toggle="tab" href="#tab-attributes-groups">Attribute Groups</a></li>
+        <?php if ($filters_enabled) { ?>
+          <li><a data-toggle="tab" href="#tab-filters">Filters</a></li>
+        <?php } ?>
+        <li><a data-toggle="tab" href="#tab-options">Options</a></li>
+        <li><a data-toggle="tab" href="#tab-discounts">Discounts</a></li>
+        <li><a data-toggle="tab" href="#tab-specials">Specials</a></li>
+        <li><a data-toggle="tab" href="#tab-reward_points">Reward Points</a></li>
+        <?php if ($product_profiles_enabled) { ?>
+          <li><a data-toggle="tab" href="#tab-product_profiles">Product Profiles</a></li>
+        <?php } ?>
+         </ul>  
+      
+      <div class="tab-content">
+        <div class="tab-pane active" id="tab-general">
           Match the product fields with columns from your file. 
           Some fields may be selected already but please verify all data before starting
           the import.<br /><br />
@@ -530,7 +533,7 @@ function clearTplProduct() {
             <tr>
               <td class="left" width="25%">Product Field</td>
               <td>Column in File</td>
-              <td width="50%">Notes</td>
+              <td width="50%">Notes <?php //echo '<pre>'; print_r($matches['fields']);  echo '</pre>'; ?></td>
             </tr>
           </thead>
 
@@ -553,7 +556,7 @@ function clearTplProduct() {
         </table>
         </div>
 
-        <div id="tab-attributes">
+        <div class="tab-pane" id="tab-attributes">
         Only attributes declared in the store will be imported. Create new attributes <a href="<?php echo $attribute_page_url; ?>">here</a><br /><br />
 
         <table class="list">
@@ -578,9 +581,35 @@ function clearTplProduct() {
           </tbody>
         </table>
         </div>
+          
+         <div class="tab-pane" id="tab-attributes-groups">
+        Only attributes declared in the store will be imported. Create new attributes <a href="<?php echo $attribute_page_url; ?>">here</a><br /><br />
+
+        <table class="list">
+          <thead>
+            <tr>
+              <td class="left" width="25%">Atribute Group Name</td>
+              <td>Column in File</td>
+              <td width="50%">Attribute Group</td>
+            </tr>
+          </thead>
+
+          <tbody>
+          <?php foreach($matches['attribute_groups'] as $ak => $av) { ?>
+            <tr>
+              <td width="25%"><?php echo $av['name'] ?></td>
+              <td>
+                <?php echo showSelector("attribute_groups[$av[attribute_group_id]]", $columns, $av['column']); ?>
+              </td>
+              <td width="50%"><?php //echo $av['attribute_group']; ?></td>
+            </tr>
+          <?php } ?>
+          </tbody>
+        </table>
+        </div> 
 
         <?php if ($filters_enabled) { ?>
-          <div id="tab-filters">
+          <div class="tab-pane" id="tab-filters">
           Available filter groups are listed below. You can create new filter groups <a href="<?php echo $filter_page_url; ?>">here</a><br /><br />
 
           <table class="list">
@@ -607,7 +636,7 @@ function clearTplProduct() {
           </div>
         <?php } ?>
         
-        <div id="tab-options">
+        <div class="tab-pane" id="tab-options">
         
         There are two option formats available for importing the options. The <b>simple format</b> is used when your options
         have option values only without any extended data like quantity, price, weight, etc. Both formats can be combined in single import.
@@ -711,7 +740,7 @@ function clearTplProduct() {
         </div>
         
 
-        <div id="tab-discounts">
+        <div class="tab-pane" id="tab-discounts">
 
 Product Discounts. You should specify at least 'quantity' and 'price' values to add new discount records.<br /><br />
 
@@ -739,7 +768,7 @@ Product Discounts. You should specify at least 'quantity' and 'price' values to 
         </table>
         </div>
     
-        <div id="tab-specials">
+        <div class="tab-pane" id="tab-specials">
 
 Product Special Prices. You should specify at least 'price' value to add new special price records.<br /><br />
 
@@ -767,7 +796,7 @@ Product Special Prices. You should specify at least 'price' value to add new spe
         </table>
         </div>
 
-        <div id="tab-reward_points">
+        <div class="tab-pane" id="tab-reward_points">
 
 Product Reward Points.<br /><br />
 
@@ -796,7 +825,7 @@ Product Reward Points.<br /><br />
         </div>
 
         <?php if ($product_profiles_enabled) { ?>        
-          <div id="tab-product_profiles">
+          <div class="tab-pane" id="tab-product_profiles">
 
   Product Profiles (for recurring billing).<br /><br />
 
@@ -824,14 +853,14 @@ Product Reward Points.<br /><br />
           </table>
           </div>
         <?php } ?>
-        
+        </div>
     </div>
 
 <script type="text/javascript"><!--
 
 $(document).ready(function() {
-  $('#tabs a').tabs();
-  $('#option_tabs a').tabs();
+  //$('#tabs a').tabs();
+  //$('#option_tabs a').tabs();
 });
 
 function saveProfile() {

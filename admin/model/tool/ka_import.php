@@ -113,21 +113,21 @@ class ModelToolKaImport extends Model {
 
  		$this->kadb = new KaDb($this->db);
 
-		if (!isset($this->session->data['ka_pi_m_stat'])) 
-			$this->session->data['ka_pi_m_stat'] = array();
-		$this->stat = &$this->session->data['ka_pi_m_stat'];
+		if (!isset($this->session->data['ka_import_pi_m_stat'])) 
+			$this->session->data['ka_import_pi_m_stat'] = array();
+		$this->stat = &$this->session->data['ka_import_pi_m_stat'];
 
-		if (!isset($this->session->data['ka_pi_m_params'])) 
-			$this->session->data['ka_pi_m_params'] = array();
-		$this->params = &$this->session->data['ka_pi_m_params'];
+		if (!isset($this->session->data['ka_import_pi_m_params'])) 
+			$this->session->data['ka_import_pi_m_params'] = array();
+		$this->params = &$this->session->data['ka_import_pi_m_params'];
 
- 		$upd = $this->config->get('ka_pi_update_interval');
+ 		$upd = $this->config->get('ka_import_pi_update_interval');
  		if ($upd >= 5 && $upd <= 25) {
  			$this->sec_per_cycle = $upd;
  		}
 		$this->load->model('catalog/product');
 		
-		$key_fields = $this->config->get('ka_pi_key_fields');
+		$key_fields = $this->config->get('ka_import_pi_key_fields');
 		if (!is_array($key_fields) || empty($key_fields)) {
 			$key_fields = array('model');
 		}
@@ -1186,15 +1186,16 @@ class ModelToolKaImport extends Model {
 			);
 		*/
 		$sets = array(
-			'fields'        => array('field', 'name', ''), 
-			'attributes'    => array('attribute_id', 'name', 'attribute:'),
-			'filter_groups' => array('filter_group_id', 'name', 'filter group:'), 
-			'options'       => array('option_id', 'name', 'simple option:'),
-			'ext_options'   => array('field', 'name', 'option:'),
-			'discounts'     => array('field', 'name', 'discount:'),
-			'specials'      => array('field', 'name', 'special:'),
-			'reward_points' => array('field', 'name', 'reward point:'),
-			'product_profiles' => array('field', 'name', 'product profile:'),
+			'fields'              => array('field', 'name', ''), 
+			'attributes'          => array('attribute_id', 'name', 'attribute:'),
+			'attribute_groups'    => array('attribute_group_id', 'name', ''),
+			'filter_groups'       => array('filter_group_id', 'name', 'filter group:'), 
+			'options'             => array('option_id', 'name', 'simple option:'),
+			'ext_options'         => array('field', 'name', 'option:'),
+			'discounts'           => array('field', 'name', 'discount:'),
+			'specials'            => array('field', 'name', 'special:'),
+			'reward_points'       => array('field', 'name', 'reward point:'),
+			'product_profiles'    => array('field', 'name', 'product profile:'),
 		);
 
 		foreach ($sets as $sk => $sv) {
@@ -1629,7 +1630,7 @@ class ModelToolKaImport extends Model {
 			}
 		}
 		
-		$multicat_sep = $this->config->get('ka_pi_multicat_separator');
+		$multicat_sep = $this->config->get('ka_import_pi_multicat_separator');
 		$cats_list    = array();
 
 		// assign categories by category_id
@@ -1712,8 +1713,8 @@ class ModelToolKaImport extends Model {
 		// insert an additional product image
 		//
 		
-		if (!empty($this->params['ka_pi_image_separator'])) {
-			$images = explode($this->params['ka_pi_image_separator'], $data['additional_image']);
+		if (!empty($this->params['ka_import_pi_image_separator'])) {
+			$images = explode($this->params['ka_import_pi_image_separator'], $data['additional_image']);
 		} else {
 			$images = array($data['additional_image']);
 		}
@@ -1758,8 +1759,63 @@ class ModelToolKaImport extends Model {
 
 
 	protected function saveAttributes($row, $product, $delete_old, $is_first_product) {
+            
+                $this->load->model('catalog/attribute');
+                
+                $attribute_list_keys = array_column($this->params['matches']['attributes'], 'attribute_id');
 
-		if (empty($this->params['matches']['attributes'])) {
+                $attribute_list_keys = array_flip($attribute_list_keys);
+
+                foreach ($this->params['matches']['attribute_groups'] as $ak => $av) {
+                    
+			if (empty($av['column']))
+				continue;
+
+			$val = $row[$av['column']];
+                       
+			if (!$is_first_product) {
+				continue;
+			}
+			
+                        $val = explode(';',$val);
+                        
+                        foreach($val as $key=>$value){
+                            
+                            $filter_data = array(
+				'filter_name' => $value,
+				'filter_attribute_group_id' => $av['attribute_group_id'],
+				
+                            );
+                            
+                           
+                           $results = $this->model_catalog_attribute->getAttributes($filter_data);
+                           
+                            if(count($results)) {
+                                
+                                foreach ($results as $key=>$result) {
+                                    
+                                    $this->params['matches']['attributes'][$attribute_list_keys[$result['attribute_id']]] = array(
+                                        'attribute_id' => $result['attribute_id'],  
+                                        'attribute_group_id' => $av['attribute_group_id'],
+                                        'sort_order'         => $result['sort_order'],
+                                        'language_id'        => $av['language_id'],
+                                        'name'               => $result['name'],
+                                        'attribute_group'    => $result['attribute_group'],
+                                        'column'            => $av['column']. 'custom_attribute_group',
+                                        'attribute_value'             => 'empty'
+
+                                    );
+                                  break;
+                                }
+                            }  else {
+                                    $this->addImportMessage("Attribute '$value' does not exist in Attribute group '$result[attribute_group]'in  the store. ");
+                            }
+                            
+                        }
+                    
+		}
+                
+                if (empty($this->params['matches']['attributes'])) {
 			return true;
 		}
 
@@ -1776,13 +1832,17 @@ class ModelToolKaImport extends Model {
 			if (empty($av['column']))
 				continue;
 
-			$val = $row[$av['column']];
+                        if( (stripos($av['column'], 'custom_attribute_group') ) !==  false) {
+                                $val = $av['attribute_value'];
+                        } else {
+                            $val = $row[$av['column']];
+                        }
+                        
 			if (!$is_first_product) {
 				continue;
 			}
 			
 			if (strlen($val) == 0 || strcasecmp($val, '[DELETE]') == 0)  {
-			
 				$this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute
 					WHERE
 						product_id = '$product[product_id]' 
@@ -1794,14 +1854,14 @@ class ModelToolKaImport extends Model {
 					'product_id'   => $product['product_id'],
 					'attribute_id' => $av['attribute_id'],
 					'language_id'  => $this->params['language_id'],
-					'text'         => $val
+					'text'         =>  ($val === 'empty' ? '' : $val)
 				);
 
 				$this->kadb->queryInsert('product_attribute', $rec, true);
 			}
 		}
-
-		return true;
+                
+                return true;
 	}
 
 	
@@ -1825,7 +1885,7 @@ class ModelToolKaImport extends Model {
 
 			$val = $row[$av['column']];
 
-			$sep = $this->config->get('ka_pi_general_separator');
+			$sep = $this->config->get('ka_import_pi_general_separator');
 			if (!empty($sep)) {
 				$filter_values = explode($sep, $val);
 			} else {
@@ -2159,8 +2219,8 @@ class ModelToolKaImport extends Model {
 					continue;
 				}
 				
-				if (!empty($this->params['ka_pi_options_separator'])) {
-					$option_values = explode($this->params['ka_pi_options_separator'], $val);
+				if (!empty($this->params['ka_import_pi_options_separator'])) {
+					$option_values = explode($this->params['ka_import_pi_options_separator'], $val);
 				} else {
 					$option_values = array($val);
 				}
@@ -2193,7 +2253,7 @@ class ModelToolKaImport extends Model {
 			
 			if (!empty($option['name'])) {
 			
-				if (!empty($this->params['ka_pi_options_separator'])) {
+				if (!empty($this->params['ka_import_pi_options_separator'])) {
 				
 					$multi_options = array();
 					$option_keys = array('value', 'quantity', 'subtract', 'image', 'price', 'points', 'weight', 'sort_order');
@@ -2201,7 +2261,7 @@ class ModelToolKaImport extends Model {
 					$max_option_length = 0;
 					foreach ($option_keys as $key) {
 						if (isset($option[$key])) {
-							$multi_options[$key] = explode($this->params['ka_pi_options_separator'], $option[$key]);
+							$multi_options[$key] = explode($this->params['ka_import_pi_options_separator'], $option[$key]);
 							$max_option_length = max($max_option_length, count($multi_options[$key]));
 						}
 					}
@@ -2429,7 +2489,7 @@ class ModelToolKaImport extends Model {
 		// get the array of related models
 		//
 		$related = array();
-		$sep     = $this->config->get('ka_pi_related_products_separator');		
+		$sep     = $this->config->get('ka_import_pi_related_products_separator');		
 		if (!empty($sep)) {
 			$related = explode($sep, $data['related_product']);
 		} else {
@@ -2533,7 +2593,7 @@ class ModelToolKaImport extends Model {
 		}
 	
 		$downloads = array();
-		$sep = $this->config->get('ka_pi_general_separator');
+		$sep = $this->config->get('ka_import_pi_general_separator');
 		if (!empty($sep)) {
 			$downloads = explode($sep, $data['downloads']);
 		} else {
@@ -2668,7 +2728,7 @@ class ModelToolKaImport extends Model {
 	
 	
 	public function initImport($params) {
-
+               
 		if (!$this->loadFile($params)) {
 			$this->report("initImport: file was not loaded. Last Error:" . $this->lastError);
 			return false;
@@ -2721,11 +2781,11 @@ class ModelToolKaImport extends Model {
 		
 		$this->params['matches'] = $sets;
 
-		$this->params['status_for_new_products']      = $this->config->get('ka_pi_status_for_new_products');
-		$this->params['status_for_existing_products'] = $this->config->get('ka_pi_status_for_existing_products');
-		$this->params['ka_pi_options_separator']      = $this->config->get('ka_pi_options_separator');
-		$this->params['skip_img_download']            = $this->config->get('ka_pi_skip_img_download');
-		$this->params['ka_pi_image_separator']        = str_replace(array('\r','\n'), array("\r", "\n"), $this->config->get('ka_pi_image_separator'));
+		$this->params['status_for_new_products']      = $this->config->get('ka_import_pi_status_for_new_products');
+		$this->params['status_for_existing_products'] = $this->config->get('ka_import_pi_status_for_existing_products');
+		$this->params['ka_import_pi_options_separator']      = $this->config->get('ka_import_pi_options_separator');
+		$this->params['skip_img_download']            = $this->config->get('ka_import_pi_skip_img_download');
+		$this->params['ka_import_pi_image_separator']        = str_replace(array('\r','\n'), array("\r", "\n"), $this->config->get('ka_import_pi_image_separator'));
 
 		if (!empty($this->params['cat_separator'])) {
 			$this->params['cat_separator'] = htmlspecialchars_decode($this->params['cat_separator'], ENT_COMPAT);
@@ -2897,6 +2957,7 @@ class ModelToolKaImport extends Model {
 		}
 
 		$status = 'error';
+                
 		while ($row = fgetcsv($handle, 0, $this->params['delimiter'], $this->enclosure)) {
 		
 			$this->stat['lines_processed']++;
@@ -3078,8 +3139,8 @@ class ModelToolKaImport extends Model {
 				$this->saveAdditionalImages($product_id, $data, $delete_old, $is_new);
 
 				$this->saveAttributes($row, $product, $delete_old, $is_first_product);
-				
-				if (version_compare(VERSION, '1.5.5', '>=')) {
+                                
+                                if (version_compare(VERSION, '1.5.5', '>=')) {
 					$this->saveFilters($row, $product, $delete_old);
 				}
 
@@ -3529,7 +3590,7 @@ class ModelToolKaImport extends Model {
 
 		$fields = array_merge($fields, $fields2);
 
-		if ($this->config->get('ka_pi_enable_product_id')) {
+		if ($this->config->get('ka_import_pi_enable_product_id')) {
 			$product_id_field = array(
 				'field' => 'product_id',
 				'name'  => 'product_id',
@@ -3690,8 +3751,10 @@ class ModelToolKaImport extends Model {
 		);
 
 		$this->load->model('catalog/attribute');
+		$this->load->model('catalog/attribute_group');
 		$sets['attributes'] = $this->model_catalog_attribute->getAttributes();
-
+                $sets['attribute_groups'] = $this->model_catalog_attribute_group->getAttributeGroups();
+                
 		$this->load->model('catalog/option');
 		$sets['options'] = $this->model_catalog_option->getOptions();
 				
@@ -3764,6 +3827,9 @@ class ModelToolKaImport extends Model {
 					
 				} elseif ($sk == 'attributes') {
 					$f_key = $f_data['attribute_id'];
+					
+				} elseif ($sk == 'attribute_groups') {
+					$f_key = $f_data['attribute_group_id'];
 					
 				} elseif ($sk == 'options') {
 					$f_key = $f_data['option_id'];
