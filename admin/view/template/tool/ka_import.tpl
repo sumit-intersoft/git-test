@@ -30,27 +30,25 @@
 ?>
 <?php echo $header; ?><?php echo $column_left; ?>
 
-
-
 <div id="content">
     
-  <div class="breadcrumb">
-    <?php foreach ($breadcrumbs as $breadcrumb) { ?>
-    <?php echo $breadcrumb['separator']; ?><a href="<?php echo $breadcrumb['href']; ?>"><?php echo $breadcrumb['text']; ?></a>
-    <?php } ?>
-  </div>
-
-  <?php if (!empty($ka_top_messages)) { ?>
-    <?php foreach ($ka_top_messages as $top_message) { ?>
-      <?php if ($top_message['type'] == 'E') { ?>
-      <div class="warning"><?php echo $top_message['content']; ?></div>
-      <?php } else { ?>
-      <div class="success"><?php echo $top_message['content']; ?></div>
-      <?php } ?>
-    <?php } ?>
-  <?php } ?>
-  <?php  echo $ka_top;?>
-  <div class="box">
+    <div class="page-header">
+    <div class="container-fluid">
+        
+        
+      <div class="pull-right">
+           <a onclick="$('#form').submit();" class="button"><span>Next</span></a>
+          
+          <button type="submit" form="form-product" data-toggle="tooltip" title="<?php echo $button_save; ?>" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $button_cancel; ?>" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+          </div>
+      <h1><?php echo $heading_title; ?></h1>
+      <?php  echo $ka_top;?>
+    </div>
+  
+  
+    <div class="container-fluid">
+  
 
     <?php if (!empty($is_wrong_db)) { ?>
 
@@ -60,17 +58,15 @@
 			That should help make the database up to date for the current version of the import extension.
       
   
-    <?php } elseif ($params['step'] == 1) { ?>
+    <?php } elseif ($params['step'] == 1) {  ?>
 
-    <div class="heading">
-      <h1><img src="view/image/module_template/background.png" alt="" /> <?php echo $heading_title; ?>: STEP 1 of 3</h1>
-      <div class="buttons">
-        <a onclick="$('#form').submit();" class="button"><span>Next</span></a>
-      </div>
-    </div>
-    <div class="content">
-        <div class="container-fluid">
+    
+    
+        
         <div class="panel panel-default">
+            <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-list"></i> <img src="view/image/module_template/background.png" alt="" /> <?php echo $heading_title; ?>: STEP 1 of 3</h3>
+      </div>
 <div class="panel-body">
       <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form">
         <input type="hidden" name="mode" value="" />
@@ -373,8 +369,8 @@
       </form>
 </div>
         </div>
-        </div>
-    </div>
+        
+    
 
 <script type="text/javascript"><!--
 
@@ -505,21 +501,22 @@ function clearTplProduct() {
         </div>
     
       
-         <ul class="nav nav-tabs"> 
+        <ul class="nav nav-tabs"> 
              <li class="active"><a data-toggle="tab" href="#tab-general">General</a></li>
-         <li><a data-toggle="tab" href="#tab-attributes">Attributes</a></li>
-         <li><a data-toggle="tab" href="#tab-attributes-groups">Attribute Groups</a></li>
-        <?php if ($filters_enabled) { ?>
-          <li><a data-toggle="tab" href="#tab-filters">Filters</a></li>
-        <?php } ?>
-        <li><a data-toggle="tab" href="#tab-options">Options</a></li>
-        <li><a data-toggle="tab" href="#tab-discounts">Discounts</a></li>
-        <li><a data-toggle="tab" href="#tab-specials">Specials</a></li>
-        <li><a data-toggle="tab" href="#tab-reward_points">Reward Points</a></li>
-        <?php if ($product_profiles_enabled) { ?>
-          <li><a data-toggle="tab" href="#tab-product_profiles">Product Profiles</a></li>
-        <?php } ?>
-         </ul>  
+            <li><a data-toggle="tab" href="#tab-attributes">Attributes</a></li>
+            <li><a data-toggle="tab" href="#tab-attributes-groups">Attribute Groups</a></li>
+            <li><a data-toggle="tab" href="#tab-custom-field">Custom Fields</a></li>
+            <?php if ($filters_enabled) { ?>
+              <li><a data-toggle="tab" href="#tab-filters">Filters</a></li>
+            <?php } ?>
+            <li><a data-toggle="tab" href="#tab-options">Options</a></li>
+            <li><a data-toggle="tab" href="#tab-discounts">Discounts</a></li>
+            <li><a data-toggle="tab" href="#tab-specials">Specials</a></li>
+            <li><a data-toggle="tab" href="#tab-reward_points">Reward Points</a></li>
+            <?php if ($product_profiles_enabled) { ?>
+              <li><a data-toggle="tab" href="#tab-product_profiles">Product Profiles</a></li>
+            <?php } ?>
+        </ul>  
       
       <div class="tab-content">
         <div class="tab-pane active" id="tab-general">
@@ -582,7 +579,7 @@ function clearTplProduct() {
         </table>
         </div>
           
-         <div class="tab-pane" id="tab-attributes-groups">
+        <div class="tab-pane" id="tab-attributes-groups">
         Only attributes declared in the store will be imported. Create new attributes <a href="<?php echo $attribute_page_url; ?>">here</a><br /><br />
 
         <table class="list">
@@ -604,6 +601,34 @@ function clearTplProduct() {
               <td width="50%"><?php //echo $av['attribute_group']; ?></td>
             </tr>
           <?php } ?>
+          </tbody>
+        </table>
+        </div>
+          
+         <div class="tab-pane" id="tab-custom-field">
+        Custom Field for products that are not in Default Opencart.
+
+        <table class="list">
+          <thead>
+            <tr>
+              <td class="left" width="25%">Atribute Group Name</td>
+              <td>Column in File</td>
+              <td width="50%">Attribute Group</td>
+            </tr>
+          </thead>
+
+          <tbody>
+          <?php foreach($matches['custom_field'] as $ak => $av) { 
+                if($av['field'] != 'product_id') { ?>
+                    <tr>
+                      <td width="25%"><?php echo $av['field'] ?></td>
+                      <td>
+                        <?php echo showSelector("custom_field[$av[field]]", $columns, $av['column']); ?>
+                      </td>
+                      <td width="50%"><?php echo $av['type']; ?></td>
+                    </tr>
+                <?php } 
+          } ?>
           </tbody>
         </table>
         </div> 
@@ -1109,8 +1134,8 @@ $(document).ready(function() {
 
     <?php } ?>
 
-  </div>
-
+  
+    </div>    
   <span class="help">'CSV Product Import' extension developed by <a href="mailto:support@ka-station.com?subject=CSV Product Import">karapuz</a></span>
 </div>
 <style type="text/css">

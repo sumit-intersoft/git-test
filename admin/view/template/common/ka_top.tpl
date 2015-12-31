@@ -8,7 +8,7 @@
 
 ?>
 <?php if (!empty($breadcrumbs)) { $breadcrumb_started = false; ?>
-  <div class="breadcrumb">
+  <!--<ul class="breadcrumb">
     <?php foreach ($breadcrumbs as $breadcrumb) { ?>
       <?php if (!empty($breadcrumb_started)) { echo ' :: '; } $breadcrumb_started = true;  ?>
       <?php if (!empty($breadcrumb['href'])) { ?>
@@ -17,15 +17,20 @@
         <?php echo $breadcrumb['text']; ?>
       <?php } ?>
     <?php } ?>
-  </div>
+  </ul>-->
+  <ul class="breadcrumb"> 
+        <?php foreach ($breadcrumbs as $breadcrumb) { ?>
+        <li><a href="<?php echo $breadcrumb['href']; ?>"><?php echo $breadcrumb['text']; ?></a></li>
+        <?php } ?>
+      </ul>
 <?php } ?>
 
-<?php if (!empty($top_messages)) { ?>
-  <?php foreach ($top_messages as $top_message) { ?>
-    <?php if ($top_message['type'] == 'E') { ?>
-    <div class="warning"><?php echo $top_message['content']; ?></div>
+<?php if (!empty($ka_top_messages)) { ?>
+  <?php foreach ($ka_top_messages as $ka_top_message) { ?>
+    <?php if ($ka_top_message['type'] == 'E') { ?>
+    <div class="warning"><?php echo $ka_top_message['content']; ?></div>
     <?php } else { ?>
-    <div class="success"><?php echo $top_message['content']; ?></div>
+    <div class="success"><?php echo $ka_top_message['content']; ?></div>
     <?php } ?>
   <?php } ?>
 <?php } ?>

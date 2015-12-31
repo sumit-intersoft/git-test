@@ -59,6 +59,17 @@ if (constant('KA_ENABLE_MACFIX')) {
 	stream_filter_register("macfix", "macfix_filter") or die("Failed to register filter");
 }
 
+if (!function_exists('array_change_key_case_recursive')) {
+    function array_change_key_case_recursive($arr) {
+        return array_map( function($item){
+            if(is_array($item)) {
+                $item = array_change_key_case_recursive($item);
+            }
+            return $item;
+        },array_change_key_case($arr));
+    }
+}
+
 class ModelToolKaImport extends Model {
 
 	// constants
@@ -1178,7 +1189,7 @@ class ModelToolKaImport extends Model {
 		}
 		$columns = $tmp;
 
-		/*
+		/* 
 			'set name' => (
 				<field id>
 				<readable name for users>
@@ -1189,6 +1200,7 @@ class ModelToolKaImport extends Model {
 			'fields'              => array('field', 'name', ''), 
 			'attributes'          => array('attribute_id', 'name', 'attribute:'),
 			'attribute_groups'    => array('attribute_group_id', 'name', ''),
+			'custom_field'        => array('field', 'field', ''),
 			'filter_groups'       => array('filter_group_id', 'name', 'filter group:'), 
 			'options'             => array('option_id', 'name', 'simple option:'),
 			'ext_options'         => array('field', 'name', 'option:'),
@@ -1433,6 +1445,10 @@ class ModelToolKaImport extends Model {
 		if (isset($data['description'])) 
 			$lang['description'] = trim($data['description']);
 
+                
+		if (isset($data['meta_title']))
+			$lang['meta_title'] = trim($data['meta_title']);
+                
 		if (isset($data['meta_description']))
 			$lang['meta_description'] = trim($data['meta_description']);
 
@@ -1760,13 +1776,14 @@ class ModelToolKaImport extends Model {
 
 	protected function saveAttributes($row, $product, $delete_old, $is_first_product) {
             
+            
                 $this->load->model('catalog/attribute');
                 
                 $attribute_list_keys = array_column($this->params['matches']['attributes'], 'attribute_id');
 
                 $attribute_list_keys = array_flip($attribute_list_keys);
                 
-                
+                //echo '<pre>'; print_r($this->params['matches']['attributes']); echo '</pre>';
                 $attriubute_group = array();
                 foreach ($this->params['matches']['attribute_groups'] as $ak => $av) {
                     
@@ -1804,11 +1821,13 @@ class ModelToolKaImport extends Model {
                            
                            $results = $this->model_catalog_attribute->getAttributes($filter_data);
                            
+                           
                             if(count($results)) {
                                 
                                 foreach ($results as $key=>$result) {
                                     
-                                    ($attribute_list_keys[$result['attribute_id']]) ? $this->params['matches']['attributes'][$attribute_list_keys[$result['attribute_id']]] :  $this->params['matches']['attributes'][] = array(
+                                 $this->params['matches']['attributes']{$attribute_list_keys[$result['attribute_id']] ? $attribute_list_keys[$result['attribute_id']] : ''} = array(
+                             
                                         'attribute_id' => $result['attribute_id'],  
                                         'attribute_group_id' => $av['attribute_group_id'],
                                         'sort_order'         => $result['sort_order'],
@@ -1819,7 +1838,7 @@ class ModelToolKaImport extends Model {
                                         'attribute_value'             => ($value ?: 'empty' )
 
                                     );
-                                  break;
+                                   break;
                                 }
                             }  else {
                                     $this->addImportMessage("Attribute '$key' does not exist in Attribute group '$result[attribute_group]'in  the store. ");
@@ -1827,7 +1846,7 @@ class ModelToolKaImport extends Model {
                             
                         }
                 }
-                
+               
                 
                 if (empty($this->params['matches']['attributes'])) {
 			return true;
@@ -1875,7 +1894,7 @@ class ModelToolKaImport extends Model {
 			}
 		}
                 
-                return true;
+            return true;
 	}
 
 	
@@ -3146,6 +3165,25 @@ class ModelToolKaImport extends Model {
 					$delete_old = true;
 				}
 			
+                                /* Code for the Prodcut Custom Field */
+                                if (!empty($this->params['matches']['custom_field'])) {
+                                    
+                                    $product_custom_field = array();
+                                    
+                                    foreach ($this->params['matches']['custom_field'] as $ak => $av) {
+                                        
+                                        if (!empty($av['column']))
+                                            $product_custom_field[$av['field']] = $row[$av['column']];
+                                            
+                                    }
+                                    
+                                    if(count($product_custom_field)) {
+                        
+                                        $product_custom_field['product_id'] = $product_id;
+                                        $this->kadb->queryInsert('product_custom_field', $product_custom_field, '', true);
+                                        
+                                    }
+                                }
 				$product['product_id'] = $product_id;
 
 				$this->saveCategories($product_id, $data, $delete_old, $is_new);
@@ -3498,6 +3536,11 @@ class ModelToolKaImport extends Model {
 				'descr' => ''
 			),
 			array(
+				'field' => 'meta_title',
+				'name'  => 'Meta tag Title',
+				'descr' => ''
+			),
+			array(
 				'field' => 'meta_description',
 				'name'  => 'Meta tag description',
 				'descr' => ''
@@ -3769,7 +3812,17 @@ class ModelToolKaImport extends Model {
 		$sets['attributes'] = $this->model_catalog_attribute->getAttributes();
                 $sets['attribute_groups'] = $this->model_catalog_attribute_group->getAttributeGroups();
                 
-		$this->load->model('catalog/option');
+                /* Get custom fields from  product_custom_field table*/
+                $query = $this->db->query("SHOW tables like '" . DB_PREFIX . "product_custom_field'");
+                if (!empty($query->num_rows)) {
+                    $query = $this->db->query("SHOW COLUMNS FROM " . DB_PREFIX . "product_custom_field");
+                    if (!empty($query->num_rows)) {
+                        $sets['custom_field'] = array_change_key_case_recursive($query->rows);
+                        
+                    } 
+                }
+                
+                $this->load->model('catalog/option');
 		$sets['options'] = $this->model_catalog_option->getOptions();
 				
 		if (version_compare(VERSION, '1.5.5', '>=')) {
@@ -3845,7 +3898,10 @@ class ModelToolKaImport extends Model {
 				} elseif ($sk == 'attribute_groups') {
 					$f_key = $f_data['attribute_group_id'];
 					
-				} elseif ($sk == 'options') {
+				} elseif ($sk == 'custom-field') {
+					$f_key = $f_data['Field'];
+					
+				}  elseif ($sk == 'options') {
 					$f_key = $f_data['option_id'];
 					
 					if (isset($matches['required_options'][$f_key])) {

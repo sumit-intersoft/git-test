@@ -67,6 +67,7 @@ class ControllerToolKaImport extends KaController {
 		$this->document->setTitle($this->data['heading_title']);
 
 		$this->data['ka_top_messages'] = $this->getTopMessages();
+                
                 $this->response->setOutput($this->render());
 	}
 
@@ -271,6 +272,7 @@ class ControllerToolKaImport extends KaController {
 			
 			if (!empty($msg)) {
 				$this->addTopMessage($msg, 'E');
+                                
 				$this->session->data['save_params'] = true;
 			 	//return $this->response->redirect($this->url->link('tool/ka_import', 'token=' . $this->session->data['token'], 'SSL'));
                                 return $this->response->redirect($this->url->link('tool/ka_import', 'token=' . $this->session->data['token'], 'SSL'));
@@ -352,7 +354,10 @@ class ControllerToolKaImport extends KaController {
 				} elseif ($sk == 'attribute_groups') {
 					$f_key = $f_data['attribute_group_id'];
 					
-				} elseif ($sk == 'options') {
+				} elseif ($sk == 'custom_field') {
+					$f_key = $f_data['field'];
+					
+				}elseif ($sk == 'options') {
 					$f_key = $f_data['option_id'];
 					
 				} else {
@@ -389,7 +394,8 @@ class ControllerToolKaImport extends KaController {
 		
 			$this->updateMatches();
 			
-			$sets = $this->model_tool_ka_import->getFieldSets();			
+			$sets = $this->model_tool_ka_import->getFieldSets();	
+                        
 			$this->model_tool_ka_import->copyMatches($sets, $this->params['matches'], $this->data['columns']);
 			
 			$errors_found = false;			
@@ -444,12 +450,19 @@ class ControllerToolKaImport extends KaController {
 		// $matches - stores array of fields and assigned columns
 		// $columns - list of columns in the file
 		//
+//                echo '<pre>'; print_r($sets); echo '</pre>';
+//                echo " ---------- ";
+//                echo '<pre>'; print_r($this->params['matches']); echo '</pre>';
+//                echo " ---------- ";
+//                echo '<pre>'; print_r($this->data['columns']); echo '</pre>';
 		if (!empty($this->params['matches'])) {
 			$this->model_tool_ka_import->copyMatches($sets, $this->params['matches'], $this->data['columns']);
 		}
 
 		$this->model_tool_ka_import->findMatches($sets, $this->data['columns']);
+                
 		$this->data['matches'] = $sets;
+                
 		//echo '<pre>'; print_r($sets); echo '</pre>';
 		//echo '<pre>'; print_r($this->data['matches']); echo '</pre>';
 		$this->data['attribute_page_url'] = $this->url->link('catalog/attribute', 'token=' . $this->session->data['token'], 'SSL');		
