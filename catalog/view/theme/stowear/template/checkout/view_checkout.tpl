@@ -329,7 +329,7 @@ $session = $registry->get('session');
             <div class="btn clearfix">
                 <span class="right-arw"><input type="submit" class="place-order-btn order-buttons btn btn-primary" value="Place your order" /></span><a class="" href="<?php echo $shopping_cart; ?>">
                     Back to cart</a>
-                <span class="loading_id"></span>
+                
 
             </div>
         </div>
@@ -345,7 +345,7 @@ $('#billing-information select[name=\'country_id\']').bind('change', function() 
             url: 'index.php?route=checkout/checkout/country&country_id=' + this.value,
             dataType: 'json',
             beforeSend: function() {
-                $('#billing-information select[name=\'country_id\']').after('<span class="wait">&nbsp;<img src="catalog/view/theme/default/image/loading.gif" alt="" /></span>');
+              //  $('#billing-information select[name=\'country_id\']').after('<span class="wait">&nbsp;<img src="catalog/view/theme/default/image/loading.gif" alt="" /></span>');
             },
             complete: function() {
                 $('.wait').remove();
@@ -419,7 +419,7 @@ $('#shipping-information select[name=\'shipping_country_id\']').bind('change', f
             dataType: 'json',
             async: ($('#is_shipping_same').is(':checked') ? false : true) ,
             beforeSend: function() {
-                $('#shipping-information select[name=\'shipping_country_id\']').after('<span class="wait">&nbsp;<img src="catalog/view/theme/default/image/loading.gif" alt="" /></span>');
+              //  $('#shipping-information select[name=\'shipping_country_id\']').after('<span class="wait">&nbsp;<img src="catalog/view/theme/default/image/loading.gif" alt="" /></span>');
             },
             complete: function() {
                 $('.wait').remove();
@@ -489,7 +489,7 @@ $('#shipping-information select[name=\'shipping_country_id\']').bind('change', f
     $('.place-order-btn').live('click', function(e) {
 
         e.preventDefault();
-        var cur_loader = $($(this).parent().siblings('.loading_id'));
+        
         var order_payment_method = $(this);
 
         $.ajax({
@@ -500,7 +500,7 @@ $('#shipping-information select[name=\'shipping_country_id\']').bind('change', f
             async: true,
             beforeSend: function() {
                 order_payment_method.attr('disabled', true);
-                cur_loader.append('<span class="custom-wait">&nbsp;<img src="catalog/view/theme/default/image/loading.gif" alt="" /></span>');
+               // cur_loader.append('<span class="custom-wait">&nbsp;<img src="catalog/view/theme/default/image/loading.gif" alt="" /></span>');
             },
             complete: function() {
 
@@ -542,7 +542,7 @@ $('#shipping-information select[name=\'shipping_country_id\']').bind('change', f
                         async: true,
                         beforeSend: function() {
                             order_payment_method.attr('disabled', true);
-                            cur_loader.html('<span class="custom-wait">&nbsp;<img src="catalog/view/theme/default/image/loading.gif" alt="" /></span>');
+                            //cur_loader.html('<span class="custom-wait">&nbsp;<img src="catalog/view/theme/default/image/loading.gif" alt="" /></span>');
                         },
                         complete: function() {
 
@@ -649,7 +649,7 @@ $('#shipping-information select[name=\'shipping_country_id\']').bind('change', f
                                     async: false,
                                     beforeSend: function() {
                                         order_payment_method.attr('disabled', true);
-                                        cur_loader.html('<span class="custom-wait">&nbsp;<img src="catalog/view/theme/default/image/loading.gif" alt="" /> </span>');
+                                       // cur_loader.html('<span class="custom-wait">&nbsp;<img src="catalog/view/theme/default/image/loading.gif" alt="" /> </span>');
                                     },
                                     complete: function() {
 
@@ -715,10 +715,9 @@ $('#shipping-information select[name=\'shipping_country_id\']').bind('change', f
             dataType: 'html',
             beforeSend: function() {
 
-                $('#put-cart').html('<span class="custom-wait">&nbsp;<img src="catalog/view/theme/default/image/loading.gif" alt="" /></span>');
+                //$('#put-cart').html('<span class="custom-wait">&nbsp;<img src="catalog/view/theme/default/image/loading.gif" alt="" /></span>');
             },
             success: function(html) {
-                $('#put-cart').html('');
                 $('#get-cart-content').html(html);
             },
             error: function(xhr, ajaxOptions, thrownError) {

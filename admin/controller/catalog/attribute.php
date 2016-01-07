@@ -20,6 +20,7 @@ class ControllerCatalogAttribute extends Controller {
 		$this->load->model('catalog/attribute');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
+                    echo '<pre>'; print_r($this->request->post); echo '</pre>'; exit;
 			$this->model_catalog_attribute->addAttribute($this->request->post);
 
 			$this->session->data['success'] = $this->language->get('text_success');

@@ -139,6 +139,9 @@ class ControllerFeedKaImport extends KaController {
 		$this->loadLanguage('feed/ka_import');
 
 		$heading_title = $this->language->get('heading_title_plain');
+                $data['text_select_all'] =  $this->language->get('text_select_all');
+                $data['text_unselect_all'] =  $this->language->get('text_unselect_all');
+                
 		$this->document->setTitle($heading_title);
 
 		$this->load->model('setting/setting');

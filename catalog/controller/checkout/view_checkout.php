@@ -376,7 +376,7 @@ class ControllerCheckoutViewCheckout extends Controller {
                                            'address_format' => $address_format,
                                            //'custom_field'   => json_decode($address_query->row['custom_field'], true)
                                    );
-                    }
+                }
         }
         $this->response->setOutput(json_encode($json));
     }

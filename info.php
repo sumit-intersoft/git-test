@@ -1,24 +1,53 @@
-
-    
 <?php
 
-
-
-
-
-
-$a = $b = array();
-echo (TRUE) ?  'sumit' : 'tarsem';
-$a[10] = 32;
-$a[20] = 42;
-$a[30] = 32;
-$a[40] = 32;
-
-$a{'B'} = ' SDFSKDF JSK0';
- $a{(($a[20]) ? 20 : '')} = 45 ;
- //$C =  (($a[10]) ? 'FSDF' :'44') . ' 788888888';
-echo '<pre>';
-
-print_r($a);
-echo '</pre>';
-exit;
+$test = 'Solid;Diamond-cut;14k Yellow gold;Lobster;Special lengths avail.;
+Solid;Diamond-cut;14k Yellow gold;Lobster;Special lengths avail.;
+Polished back;Fold-over;Textured;IP-plated;IP black-plated;
+Enamel;Beveled Edge;Polished edges;Brushed center;
+Polished back;Flat edge;Textured;IP-plated;IP black-plated;Polished edges;
+Flat back;Enamel;Beveled Edge;Brushed center;
+Flat back;Polished back;Diamond;Flat edge;Textured;IP-plated;IP black-plated;Polished edges;1 stone;
+Polished back;Flat edge;Textured;IP-plated;IP black-plated;Polished edges;
+Polished;IP-plated;Opens;IP rose-plated;IP yellow-plated;
+Polished;10K Yellow gold;Lobster;Lightweight;
+Solid;Polished;10K Yellow gold;Lobster;Box;
+Casted;Polished;10K Yellow gold;CZ;
+Polished;10K Yellow gold;CZ;
+Polished;10K Yellow gold;Open back;
+Diamond-cut;Polished;10K Yellow gold;Rhodium;Textured back;
+Polished;Spring Ring;10K White gold;
+Polished;Spring Ring;10K White gold;
+Solid;Polished;10K Yellow gold;Spring Ring;
+Solid;Polished;10K Yellow gold;Spring Ring;
+Solid;Polished;10K Yellow gold;Spring Ring;
+Solid;Polished;10K Yellow gold;Spring Ring;
+Polished;10K Yellow gold;Box;Spring Ring;
+Polished;10K Yellow gold;Box;Spring Ring;
+Solid;10K Yellow gold;Spring Ring;
+Solid;10K Yellow gold;Spring Ring;
+Solid;10K Yellow gold;Spring Ring;
+Polished;Box;Spring Ring;10K White gold;
+Solid;Polished;Box;Spring Ring;10K White gold;
+Solid;Polished;Lobster;Box;10K White gold;
+Diamond-cut;Polished;Spring Ring;10K White gold;
+Solid;14K White gold;Spring Ring;
+Solid;14k Yellow gold;Spring Ring;
+Polished;10K Yellow gold;Hinged post;Hollow tube;
+10K Two-tone;Hinged post;Textured;Twisted;
+14k Yellow gold;Lobster;18" chain;
+Polished;14K White gold;Spring Ring;Box chain;
+Solid;Diamond-cut;14K White gold;Lobster;
+Polished;14K White gold;Lobster;Box chain;18" chain;
+14K White gold;Lobster;18" chain;
+Polished;14k Yellow gold;Post;
+Polished;14k Yellow gold;Post;
+Diamond-cut;14k Yellow gold;Lobster;
+Diamond-cut;14K White gold;Lobster;
+Diamond-cut;14K White gold;Lobster;18" chain;
+Polished;14K White gold;Lobster;Box chain;
+Polished;14K Two-tone;Fancy lobster;Textured;Diamond Cut;
+Polished;14k Yellow gold;Hinged post;
+Polished;14k Yellow gold;Lobster;Box chain;18" chain;
+Polished;10K Yellow gold;Slip on;
+Solid;Polished;14K White gold;Spring Ring;
+';
