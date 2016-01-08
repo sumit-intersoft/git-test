@@ -1874,7 +1874,7 @@ Polished;3-D;14k Yellow gold;Hollow;
 Polished;3-D;14k Yellow gold;Hollow;
 Solid;Casted;Diamond-cut;Polished;Enamel;14K Yellow gold & rhodium;';
 
-        $str = 'Weight;CT_Weight;Gem_Weight;Size;Length;Width;Sizeable;Metal_Desc;UM_Sales;Country_Of_Origin';
+        $str = 'Weight;CT Weight;Gem Weight;Size;Length;Width;Sizeable;Metal Desc;Metal Price;UM Sales;Country Of Origin';
         $attributes = explode(";", $str);
         $attributes = array_map("trim_value", $attributes);
         $attributes =  array_flip($attributes);
