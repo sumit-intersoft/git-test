@@ -3,6 +3,10 @@
 	<version>2.0.0</version>
 	<vqmver>2.3.0</vqmver>
 	<author>Intersoft (info@intersoftprofessional.com)</author>
+        
+        <file name="system/startup.php,system/engine/*.php,system/library/*.php,admin/controller/extension/*.php">
+		
+	</file>
 	
 	
 </modification>
