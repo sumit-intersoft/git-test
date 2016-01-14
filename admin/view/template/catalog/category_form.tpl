@@ -200,7 +200,8 @@
                   <tbody>
                     <tr>
                       <td class="text-left"><?php echo $text_default; ?></td>
-                      <td class="text-left"><select name="category_layout[0]" class="form-control">
+                      <td class="text-left">
+                      <select name="category_layout[0]" class="form-control">
                           <option value=""></option>
                           <?php foreach ($layouts as $layout) { ?>
                           <?php if (isset($category_layout[0]) && $category_layout[0] == $layout['layout_id']) { ?>

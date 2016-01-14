@@ -16,7 +16,7 @@
 		$template->data['selected'] = $selected;
 		$template->data['extra']    = $extra;
 		//$text = $template->fetch("tool/ka_selector.tpl");
-		$text = '<select name="'.$name. '" '.$extra.'>';
+		$text = '<select name="'.$name. '" '.$extra.' class="form-control">';
                 if (!empty($data)) { ?>
                     <?php foreach($data as $dk => $dv) { ?>
                           <?php $text .= '<option ' . (($dk == $selected) ?  'selected="selected"' : '') . 'value="'.$dk.'">'.$dv.'</option>'; ?>
@@ -28,22 +28,59 @@
  	}
         
 ?>
-<?php echo $header; ?><?php echo $column_left; ?>
+<?php echo $header; ?>
+
+<?php echo $column_left; ?>
 
 <div id="content">
-    
+    <style type="text/css">
+    		.panel-title{ color: #1e91cf;
+    font-weight: bold;
+    margin: 10px 0;}
+span.important_note {
+  color: red;
+  font-weight: normal;
+}
+
+div.scroll {
+  height: 200px;
+  width: 100%;
+  overflow: auto;
+  border: 1px solid black;
+  background-color: #ccc;
+  padding: 8px;
+}
+
+span.note {
+  font-weight: bold;
+}
+
+.list td a.link {
+  text-decoration: underline;
+  color: blue;
+}
+
+#import_status {
+  color: black;
+}
+input[type="radio"],input[type="checkbox"]{
+	   display: inline-block;
+    margin-right: 10px;
+    margin-top: 0;
+    vertical-align: top;}
+	.table{ font-size:}
+</style>
     <div class="page-header">
     <div class="container-fluid">
-        
-        
       <div class="pull-right">
-           <a onclick="$('#form').submit();" class="button"><span>Next</span></a>
-          
+           <a onclick="$('#form').submit();" class="btn btn-default" title="Next"><span><i class="fa fa-angle-right"></i></span></a>
           <button type="submit" form="form-product" data-toggle="tooltip" title="<?php echo $button_save; ?>" class="btn btn-primary"><i class="fa fa-save"></i></button>
         <a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $button_cancel; ?>" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+         <h1><?php echo $heading_title; ?></h1>
+         <?php  echo $ka_top;?>
           </div>
-      <h1><?php echo $heading_title; ?></h1>
-      <?php  echo $ka_top;?>
+     
+      
     </div>
   
   
@@ -65,12 +102,12 @@
         
         <div class="panel panel-default">
             <div class="panel-heading">
-        <h3 class="panel-title"><i class="fa fa-list"></i> <img src="view/image/module_template/background.png" alt="" /> <?php echo $heading_title; ?>: STEP 1 of 3</h3>
+        <h3 class="panel-title"><i class="fa fa-list"></i>  <?php echo $heading_title; ?>: STEP 1 of 3</h3>
       </div>
 <div class="panel-body">
       <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form">
         <input type="hidden" name="mode" value="" />
-            <table class="form">
+            <table class="form table table-bordered table-hover">
           <tr>
             <td colspan="3">
             This page allows you to import the data from a file in <a href="http://en.wikipedia.org/wiki/Comma-separated_values" target="_blank">CSV</a> format. <br /><br />
@@ -84,9 +121,9 @@
             <td width="25%">Profile</td>
             <td>
               <?php if (!empty($profiles)) { ?>
-                <?php echo showSelector("profile_id", $profiles, $params['profile_id']); ?>
-                <input type="button" value="Load" onclick="javascript: loadProfile();" />
-                <input type="button" value="Delete" onclick="javascript: deleteProfile();" />
+                <?php echo showSelector("profile_id", $profiles, $params['profile_id']); ?><br />
+                <input type="button" value="Load" onclick="javascript: loadProfile();" class=" btn btn-primary" />
+                <input type="button" value="Delete" onclick="javascript: deleteProfile();" class="btn btn-danger" />
                <?php } else { ?>
                 no profiles present
                <?php } ?>
@@ -105,22 +142,22 @@
         
             <div class="tab-content">
             <div class="tab-pane active" id="tab-general">
-              <table class="form">          
+              <table class="form table table-bordered table-hover">          
                 <tr>
                   <td width="25%">Product Update Mode</td>
-                  <td>
-                    <select name="update_mode" style="width: 300px">
+                  <td style="border:none;">
+                    <select name="update_mode" style="width: 300px" class="form-control">
                       <option <?php if ($params['update_mode'] == 'add') { ?>selected="selected" <?php } ?>value="add">Add new records (safe) </option>
                       <option <?php if ($params['update_mode'] == 'replace') { ?>selected="selected" <?php } ?>value="replace">Replace old records </option>
                     </select>
                   </td>
-                  <td width="50%"><span class="help">In the 'add' mode all related information is just added to the product. In the 'Replace' mode old information related to the product is deleted first. For example, the 'Replace' mode is useful for updating special prices and discounts.</span></td>
+                  <td width="50%" style="border:none;"><span class="help">In the 'add' mode all related information is just added to the product. In the 'Replace' mode old information related to the product is deleted first. For example, the 'Replace' mode is useful for updating special prices and discounts.</span></td>
                 </tr>
 
                 <tr>
                   <td width="25%">Field Delimiter</td>
                   <td colspan="2">
-                    <input type="hidden" id="delimiter_option" name="delimiter_option" value="<?php echo $params['delimiter_option']; ?>" />
+                    <input class="form-control" type="hidden" id="delimiter_option" name="delimiter_option" value="<?php echo $params['delimiter_option']; ?>" />
                     <table width="600px">
 
                       <tr id="predefined_delimiter_row" <?php if ($params['delimiter_option'] != 'predefined') { ?> style="display:none" <?php } ?>>
@@ -152,14 +189,14 @@
                               ?>
                               <?php echo showSelector("delimiter", $delimiters, $params['delimiter'], 'style="width:300px;"'); ?>
                         </td>
-                        <td><a href="javascript: void(0);" onclick="javascript: activateDelimiter('custom');">define manually</a></td>
+                        <td width="50%"><a href="javascript: void(0);" style="margin-left:10px" onclick="javascript: activateDelimiter('custom');">define manually</a></td>
                       </tr>
 
                       <tr id="custom_delimiter_row" <?php if ($params['delimiter_option'] == 'predefined') { ?> style="display:none" <?php } ?>>
                         <td width="250px">
-                          <input type="text" style="width: 290px" id="custom_delimiter" name="custom_delimiter" value="<?php echo $params['delimiter']; ?>" />
+                          <input type="text" class="form-control" style="width: 290px" id="custom_delimiter" name="custom_delimiter" value="<?php echo $params['delimiter']; ?>" />
                         </td>
-                        <td><a href="javascript: void(0);" onclick="javascript: activateDelimiter('predefined');">select from predefined values</a></td>
+                        <td width="50%"><a href="javascript: void(0);" style="margin-left:10px" onclick="javascript: activateDelimiter('predefined');">select from predefined values</a></td>
                       </tr>
 
                     </table>
@@ -171,21 +208,21 @@
                 <tr>
                   <td width="25%">File Charset</td>
                   <td colspan="2">
-                    <input type="hidden" id="charset_option" name="charset_option" value="<?php echo $params['charset_option']; ?>" />
+                    <input type="hidden" id="charset_option" class="form-control" name="charset_option" value="<?php echo $params['charset_option']; ?>" />
                     <table width="600px">
 
                       <tr id="predefined_charset_row" <?php if ($params['charset_option'] != 'predefined') { ?> style="display:none" <?php } ?>>
                         <td width="280px">
                           <?php echo showSelector("charset", $charsets, $params['charset'], 'style="width:300px;"'); ?>
                         </td>
-                        <td><a href="javascript: void(0);" onclick="javascript: activateCharset('custom');">define manually</a></td>
+                        <td width="50%"><a href="javascript: void(0);" style="margin-left:10px" onclick="javascript: activateCharset('custom');">define manually</a></td>
                       </tr>
 
                       <tr id="custom_charset_row" <?php if ($params['charset_option'] == 'predefined') { ?> style="display:none" <?php } ?>>
                         <td width="250px">
-                          <input type="text" style="width: 290px" id="custom_charset" name="custom_charset" value="<?php echo $params['charset']; ?>" />
+                          <input type="text" style="width: 290px" class="form-control" id="custom_charset" name="custom_charset" value="<?php echo $params['charset']; ?>" />
                         </td>
-                        <td><a href="javascript: void(0);" onclick="javascript: activateCharset('predefined');">select from predefined values</a></td>
+                        <td width="50%"><a href="javascript: void(0);" style="margin-left:10px" onclick="javascript: activateCharset('predefined');">select from predefined values</a></td>
                       </tr>
 
                     </table>
@@ -196,10 +233,10 @@
                 <tr>
                   <td width="25%">File Location</td>
                   <td>
-                    <input type="radio" name="location" value="local" onclick="javascript: activateLocation('local');" <?php if ($params['location'] == 'local') { ?> checked="checked" <?php } ?> />Local computer
-                    <input type="radio" name="location" value="server" onclick="javascript: activateLocation('server');" <?php if ($params['location'] == 'server') { ?> checked="checked" <?php } ?> />Server
+                    <label><input type="radio" name="location" class="form-control" value="local" onclick="javascript: activateLocation('local');" <?php if ($params['location'] == 'local') { ?> checked="checked" <?php } ?> />Local computer</label><br />
+                    <label><input type="radio" name="location" class="form-control" value="server" onclick="javascript: activateLocation('server');" <?php if ($params['location'] == 'server') { ?> checked="checked" <?php } ?> />Server</label>
                   </td>
-                  <td width="50%">&nbsp;</td>
+                  
                 </tr>
 
                 <tr id="local_location" <?php if ($params['location'] != 'local') { ?>style="display:none" <?php } ?>>
@@ -212,9 +249,9 @@
 
                 <tr id="server_location" <?php if ($params['location'] != 'server') { ?>style="display:none" <?php } ?>>
                   <td width="25%">File path</td>
-                  <td nowrap="nowrap" colspan="2"><?php echo $store_root_dir . DIRECTORY_SEPARATOR; ?><input type="text" name="file_path" size="50" value="<?php echo $params['file_path']; ?>" />
+                  <td nowrap="nowrap" colspan="2"><?php echo $store_root_dir . DIRECTORY_SEPARATOR; ?><input type="text" class="form-control" name="file_path" size="50" value="<?php echo $params['file_path']; ?>" />
                   <br />
-                  <input type="checkbox" name="rename_file" value="Y" <?php if (!empty($params['rename_file'])) { ?> checked="checked" <?php } ?> />
+                  <input type="checkbox" class="form-control" name="rename_file" value="Y" <?php if (!empty($params['rename_file'])) { ?> checked="checked" <?php } ?> />
                   Rename the file after successful import
                   </td>
                 </tr>
@@ -222,7 +259,7 @@
                 <tr>
                   <td width="25%">Sub-Category Separator</td>
                   <td>
-                    <input type="text" name="cat_separator" maxlength="8" size="8" value="<?php echo $params['cat_separator']; ?>" />
+                    <input type="text" class="form-control" name="cat_separator" maxlength="8" size="8" value="<?php echo $params['cat_separator']; ?>" />
                   </td>
                   <td width="50%"><span class="help">It is a sub-category separator. A separator of multiple product categories can be defined on the "<a href="<?php echo $settings_page;?>" target="settings_page">extension settings</a>" page.</span></td>
                 </tr>
@@ -230,7 +267,7 @@
                 <tr>
                   <td width="25%">Path to Images Directory</td>
                   <td colspan="2"><?php echo $store_images_dir . DIRECTORY_SEPARATOR; ?>
-                    <input type="text" name="images_dir" value="<?php echo $params['images_dir']?>" />
+                    <input type="text" class="form-control" name="images_dir" style="width:300px" value="<?php echo $params['images_dir']?>" />
                     <span class="help">File names must consist of Latin characters only. Files with national characters in names will not be imported.</span>
                   </td>
                 </tr>
@@ -240,7 +277,7 @@
                   <td colspan="2">
                     <?php if ($params['image_urls_allowed']) { ?>
                       <?php echo $store_images_dir . DIRECTORY_SEPARATOR; ?>
-                      <input type="text" name="incoming_images_dir" value="<?php echo $params['incoming_images_dir']?>" />
+                      <input type="text" class="form-control" name="incoming_images_dir" style="width:300px" value="<?php echo $params['incoming_images_dir']?>" />
                       <span class="help"><span class="note">Important:</span> Images provided as URLs will be downloaded to your server and it may dramatically decrease speed of the import. Avoid using URLs in the import as long as you can.
                       </span>               
                     <?php } else { ?>
@@ -253,14 +290,14 @@
                   <td width="25%">Language</td>
                   <td>
                     <?php if (count($languages) > 1) { ?>
-                      <select name="language_id" style="width: 300px">
+                      <select name="language_id" style="width: 300px" class="form-control">
                         <?php foreach ($languages as $language) { ?>
                           <option value="<?php echo $language['language_id']; ?>" <?php if ($language['language_id'] == $params['language_id']) { ?>selected="selected"<?php } ?>><?php echo $language['name']; ?></option>
                         <?php } ?>
                       </select>
                     <?php } else { ?>
                       <?php $language = reset($languages); echo $language['name']; ?>
-                      <input type="hidden" name="language_id" value="<?php echo $language['language_id']; ?>" />
+                      <input type="hidden" class="form-control" name="language_id" value="<?php echo $language['language_id']; ?>" />
                     <?php } ?>
                   </td>
                   <td width="50%">&nbsp;</td>
@@ -270,14 +307,14 @@
                   <td width="25%">Store</td>
                   <td>
                     <?php if (count($stores) > 1) { ?>
-                      <select name="store_ids[]" multiple="multiple" size="5" style="width: 300px">
+                      <select name="store_ids[]" multiple="multiple" size="5" style="width: 300px" class="form-control">
                         <?php foreach($stores as $store) { ?>
                           <option <?php if (in_array($store['store_id'], $params['store_ids'])) { ?>selected="selected" <?php } ?>value="<?php echo $store['store_id']; ?>"><?php echo $store['name']; ?></option>
                         <?php } ?>
                       </select>
                     <?php } else { ?>
                       <?php $store = reset($stores); echo $store['name']; ?>
-                      <input type="hidden" name="store_id" value="<?php echo $store['store_id']; ?>" />
+                      <input type="hidden" class="form-control" name="store_id" value="<?php echo $store['store_id']; ?>" />
                     <?php } ?>
                   </td>
                   <td width="50%">&nbsp;</td>
@@ -287,7 +324,7 @@
                 <tr>
                   <td width="25%">Default Category</td>
                   <td colspan="2">
-                    <select name="default_category_id">
+                    <select name="default_category_id" class="form-control" style="width:300px">
                       <?php foreach($categories as $category) { ?>
                         <option <?php if ($category['category_id'] == $params['default_category_id']) { ?>selected="selected" <?php } ?>value="<?php echo $category['category_id']; ?>"><?php echo $category['name']; ?></option>
                       <?php } ?>
@@ -299,42 +336,41 @@
               </table>
             </div>
 
-            <div class="tab-pane" id="tab-extra">
+            <div class="tab-pane table table-bordered table-hover" id="tab-extra">
 
-              <table class="form">
+              <table class="form table table-bordered table-hover">
                 <tr>
                   <td width="25%">Price Multiplier</td>
                   <td>
-                    <input type="text" name="price_multiplier" maxlength="8" size="8" value="<?php echo $params['price_multiplier']; ?>" />
+                    <input type="text" class="form-control" name="price_multiplier" maxlength="8" size="8" value="<?php echo $params['price_multiplier']; ?>" />
                   </td>
                   <td width="50%"><span class="help">Regular product price multiplier (leave empty or set to 1 if the price should not be updated)</span></td>
                 </tr>
                 <tr>
                   <td width="25%">Disable store products not presented in the file</td>
-                  <td>
-                    <input type="checkbox" name="disable_not_imported_products" value="Y" <?php if (!empty($params['disable_not_imported_products'])) { ?> checked="checked" <?php } ?> />
+                  <td colspan="2">
+                    <input type="checkbox" class="form-control" name="disable_not_imported_products" value="Y" <?php if (!empty($params['disable_not_imported_products'])) { ?> checked="checked" <?php } ?> /> <span class="help">it will affect products available in the selected stores only</span>
                   </td>
-                  <td width="50%"><span class="help">it will affect products available in the selected stores only</span></td>
                 </tr>
                 <tr>
                   <td width="25%">Do not create new products</td>
-                  <td>
-                    <input type="checkbox" name="skip_new_products" value="N" <?php if (!empty($params['skip_new_products'])) { ?> checked="checked" <?php } ?> />
+                  <td colspan="2">
+                    <input type="checkbox" class="form-control" name="skip_new_products" value="N" <?php if (!empty($params['skip_new_products'])) { ?> checked="checked" <?php } ?> />
                   </td>
-                  <td width="50%">&nbsp;</td>
+                 
                 </tr>
 
                 <?php if ($enable_tpl_product) { ?>
                   <tr>
                     <td width="25%">Template product</td>
                     <td>
-                      <input type="text" name="tpl_product" value="<?php if (!empty($tpl_product)) { echo $tpl_product['name']; } ?>" <?php if (!empty($tpl_product)) { ?> disabled="disabled" <?php } ?> />
+                      <input type="text" class="form-control" name="tpl_product" value="<?php if (!empty($tpl_product)) { echo $tpl_product['name']; } ?>" <?php if (!empty($tpl_product)) { ?> disabled="disabled" <?php } ?> />
                       <div id="tpl_product_actions" <?php if (empty($tpl_product)) { ?> style="display: none" <?php } else { ?> style="display: inline" <?php } ?>>
                         &nbsp;<a id="view_tpl_product" target="_blank" <?php if (!empty($tpl_product)) { echo 'href="'. $product_url . '&product_id=' . $tpl_product['product_id'] . '"'; } ?>>view</a>
                         &nbsp;<a id="clear_tpl_product" onclick="javascript: clearTplProduct();">clear</a>
                       </div>
                       <span class="help">(Autocomplete)</span>
-                      <input type="hidden" name="tpl_product_id" value="<?php if (!empty($tpl_product['product_id'])) { echo $tpl_product['product_id']; } ?>" />
+                      <input type="hidden" class="form-control" name="tpl_product_id" value="<?php if (!empty($tpl_product['product_id'])) { echo $tpl_product['product_id']; } ?>" />
                     </td>
                     <td width="50%"><span class="help">if template product is specified then new products are created as a clone of the template product and updated with data from the file</span></td>
                   </tr>
@@ -344,18 +380,18 @@
             </div>
 
             <div class="tab-pane" id="tab-downloads">      
-              <table class="form">
+              <table class="form table table-bordered table-hover">
                 <tr>
                   <td width="25%">Path to Source Directory</td>
                   <td colspan="2"><?php echo $store_root_dir . DIRECTORY_SEPARATOR; ?>
-                    <input type="text" name="download_source_dir" value="<?php echo $params['download_source_dir']?>" />
+                    <input type="text" class="form-control" name="download_source_dir" value="<?php echo $params['download_source_dir']?>" />
                     <span class="help">File names must consist of Latin characters only. Files with national characters in names will not be imported.</span>
                   </td>
                 </tr>
                 <tr>
                   <td width="25%">Where to Get File Postfix</td>
                   <td>
-                    <select name="file_name_postfix" style="width: 300px">
+                    <select name="file_name_postfix" style="width: 300px" class="form-control">
                       <option <?php if ($params['file_name_postfix'] == 'generate') { ?>selected="selected" <?php } ?>value="generate">Generate Random Postfixes</option>
                       <option <?php if ($params['file_name_postfix'] == 'detect') { ?>selected="selected" <?php } ?>value="detect">Detect Postfixes in File Names</option>
                       <option <?php if ($params['file_name_postfix'] == 'skip') { ?>selected="selected" <?php } ?>value="skip">Do Not Use Postfixes</option>
@@ -472,36 +508,35 @@ function clearTplProduct() {
     <?php } elseif ($params['step'] == 2) { ?>
 
     <div class="heading">
-      <h1><img src="view/image/backup.png" alt="" /> <?php echo $heading_title; ?>: STEP 2 of 3</h1>
-      <div class="buttons">
-        <a onclick="location='<?php echo $back_action; ?>'" class="button"><span><?php echo "Back"; ?></span></a>
-        <a onclick="$('#form').submit();" class="button"><span>Next</span></a>    
+      <!--<h3><?php echo $heading_title; ?>: STEP 2 of 3</h3>-->
+      
+      <h3 class="panel-title"><i class="fa fa-list"></i>  <?php echo $heading_title; ?>:  STEP 2 of 3</h3>
+      
+      <div class="pull-right">
+        <a onclick="location='<?php echo $back_action; ?>'" class="btn btn-default"><span><!---<?php echo "Back"; ?>--><i class="fa fa-angle-left"></i></span></a>
+        <a onclick="$('#form').submit();" class="btn btn-default"><span><!--Next--><i class="fa fa-angle-right"></i></span></a>    
       </div>
     </div>
-    <div class="content">
+    <div class="content" style="margin-top:10px">
       <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form">
         <input type="hidden" name="mode" value="" />
 
         <div style="padding-bottom: 10px">
-          <tr>
-            <td width="100px">Profile</td>
-            <td width="150px">
-              <input type="hidden" name="profile_id" value="<?php echo $params['profile_id']; ?>" />
-              <input type="text" name="profile_name" value="<?php echo $params['profile_name']; ?>" style="width: 90%" />
-            </td>
-            <td width="50px">
-              <input type="button" value="Save" onclick="javascript: saveProfile();" />
-            </td>
-            <td width="100px">
-            </td>
-            <td width="200px">
-              File size: <?php echo $filesize; ?>
-            </td>
-          </tr>
+          <table width="100%">
+          	<tr>
+                <td><label>Profile</label></td>
+                <td style="">
+                  <input type="hidden" name="profile_id" class="form-control" value="<?php echo $params['profile_id']; ?>" />
+                  <input type="text" name="profile_name" class="form-control" value="<?php echo $params['profile_name']; ?>" style="width: 90%" />
+                </td>
+                  <td><input type="button" value="Save" class=" btn btn-primary" onclick="javascript: saveProfile();" /></td>
+                  <td>File size: <?php echo $filesize; ?></td>
+              </tr>
+          </table>
         </div>
     
       
-        <ul class="nav nav-tabs"> 
+        <ul class="nav nav-tabs" style="margin-top:25px"> 
              <li class="active"><a data-toggle="tab" href="#tab-general">General</a></li>
             <li><a data-toggle="tab" href="#tab-attributes">Attributes</a></li>
             <li><a data-toggle="tab" href="#tab-attributes-groups">Attribute Groups</a></li>
@@ -524,7 +559,7 @@ function clearTplProduct() {
           Some fields may be selected already but please verify all data before starting
           the import.<br /><br />
 
-        <table class="list">
+        <table class="list form table table-bordered table-hover" style="font-size:12px">
 
           <thead>
             <tr>
@@ -556,7 +591,7 @@ function clearTplProduct() {
         <div class="tab-pane" id="tab-attributes">
         Only attributes declared in the store will be imported. Create new attributes <a href="<?php echo $attribute_page_url; ?>">here</a><br /><br />
 
-        <table class="list">
+        <table class="list form table table-bordered table-hover">
           <thead>
             <tr>
               <td class="left" width="25%">Atribute Name</td>
@@ -582,7 +617,7 @@ function clearTplProduct() {
         <div class="tab-pane" id="tab-attributes-groups">
         Only attributes declared in the store will be imported. Create new attributes <a href="<?php echo $attribute_page_url; ?>">here</a><br /><br />
 
-        <table class="list">
+        <table class="list form table table-bordered table-hover">
           <thead>
             <tr>
               <td class="left" width="25%">Atribute Group Name</td>
@@ -606,9 +641,9 @@ function clearTplProduct() {
         </div>
           
          <div class="tab-pane" id="tab-custom-field">
-        Custom Field for products that are not in Default Opencart.
+        Custom Field for products that are not in Default Opencart.<br /><br />
 
-        <table class="list">
+        <table class="form table table-bordered table-hover">
           <thead>
             <tr>
               <td class="left" width="25%">Atribute Group Name</td>
@@ -637,7 +672,7 @@ function clearTplProduct() {
           <div class="tab-pane" id="tab-filters">
           Available filter groups are listed below. You can create new filter groups <a href="<?php echo $filter_page_url; ?>">here</a><br /><br />
 
-          <table class="list">
+          <table class="form table table-bordered table-hover">
             <thead>
               <tr>
                 <td class="left" width="25%">Filter Group</td>
@@ -668,12 +703,12 @@ function clearTplProduct() {
         
         <br /><br />
         
-        <div id="option_tabs" class="htabs">
-          <a href="#otab-simple_format">Simple format</a>
-          <a href="#otab-extended_format">Extended format</a>
-        </div>
-
-      <div id="otab-simple_format">
+        <ul id="option_tabs" class="nav nav-tabs">
+          <li class="active"><a href="#otab-simple_format">Simple format</a></li>
+          <li><a href="#otab-extended_format">Extended format</a></li>
+        </ul>
+	<div class="tab-content">
+      <div id="otab-simple_format" class="tab-pane">
 
         Select the columns containg simple option values (without weight, price, etc.). New options should be created beforehand at <a href="<?php echo $option_page_url; ?>">the options page</a>.
         You can import multiple values from one cell if you define the 'options separataor' on the extension settings page. <a href="javascript: void(0)" onclick="javascript: $('#simple_options_example').show()">See example</a>
@@ -686,7 +721,7 @@ function clearTplProduct() {
         
         </div>
         <br /><br />
-        <table class="list">
+        <table class="form table table-bordered table-hover">
           <thead>
             <tr>
               <td class="left" width="25%">Option Name</td>
@@ -711,7 +746,7 @@ function clearTplProduct() {
         </table>
       </div>        
 
-      <div id="otab-extended_format">
+      <div id="otab-extended_format" class="tab-pane active">
 
         If you need to import extra option properties like weight, price, quantity please use <a href="javascript: void(0)" onclick="javascript: $('#option_format').show()">reserved columns</a>. Options from <b>the resered columns</b> are pre-selected automatically.<br />
 
@@ -738,7 +773,7 @@ function clearTplProduct() {
 
         <br />
 
-        <table class="list">
+        <table class="form table table-bordered table-hover">
           <thead>
             <tr>
               <td class="left" width="25%">Atribute Name</td>
@@ -761,6 +796,7 @@ function clearTplProduct() {
 
         </table>
       </div>
+      </div>
         
         </div>
         
@@ -769,7 +805,7 @@ function clearTplProduct() {
 
 Product Discounts. You should specify at least 'quantity' and 'price' values to add new discount records.<br /><br />
 
-        <table class="list">
+        <table class="form table table-bordered table-hover">
           <thead>
             <tr>
               <td class="left" width="25%">Atribute Name</td>
@@ -789,7 +825,6 @@ Product Discounts. You should specify at least 'quantity' and 'price' values to 
               <td width="50%"><span class="help"><?php echo $dv['descr']; ?></span></td>
             </tr>
           <?php } ?>
-
         </table>
         </div>
     
@@ -797,7 +832,7 @@ Product Discounts. You should specify at least 'quantity' and 'price' values to 
 
 Product Special Prices. You should specify at least 'price' value to add new special price records.<br /><br />
 
-        <table class="list">
+        <table class="form table table-bordered table-hover">
           <thead>
             <tr>
               <td class="left" width="25%">Atribute Name</td>
@@ -825,7 +860,7 @@ Product Special Prices. You should specify at least 'price' value to add new spe
 
 Product Reward Points.<br /><br />
 
-        <table class="list">
+        <table class="form table table-bordered table-hover">
           <thead>
             <tr>
               <td class="left" width="25%">Atribute Name</td>
@@ -854,7 +889,7 @@ Product Reward Points.<br /><br />
 
   Product Profiles (for recurring billing).<br /><br />
 
-          <table class="list">
+          <table class="form table table-bordered table-hover">
             <thead>
               <tr>
                 <td class="left" width="25%">Name</td>
@@ -898,23 +933,25 @@ function saveProfile() {
 
     <?php } elseif ($params['step'] == 3) { ?>
 
-    <div class="heading">
-      <h1><img src="view/image/backup.png" alt="" /> <?php echo $heading_title; ?>: STEP 3 of 3</h1>
-
+    <div class="heading clearfix">
+    <h3 class="panel-title" style="margin:10px 0"><i class="fa fa-list"></i> <?php echo $heading_title; ?>: STEP 3 of 3</h3>
+     <!-- <h1><img src="view/image/backup.png" alt="" /> <?php echo $heading_title; ?>: STEP 3 of 3</h1>-->
+<div class="pull-right">
       <div class="buttons" id="buttons_in_progress">
-        <a onclick="javascript: ka_stop_import();" class="button"><span>Stop</span></a>
+        <a onclick="javascript: ka_stop_import();" class="btn btn-primary"><span>Stop</span></a>
       </div>
       <div class="buttons" id="buttons_stopped" style="display: none">
-        <a onclick="javascript: ka_continue_import();" class="button"><span>Continue</span></a>
+        <a onclick="javascript: ka_continue_import();" class="btn btn-primary"><span>Continue</span></a>
       </div>
       <div class="buttons" id="buttons_completed" style="display: none">
-        <a onclick="location='<?php echo $done_action; ?>'" class="button"><span>Done</span></a>
+        <a onclick="location='<?php echo $done_action; ?>'" class=" btn btn-primary"><span>Done</span></a>
+      </div>
       </div>
     </div>
     <div class="content">
 
-        <h2 id="import_status">Import is in progress</h2>
-        <table class="form">
+        <h2 id="import_status" style="color:green; font-size:20px">Import is in progress</h2>
+        <table class="form form table table-bordered table-hover">
           <tr>
             <td colspan="2">The import statistics updates every <? echo $update_interval; ?> seconds. Please do not close the window.</td>
           </tr>
@@ -950,9 +987,9 @@ function saveProfile() {
           <tr>
             <td colspan="2">
               <h4>Import messages:</h4>
-              <div class="scroll" id="scroll">
+              <div class="scroll" id="scroll" style="margin-bottom:20px" >
               </div>
-              <input type="checkbox" id="autoscroll" checked="checked" /> Autoscrolling
+              <input type="checkbox" id="autoscroll" checked="checked" /><span > Autoscrolling</span>
             </td>
           </tr>
         
@@ -1135,39 +1172,8 @@ $(document).ready(function() {
     <?php } ?>
 
   
-    </div>    
-  <span class="help">'CSV Product Import' extension developed by <a href="mailto:support@ka-station.com?subject=CSV Product Import">karapuz</a></span>
+       
+  <span class="help">'CSV Product Import' extension developed by <a href="mailto:support@ka-station.com?subject=CSV Product Import">karapuz</a></span></div> 
 </div>
-<style type="text/css">
-<!--
-/*
-span.important_note {
-  color: red;
-  font-weight: normal;
-}
 
-div.scroll {
-  height: 200px;
-  width: 100%;
-  overflow: auto;
-  border: 1px solid black;
-  background-color: #ccc;
-  padding: 8px;
-}
-
-span.note {
-  font-weight: bold;
-}
-
-.list td a.link {
-  text-decoration: underline;
-  color: blue;
-}
-
-#import_status {
-  color: black;
-}
-*/
--->
-</style>
 <?php echo $footer; ?>

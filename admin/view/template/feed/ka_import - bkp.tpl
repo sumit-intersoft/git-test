@@ -17,10 +17,7 @@
     <div class="page-header">
         <div class="container-fluid">
           <h1><img src="view/image/module.png" alt="" /> <?php echo $heading_title; ?></h1>
-          <div class="pull-right">
-          	<button onclick="$('#form').submit();" class="btn btn-primary"><i class="fa fa-save"></i></button>
-            <a onclick="location = '<?php echo $cancel; ?>';" class="btn btn-default"><span><i class="fa fa-reply"></i></span></a>
-          </div>
+          <div class="buttons"><a onclick="$('#form').submit();" class="button"><span><?php echo $button_save; ?></span></a><a onclick="location = '<?php echo $cancel; ?>';" class="button"><span><?php echo $button_cancel; ?></span></a></div>
           <ul class="breadcrumb">
             <?php foreach ($breadcrumbs as $breadcrumb) { ?>
             <li><a href="<?php echo $breadcrumb['href']; ?>"><?php echo $breadcrumb['text']; ?></a></li>
@@ -53,7 +50,7 @@
                 </div>
                 <div class="panel-body">
                    <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form">
-                        <ul id="ka_import" class="nav nav-tabs">
+                        <ul id="ka_import" class="nav nav-tabs nav-justified">
                             <li class="active"><a href="#tab-general" data-toggle="tab">General</a></li>
                             <li><a href="#tab-separators" data-toggle="tab">Separators</a></li>
                         </ul>
@@ -70,7 +67,7 @@
                                                   <tr>
                                                     <td class="left">Script update interval in seconds (5-25)<span class="help">Reduce this value if you experience server connection issues during the import. Default value is 10.</span></td>
                                                     <td class="left">
-                                                      <input type="text" class="form-control" name="ka_import_pi_update_interval" value="<?php echo $ka_import_pi_update_interval; ?>" />
+                                                      <input type="text" name="ka_import_pi_update_interval" value="<?php echo $ka_import_pi_update_interval; ?>" />
                                                     </td>
                                                   </tr>
 
@@ -106,7 +103,7 @@
                                                       <span class="help">This option is ignored if the status field is defined in the file</span>
                                                     </td>
                                                     <td class="left">
-                                                      <select name="ka_import_pi_status_for_new_products" class="form-control">
+                                                      <select name="ka_import_pi_status_for_new_products">
                                                         <option value="enabled_gt_0" <?php if ($ka_import_pi_status_for_new_products == 'enabled_gt_0') { ?> selected="selected" <?php } ?>>'Enabled' for products with quantity &gt; 0</option>
                                                         <option value="enabled" <?php if ($ka_import_pi_status_for_new_products == 'enabled') { ?> selected="selected" <?php } ?>>'Enabled' for all</option>
                                                         <option value="disabled" <?php if ($ka_import_pi_status_for_new_products == 'disabled') { ?> selected="selected" <?php } ?>>'Disabled' for all</option>
@@ -119,7 +116,7 @@
                                                       <span class="help">This option is ignored if the status field is defined in the file</span>
                                                     </td>
                                                     <td class="left">
-                                                      <select name="ka_import_pi_status_for_existing_products" class="form-control">
+                                                      <select name="ka_import_pi_status_for_existing_products">
                                                         <option value="not_change" <?php if ($ka_import_pi_status_for_existing_products == 'not_change') { ?> selected="selected" <?php } ?>>Do not change status</option>
                                                         <option value="enabled_gt_0" <?php if ($ka_import_pi_status_for_existing_products == 'enabled_gt_0') { ?> selected="selected" <?php } ?>>'Enabled' for products with quantity &gt; 0</option>
                                                         <option value="enabled" <?php if ($ka_import_pi_status_for_existing_products == 'enabled') { ?> selected="selected" <?php } ?>>'Enabled' for all</option>
@@ -142,10 +139,10 @@
                                                         <div class="<?php echo $class; ?>">
                                                         <?php if (in_array($field['field'], $ka_import_pi_key_fields)) { ?>
                                                           <input type="checkbox" name="ka_import_pi_key_fields[]" value="<?php echo $field['field']; ?>" checked="checked" />
-                                                          <label><?php echo $field['name']; ?></label>
+                                                          <?php echo $field['name']; ?>
                                                         <?php } else { ?>
                                                           <input type="checkbox" name="ka_import_pi_key_fields[]" value="<?php echo $field['field']; ?>" />
-                                                          <label><?php echo $field['name']; ?></label>
+                                                          <?php echo $field['name']; ?>
                                                         <?php } ?>
                                                         </div>
                                                         <?php } ?>
@@ -181,7 +178,7 @@
                             </div>   
                             <div class="tab-pane" id="tab-separators">
                                
-                                        <table class="list table table-striped table-bordered table-hover" width="100%">
+                                        <table class="list">
                                           <thead> 
                                             <tr>
                                               <td class="left">Setting</td>
@@ -191,33 +188,33 @@
                                           <tbody>
                                             <tr>
                                               <td class="left">General separator for multiple values</td>
-                                              <td class="right">
-                                                <input type="text" name="ka_import_pi_general_separator" value="<?php echo $ka_import_pi_general_separator; ?>" class="form-control" />
+                                              <td class="left">
+                                                <input type="text" name="ka_import_pi_general_separator" value="<?php echo $ka_import_pi_general_separator; ?>" />
                                               </td>
                                             </tr>
                                             <tr>
                                               <td class="left">Separator for multiple values in the <b>category</b> field<span class="help">Leave this parameter empty if you have one value in the cell per row</span></td>
-                                              <td class="right">
-                                                <input type="text" name="ka_import_pi_multicat_separator" value="<?php echo $ka_import_pi_multicat_separator; ?>" class="form-control" />
+                                              <td class="left">
+                                                <input type="text" name="ka_import_pi_multicat_separator" value="<?php echo $ka_import_pi_multicat_separator; ?>" />
                                               </td>
                                             </tr>
                                             <tr>
                                               <td class="left">Separator for multiple values in the <b>related product</b> field<span class="help">Leave this parameter empty if you have one value in the cell per row</span></td>
-                                              <td class="right">
-                                                <input type="text" name="ka_import_pi_related_products_separator" value="<?php echo $ka_import_pi_related_products_separator; ?>" class="form-control" />
+                                              <td class="left">
+                                                <input type="text" name="ka_import_pi_related_products_separator" value="<?php echo $ka_import_pi_related_products_separator; ?>" />
                                               </td>
                                             </tr>
                                             <tr>
                                               <td class="left">Separator for multiple values in the <b>product option</b> cell field<span class="help">Leave this parameter empty if you have one value in the cell per row</span></td>
-                                              <td class="right">
-                                                <input type="text" name="ka_import_pi_options_separator" value="<?php echo $ka_import_pi_options_separator; ?>" class="form-control" />
+                                              <td class="left">
+                                                <input type="text" name="ka_import_pi_options_separator" value="<?php echo $ka_import_pi_options_separator; ?>" />
                                               </td>
                                             </tr>
                                             <tr>
                                               <td class="left">Separator for multiple values in the <b>additional image</b> field
                                                 <span class="help">You can use \r and \n escape codes for defining a new line separator</span></td>
-                                              <td class="right">
-                                                <input type="text" name="ka_import_pi_image_separator" value="<?php echo $ka_import_pi_image_separator; ?>" class="form-control" />
+                                              <td class="left">
+                                                <input type="text" name="ka_import_pi_image_separator" value="<?php echo $ka_import_pi_image_separator; ?>" />
                                               </td>
                                             </tr>
                                           </tbody>

@@ -1790,14 +1790,20 @@ class ModelToolKaImport extends Model {
 			if (empty($av['column']))
 				continue;
 
-			$col_val = $row[$av['column']];
+			$col_val = html_entity_decode($row[$av['column']]);
                        
 			if (!$is_first_product) {
 				continue;
 			}
                         $val = array();
 			if($av['name'] == 'Attributes') {
+//                            ECHO '<PRE>';
+//                        var_dump($col_val);
+//                        echo '</pre>';
                             $attribute_group_attributes = explode(';',$col_val);
+//                             ECHO '<PRE>';
+//                        print_r($attribute_group_attributes);
+//                        echo '</pre>';
                             $val=array_fill_keys($attribute_group_attributes,"");    
                         } elseif($av['name'] == 'ListOfSpecs') {
                             $sepe = explode('|',$col_val);
@@ -1861,10 +1867,11 @@ class ModelToolKaImport extends Model {
 		}
 
 		$data = array();
+                
 		foreach ($this->params['matches']['attributes'] as $ak => $av) {
 			if (empty($av['column']))
 				continue;
-
+                      
                         if( (stripos($av['column'], 'custom_attribute_group') ) !==  false) {
                                 $val = $av['attribute_value'];
                         } else {

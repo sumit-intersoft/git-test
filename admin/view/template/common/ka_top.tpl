@@ -28,9 +28,15 @@
 <?php if (!empty($ka_top_messages)) { ?>
   <?php foreach ($ka_top_messages as $ka_top_message) { ?>
     <?php if ($ka_top_message['type'] == 'E') { ?>
-    <div class="warning"><?php echo $ka_top_message['content']; ?></div>
+    	<div class="alert alert-danger">
+        <i class="fa fa-exclamation-circle"></i> <?php echo $ka_top_message['content']; ?>
+      	<button type="button" class="close" data-dismiss="alert">&times;</button>
+    	</div>
     <?php } else { ?>
-    <div class="success"><?php echo $ka_top_message['content']; ?></div>
+    <div class="alert alert-success">
+      <i class="fa fa-check-circle"></i> <?php echo $ka_top_message['content']; ?>
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
     <?php } ?>
   <?php } ?>
 <?php } ?>

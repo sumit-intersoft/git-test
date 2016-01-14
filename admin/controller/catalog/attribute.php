@@ -342,7 +342,7 @@ class ControllerCatalogAttribute extends Controller {
 		} else {
 			$data['attribute_description'] = array();
 		}
-
+               
 		if (isset($this->request->post['attribute_group_id'])) {
 			$data['attribute_group_id'] = $this->request->post['attribute_group_id'];
 		} elseif (!empty($attribute_info)) {

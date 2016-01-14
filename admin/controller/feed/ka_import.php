@@ -141,6 +141,8 @@ class ControllerFeedKaImport extends KaController {
 		$heading_title = $this->language->get('heading_title_plain');
                 $data['text_select_all'] =  $this->language->get('text_select_all');
                 $data['text_unselect_all'] =  $this->language->get('text_unselect_all');
+				$data['text_form'] =  'Edit Category';
+				
                 
 		$this->document->setTitle($heading_title);
 
