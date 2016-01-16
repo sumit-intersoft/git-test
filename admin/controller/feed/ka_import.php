@@ -136,20 +136,20 @@ class ControllerFeedKaImport extends KaController {
 	}
 
 	public function index() {
-		$this->loadLanguage('feed/ka_import');
+            
+            $this->loadLanguage('feed/ka_import');
 
 		$heading_title = $this->language->get('heading_title_plain');
                 $data['text_select_all'] =  $this->language->get('text_select_all');
                 $data['text_unselect_all'] =  $this->language->get('text_unselect_all');
-				$data['text_form'] =  'Edit Category';
-				
+		$data['text_form'] =  $this->language->get('text_form');				
                 
 		$this->document->setTitle($heading_title);
 
 		$this->load->model('setting/setting');
 				
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
-
+                    
 			$val = max(5, $this->request->post['ka_import_pi_update_interval']);
 			$this->request->post['ka_import_pi_update_interval'] = min(25, $val);
 			if (!isset($this->request->post['ka_import_pi_create_options'])) {
@@ -165,8 +165,7 @@ class ControllerFeedKaImport extends KaController {
 			$this->request->post['ka_import_status'] = 'Y';
                        
 			$this->model_setting_setting->editSetting('ka_import', $this->request->post);
-                        
-			$this->session->data['success'] = $this->language->get('Settings have been stored sucessfully.');
+                        $this->session->data['success'] = $this->language->get('Settings have been stored sucessfully.');
 			$this->response->redirect($this->url->link('extension/feed', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 				
@@ -175,6 +174,7 @@ class ControllerFeedKaImport extends KaController {
 	
 		$data['button_save']           = $this->language->get('button_save');
 		$data['button_cancel']         = $this->language->get('button_cancel');
+                $data['text_none']             = $this->language->get('text_none');
 
 		$data['ka_import_pi_update_interval']    = $this->config->get('ka_import_pi_update_interval');
 		$data['ka_import_pi_general_separator']         = $this->config->get('ka_import_pi_general_separator');
@@ -205,6 +205,15 @@ class ControllerFeedKaImport extends KaController {
 				'name'  => 'upc',
 			),
 		);
+                
+                $this->load->model('localisation/stock_status');
+                $this->load->model('localisation/tax_class');
+
+		$data['tax_classes'] = $this->model_localisation_tax_class->getTaxClasses();
+                $data['ka_import_pi_tax_class_id_for_new_products']      = $this->config->get('ka_import_pi_tax_class_id_for_new_products');
+                
+                $data['stock_statuses'] = $this->model_localisation_stock_status->getStockStatuses();
+                $data['ka_import_pi_stock_status_id_for_new_products']      = $this->config->get('ka_import_pi_stock_status_id_for_new_products');
 		
 		$data['ka_import_pi_status_for_new_products']      = $this->config->get('ka_import_pi_status_for_new_products');
 		$data['ka_import_pi_status_for_existing_products'] = $this->config->get('ka_import_pi_status_for_existing_products');

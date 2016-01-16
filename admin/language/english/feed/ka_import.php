@@ -8,6 +8,7 @@
 */
 $_['heading_title']       = 'CSV Product Import ver. 3.7 <i>(developed by <a href="mailto:support@ka-station.com">karapuz</a>)</i>';
 $_['heading_title_plain'] = 'CSV Product Import';
+$_['text_form']           = 'Edit CSV Product Import';
 
 $_['text_feed']        = 'Product Feeds';
 

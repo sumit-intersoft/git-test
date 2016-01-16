@@ -121,7 +121,7 @@ class ControllerToolKaImport extends KaController {
 				'store_ids'           => array(0),
 				'step'                => 1,
 				'images_dir'          => '',
-				'incoming_images_dir' => 'data' . DIRECTORY_SEPARATOR . 'incoming',
+				'incoming_images_dir' => 'data' . DIRECTORY_SEPARATOR . 'incoming'. DIRECTORY_SEPARATOR . 'qgrepo',
 				'default_category_id' => 0,
 				'charset'             => 'ISO-8859-1',
 				'charset_option'      => 'predefined',
@@ -309,8 +309,14 @@ class ControllerToolKaImport extends KaController {
 		
 		$this->load->model('localisation/language');
 		$this->data['languages'] = $this->model_localisation_language->getLanguages();
+                
+                
 		$this->data['action']    = $this->url->link('tool/ka_import', 'token=' . $this->session->data['token'], 'SSL');
 		$this->data['backup_link'] = $this->url->link('tool/backup', 'token=' . $this->session->data['token'], 'SSL');
+                
+                $this->data['button_rebuild'] = $this->language->get('button_rebuild');
+                $this->data['repair'] = $this->url->link('tool/ka_import', 'token=' . $this->session->data['token'] , 'SSL');
+                
 		$this->data['params']      = $this->params;
 
 		$this->data['max_file_size'] = $this->model_tool_ka_import->convertToMegabyte($this->uploadMaxFilesize());

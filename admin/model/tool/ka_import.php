@@ -1399,6 +1399,12 @@ class ModelToolKaImport extends Model {
 			}
 			$tax_class_id = (isset($sel->row['tax_class_id'])) ?$sel->row['tax_class_id'] : 0;
 			$product['tax_class_id'] = $tax_class_id;
+		} elseif ($is_new) {
+
+			if ($this->params['tax_class_id_for_new_products'] != NULL) {
+				$product['tax_class_id'] = $this->params['tax_class_id_for_new_products'];
+			} 
+
 		}
 
 		// Weight. Sample value: 10.000Kg
@@ -1490,13 +1496,17 @@ class ModelToolKaImport extends Model {
 			if (empty($qry->row)) {
 				$this->addImportMessage("stock status not found - $data[stock_status]");
 				if ($is_new) {
-					$product['stock_status_id'] = $this->config->get('config_stock_status_id');
+                                    if ($this->params['stock_status_id_for_new_products']) {
+                                        $product['stock_status_id'] = $this->params['stock_status_id_for_new_products'];
+                                    }
 				}
 			} else {
 				$product['stock_status_id'] = $qry->row['stock_status_id'];
 			}
 		} elseif ($is_new) {
-			$product['stock_status_id'] = $this->config->get('config_stock_status_id');
+                        if ($this->params['stock_status_id_for_new_products']) {
+                            $product['stock_status_id'] = $this->params['stock_status_id_for_new_products'];
+                        }
 		}
 
 		// update product description or insert new one
@@ -2823,6 +2833,10 @@ class ModelToolKaImport extends Model {
 
 		$this->params['status_for_new_products']      = $this->config->get('ka_import_pi_status_for_new_products');
 		$this->params['status_for_existing_products'] = $this->config->get('ka_import_pi_status_for_existing_products');
+                
+		$this->params['tax_class_id_for_new_products'] = (($this->config->get('ka_import_pi_tax_class_id_for_new_products') != NULL) ? $this->config->get('ka_import_pi_tax_class_id_for_new_products') :NULL);
+		$this->params['stock_status_id_for_new_products'] = $this->config->get('ka_import_pi_stock_status_id_for_new_products');
+                
 		$this->params['ka_import_pi_options_separator']      = $this->config->get('ka_import_pi_options_separator');
 		$this->params['skip_img_download']            = $this->config->get('ka_import_pi_skip_img_download');
 		$this->params['ka_import_pi_image_separator']        = str_replace(array('\r','\n'), array("\r", "\n"), $this->config->get('ka_import_pi_image_separator'));

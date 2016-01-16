@@ -22,7 +22,7 @@
                           <?php $text .= '<option ' . (($dk == $selected) ?  'selected="selected"' : '') . 'value="'.$dk.'">'.$dv.'</option>'; ?>
                         <?php //$text .= '<option'  . 'value="'.$dk.'">'.$dv.'</option>'; ?>
                 <?php } ?>
-                <?php } ?>
+                <?php } ?> 
                 <?php $text .= ' </select>';
 		echo $text;
  	}
@@ -72,13 +72,29 @@ input[type="radio"],input[type="checkbox"]{
 </style>
     <div class="page-header">
     <div class="container-fluid">
-      <div class="pull-right">
-           <a onclick="$('#form').submit();" class="btn btn-default" title="Next"><span><i class="fa fa-angle-right"></i></span></a>
-          <button type="submit" form="form-product" data-toggle="tooltip" title="<?php echo $button_save; ?>" class="btn btn-primary"><i class="fa fa-save"></i></button>
-        <a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $button_cancel; ?>" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
-         <h1><?php echo $heading_title; ?></h1>
-         <?php  echo $ka_top;?>
-          </div>
+        <div class="pull-right">
+            <?php if ($params['step'] == 1) {  ?> 
+                <a onclick="$('#form').submit();" class="btn btn-primary" title="Next"><span><i class="fa fa-angle-right"></i></span></a>
+                <a href="<?php echo $repair; ?>" data-toggle="tooltip" title="<?php echo $button_rebuild; ?>" class="btn btn-default"><i class="fa fa-refresh"></i></a>
+            <?php } elseif ($params['step'] == 2) { ?>
+                         <a onclick="location='<?php echo $back_action; ?>'" class="btn btn-default"><span><!---<?php echo "Back"; ?>--><i class="fa fa-angle-left"></i></span></a>
+                         <a onclick="$('#form').submit();" class="btn btn-default"><span><!--Next--><i class="fa fa-angle-right"></i></span></a>
+            <?php }  elseif ($params['step'] == 3) {  ?> 
+
+                    <div class="buttons" id="buttons_in_progress">
+                        <a onclick="javascript: ka_stop_import();" class="btn btn-primary"><span>Stop</span></a>
+                    </div>
+                    <div class="buttons" id="buttons_stopped" style="display: none">
+                        <a onclick="javascript: ka_continue_import();" class="btn btn-primary"><span>Continue</span></a>
+                    </div>
+                    <div class="buttons" id="buttons_completed" style="display: none">
+                        <a onclick="location='<?php echo $done_action; ?>'" class=" btn btn-primary"><span>Done</span></a>
+                    </div>
+                <?php } ?>
+        </div>
+        <h1><?php echo $heading_title; ?></h1>
+        <?php  echo $ka_top;?>
+    </div>
      
       
     </div>
@@ -507,16 +523,6 @@ function clearTplProduct() {
 
     <?php } elseif ($params['step'] == 2) { ?>
 
-    <div class="heading">
-      <!--<h3><?php echo $heading_title; ?>: STEP 2 of 3</h3>-->
-      
-      <h3 class="panel-title"><i class="fa fa-list"></i>  <?php echo $heading_title; ?>:  STEP 2 of 3</h3>
-      
-      <div class="pull-right">
-        <a onclick="location='<?php echo $back_action; ?>'" class="btn btn-default"><span><!---<?php echo "Back"; ?>--><i class="fa fa-angle-left"></i></span></a>
-        <a onclick="$('#form').submit();" class="btn btn-default"><span><!--Next--><i class="fa fa-angle-right"></i></span></a>    
-      </div>
-    </div>
     <div class="content" style="margin-top:10px">
       <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form">
         <input type="hidden" name="mode" value="" />
@@ -933,21 +939,6 @@ function saveProfile() {
 
     <?php } elseif ($params['step'] == 3) { ?>
 
-    <div class="heading clearfix">
-    <h3 class="panel-title" style="margin:10px 0"><i class="fa fa-list"></i> <?php echo $heading_title; ?>: STEP 3 of 3</h3>
-     <!-- <h1><img src="view/image/backup.png" alt="" /> <?php echo $heading_title; ?>: STEP 3 of 3</h1>-->
-<div class="pull-right">
-      <div class="buttons" id="buttons_in_progress">
-        <a onclick="javascript: ka_stop_import();" class="btn btn-primary"><span>Stop</span></a>
-      </div>
-      <div class="buttons" id="buttons_stopped" style="display: none">
-        <a onclick="javascript: ka_continue_import();" class="btn btn-primary"><span>Continue</span></a>
-      </div>
-      <div class="buttons" id="buttons_completed" style="display: none">
-        <a onclick="location='<?php echo $done_action; ?>'" class=" btn btn-primary"><span>Done</span></a>
-      </div>
-      </div>
-    </div>
     <div class="content">
 
         <h2 id="import_status" style="color:green; font-size:20px">Import is in progress</h2>
