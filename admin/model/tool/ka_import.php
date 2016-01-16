@@ -1858,10 +1858,6 @@ class ModelToolKaImport extends Model {
                 }
                
                 
-                if (empty($this->params['matches']['attributes_from_attribute_groups'])) {
-			return true;
-		}
-
                 if ((empty($this->params['matches']['attributes'])) && (empty($this->params['matches']['attributes_from_attribute_groups']))  ) {
 			return true;
 		}
