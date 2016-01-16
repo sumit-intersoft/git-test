@@ -1809,6 +1809,7 @@ class ModelToolKaImport extends Model {
                         $val = array();
 			if($av['name'] == 'Attributes') {
                             $attribute_group_attributes = explode(';',$col_val);
+                             $val=array_fill_keys($attribute_group_attributes,"");
                         } elseif($av['name'] == 'ListOfSpecs') {
                             $sepe = explode('|',$col_val);
                             
@@ -1857,7 +1858,6 @@ class ModelToolKaImport extends Model {
                         }
                 }
                
-                
                 if ((empty($this->params['matches']['attributes'])) && (empty($this->params['matches']['attributes_from_attribute_groups']))  ) {
 			return true;
 		}
@@ -1871,8 +1871,6 @@ class ModelToolKaImport extends Model {
 			);
 		}
 
-		
-                
 		foreach ($this->params['matches']['attributes_from_attribute_groups'] as $ak => $av) {
 			if (empty($av['column']))
 				continue;
@@ -1901,7 +1899,7 @@ class ModelToolKaImport extends Model {
 					'language_id'  => $this->params['language_id'],
 					'text'         =>  ($val === 'empty' ? '' : $val)
 				);
-
+                                
 				$this->kadb->queryInsert('product_attribute', $rec, true);
 			}
 		}
