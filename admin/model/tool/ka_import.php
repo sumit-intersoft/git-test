@@ -1793,8 +1793,9 @@ class ModelToolKaImport extends Model {
 
                 $attribute_list_keys = array_flip($attribute_list_keys);
                 
-                //echo '<pre>'; print_r($this->params['matches']['attributes']); echo '</pre>';
-                $attriubute_group = array();
+                $attriubute_group = array(); 
+                $this->params['matches']['attributes_from_attribute_groups'] = array();
+                        
                 foreach ($this->params['matches']['attribute_groups'] as $ak => $av) {
                     
 			if (empty($av['column']))
@@ -1807,17 +1808,10 @@ class ModelToolKaImport extends Model {
 			}
                         $val = array();
 			if($av['name'] == 'Attributes') {
-//                            ECHO '<PRE>';
-//                        var_dump($col_val);
-//                        echo '</pre>';
                             $attribute_group_attributes = explode(';',$col_val);
-//                             ECHO '<PRE>';
-//                        print_r($attribute_group_attributes);
-//                        echo '</pre>';
-                            $val=array_fill_keys($attribute_group_attributes,"");    
                         } elseif($av['name'] == 'ListOfSpecs') {
                             $sepe = explode('|',$col_val);
-                           
+                            
                             foreach($sepe as $value) {
                                 $sep = strrpos($value, ":") ;
                                 if($sep !== false) {
@@ -1842,7 +1836,7 @@ class ModelToolKaImport extends Model {
                                 
                                 foreach ($results as $key=>$result) {
                                     
-                                 $this->params['matches']['attributes']{$attribute_list_keys[$result['attribute_id']] ? $attribute_list_keys[$result['attribute_id']] : ''} = array(
+                                 $this->params['matches']['attributes_from_attribute_groups']{$attribute_list_keys[$result['attribute_id']] ? $attribute_list_keys[$result['attribute_id']] : ''} = array(
                              
                                         'attribute_id' => $result['attribute_id'],  
                                         'attribute_group_id' => $av['attribute_group_id'],
@@ -1864,10 +1858,15 @@ class ModelToolKaImport extends Model {
                 }
                
                 
-                if (empty($this->params['matches']['attributes'])) {
+                if (empty($this->params['matches']['attributes_from_attribute_groups'])) {
 			return true;
 		}
 
+                if ((empty($this->params['matches']['attributes'])) && (empty($this->params['matches']['attributes_from_attribute_groups']))  ) {
+			return true;
+		}
+                
+                $delete_old = 1;
 		if ($delete_old) {
 			$this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute
 				WHERE
@@ -1876,9 +1875,9 @@ class ModelToolKaImport extends Model {
 			);
 		}
 
-		$data = array();
+		
                 
-		foreach ($this->params['matches']['attributes'] as $ak => $av) {
+		foreach ($this->params['matches']['attributes_from_attribute_groups'] as $ak => $av) {
 			if (empty($av['column']))
 				continue;
                       
@@ -1887,6 +1886,36 @@ class ModelToolKaImport extends Model {
                         } else {
                             $val = $row[$av['column']];
                         }
+                        
+			if (!$is_first_product) {
+				continue;
+			}
+			
+			if (strlen($val) == 0 || strcasecmp($val, '[DELETE]') == 0)  {
+				$this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute
+					WHERE
+						product_id = '$product[product_id]' 
+						AND	attribute_id = '" .$av['attribute_id'] . "'"
+				);
+				
+			} else {
+				$rec = array(
+					'product_id'   => $product['product_id'],
+					'attribute_id' => $av['attribute_id'],
+					'language_id'  => $this->params['language_id'],
+					'text'         =>  ($val === 'empty' ? '' : $val)
+				);
+
+				$this->kadb->queryInsert('product_attribute', $rec, true);
+			}
+		}
+                
+                foreach ($this->params['matches']['attributes'] as $ak => $av) {
+			if (empty($av['column']))
+				continue;
+                      
+                        $val = $row[$av['column']];
+                        
                         
 			if (!$is_first_product) {
 				continue;
