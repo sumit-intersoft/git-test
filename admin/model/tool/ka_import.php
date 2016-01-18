@@ -1824,7 +1824,7 @@ class ModelToolKaImport extends Model {
                         foreach($val as $key=>$value){
                             
                             $filter_data = array(
-				'filter_name' => $key,
+				'filter_name' =>  htmlspecialchars($key, ENT_COMPAT, 'UTF-8'),  //$key,  because we html_entity_decode the data above
 				'filter_attribute_group_id' => $av['attribute_group_id'],
 				
                             );
