@@ -35,11 +35,16 @@ class ModelCatalogProductCustom extends Model {
                 
         }
 
-        
         public function deleteProduct($product_id) {
             
             $this->db->query("DELETE FROM " . DB_PREFIX . "$this->table_name WHERE product_id = '" . (int)$product_id . "'");
             
         }
+        
+        public function getProduct($product_id) {
+		$query = $this->db->query("SELECT  pc.* FROM " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "$this->table_name pc ON (p.product_id = pc.product_id) WHERE p.product_id = '" . (int)$product_id . "'");
+
+		return $query->row;
+	}
 
 }

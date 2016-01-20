@@ -195,15 +195,16 @@ class ControllerCheckoutViewCheckout extends Controller {
             $method_data = array();
 
             $results = $this->model_extension_extension->getExtensions('payment');
-
+            
             $cart_has_recurring = $this->cart->hasRecurringProducts();
 
             foreach ($results as $result) {
+                
                 if ($this->config->get($result['code'] . '_status')) {
                     $this->load->model('payment/' . $result['code']);
 
                     $method = $this->{'model_payment_' . $result['code']}->getMethod($data['payment_address'], $total);
-
+                    
                     if ($method) {
                         if ($cart_has_recurring > 0) {
                             if (method_exists($this->{'model_payment_' . $result['code']}, 'recurringPayments')) {
@@ -225,7 +226,7 @@ class ControllerCheckoutViewCheckout extends Controller {
             }
 
             array_multisort($sort_order, SORT_ASC, $method_data);
-
+            
             $this->session->data['payment_methods'] = $method_data;
             $data['payment_methods'] = $method_data;
         }
@@ -248,17 +249,6 @@ class ControllerCheckoutViewCheckout extends Controller {
         }
     }
     
-    public function setpaymentshipping() {
-
-        $json = array();
-        
-        $this->session->data['shipping-address-new'] = 1;
-        $this->session->data['shipping_address']['country_id'] =  $this->request->post['shipping_country_id'];
-        $this->session->data['shipping_address']['zone_id'] = $this->request->post['shipping_zone_id'];
-
-        $this->response->setOutput(json_encode($json));
-    }
-
     public function setPaymentAddress() {
 
         $json = array();
@@ -320,7 +310,7 @@ class ControllerCheckoutViewCheckout extends Controller {
         $this->response->setOutput(json_encode($json));
     }
     
-     public function setShippingAddress() {
+    public function setShippingAddress() {
 
         $json = array();
         
@@ -330,8 +320,6 @@ class ControllerCheckoutViewCheckout extends Controller {
                 $this->session->data['shipping_address'] = $this->model_account_address->getAddress($this->request->post['shipping_address_id']);
             }
         } else {
-            
-                //if (isset($this->request->post['shipping_country_id']) && !empty($this->request->post['shipping_country_id'])) {
                 if (isset($this->request->post['shipping_country_id']) ) {
                    $country_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "country` WHERE country_id = '" . (int)$this->request->post['shipping_country_id'] . "'");
 
@@ -381,35 +369,7 @@ class ControllerCheckoutViewCheckout extends Controller {
         $this->response->setOutput(json_encode($json));
     }
     
-    
-    public function validatePaymentShipping() {
-
-        $json = array();
-        $this->load->model('account/address');
-        if (isset($this->request->post['payment_address_id']) && !empty($this->request->post['payment_address_id'])) {
-            $this->session->data['payment_address_id'] = $this->request->post['payment_address_id'];
-            $payment_address = $this->model_account_address->getAddress($this->session->data['payment_address_id']);
-            if ($payment_address) {
-                $this->session->data['payment_country_id'] = $payment_address['country_id'];
-                $this->session->data['payment_zone_id'] = $payment_address['zone_id'];
-            }
-            unset($this->session->data['payment-address-new']);
-        }
-
-        if (isset($this->request->post['shipping_address_id']) && !empty($this->request->post['shipping_address_id'])) {
-            $this->session->data['shipping_address_id'] = $this->request->post['shipping_address_id'];
-            $shipping_address = $this->model_account_address->getAddress($this->session->data['shipping_address_id']);
-            if ($shipping_address) {
-                $this->session->data['shipping_country_id'] = $shipping_address['country_id'];
-                $this->session->data['shipping_zone_id'] = $shipping_address['zone_id'];
-            }
-            unset($this->session->data['shipping-address-new']);
-        }
-
-        $this->response->setOutput(json_encode($json));
-    }
-
-     public function getCart() {
+    public function getCart() {
          
         $this->language->load('checkout/checkout');
         $this->language->load('checkout/cart_custom_two');
@@ -577,46 +537,4 @@ class ControllerCheckoutViewCheckout extends Controller {
     
  
 }
-
-/*
- * 
- * OST http://10.10.10.58/projects/opencart-2.1.0.1/index.php?route=checkout/payment_address/save
-	
-200 OK
-		95ms	
-jquery.min.js (line 4)
-ParamsHeadersPostResponseJSONCookies
-
-[]
-
-GET http://10.10.10.58/projects/opencart-2.1.0.1/index.php?route=checkout/payment_method
-	
-200 OK
-		120ms	
-jquery.min.js (line 4)
-GET http://10.10.10.58/projects/opencart-2.1.0.1/index.php?route=checkout/payment_address
-	
-200 OK
-		173ms	
-jquery.min.js (line 4)
-GET http://10.10.10.58/projects/opencart-2.1.0.1/ind...hp?route=checkout/checkout/country&country_id=99
-	
-200 OK
-		84ms
- * 
- * 
- * AFte choosing payment method
- http://10.10.10.58/projects/opencart-2.1.0.1/index.php?route=checkout/payment_method/save
-	
-200 OK
-		105ms	
-jquery.min.js (line 4)
-GET http://10.10.10.58/projects/opencart-2.1.0.1/index.php?route=checkout/confirm
-	
-200 OK
-		146ms
-
-
-lst was i tink payment/cod */
-
 ?>

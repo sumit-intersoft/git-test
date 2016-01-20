@@ -282,12 +282,17 @@ $session = $registry->get('session');
             <div class="clear"></div>
 
         </div>
+        
+        <div>
+            <div class="comment">
+                <h5>Your Comments<span>(Optional)</span> </h5>  
+                <textarea maxlength="300" style="width: 100%;" rows="4" name="comment"></textarea>
+            </div> 
+            <div class="clear"></div>
+        </div>
+        
         <div class="payment">
             <h5><?php echo $text_payment_info; ?></h5>
-            <ul class="clearfix">
-                <li id="li-1"  data-index="credit" data-place_order="place-order-btn"  class="payments_method"><a href="javascript:void(0);"><?php echo 'Cash on Delivery' //$text_credit_cart;  ?></a></li>
-            </ul>
-           
             <?php
            if($payment_methods) { ?>
             <div class="" >
@@ -318,20 +323,13 @@ $session = $registry->get('session');
             <?php } ?>
 
          </div>
+        
         <div>
-
-            <div class="comment">
-                <h5>Your Comments<span>(Optional)</span> </h5>  
-                <textarea maxlength="300" style="width: 100%;" rows="4" name="comment"></textarea>
-            </div> 
-            
-            <div class="clear"></div>
             <div class="btn clearfix">
                 <span class="right-arw"><input type="submit" class="place-order-btn order-buttons btn btn-primary" value="Place your order" /></span><a class="" href="<?php echo $shopping_cart; ?>">
                     Back to cart</a>
-                
-
             </div>
+            <div class="clear"></div>
         </div>
     </div>
 
@@ -379,8 +377,7 @@ $('#billing-information select[name=\'country_id\']').bind('change', function() 
     });
 
 $('#billing-information select[name=\'zone_id\']').bind('change', function() {
-        //if (this.value == '')
-        //  return;
+        
         $.ajax({
             url: 'index.php?route=checkout/view_checkout/setPaymentAddress',
             type: 'post',
@@ -453,7 +450,7 @@ $('#shipping-information select[name=\'shipping_country_id\']').bind('change', f
         });
     });
 
-    $('#shipping-information select[name=\'shipping_zone_id\']').bind('change', function() {
+$('#shipping-information select[name=\'shipping_zone_id\']').bind('change', function() {
         //if (this.value == '')
         //  return;
         $.ajax({
@@ -477,10 +474,10 @@ $('#shipping-information select[name=\'shipping_country_id\']').bind('change', f
 
     });
     
-    $('#shipping-information input[type=\'text\']').bind('blur', function() {
+$('#shipping-information input[type=\'text\']').bind('blur', function() {
         $('#billing-information select[name=\'zone_id\']').html(html).trigger('change');
     }); 
-    $('#shipping-information select[name=\'shipping_country_id\']').trigger('change');
+$('#shipping-information select[name=\'shipping_country_id\']').trigger('change');
 //--></script>
 
 

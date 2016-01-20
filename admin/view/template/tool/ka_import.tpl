@@ -74,11 +74,11 @@ input[type="radio"],input[type="checkbox"]{
     <div class="container-fluid">
         <div class="pull-right">
             <?php if ($params['step'] == 1) {  ?> 
-                <a onclick="$('#form').submit();" class="btn btn-primary" title="Next"><span><i class="fa fa-angle-right"></i></span></a>
+                <a onclick="$('#form').submit();" class="btn btn-primary" title="Next"><i class="fa fa-angle-right"></i></a>
                 <a href="<?php echo $repair; ?>" data-toggle="tooltip" title="<?php echo $button_rebuild; ?>" class="btn btn-default"><i class="fa fa-refresh"></i></a>
             <?php } elseif ($params['step'] == 2) { ?>
-                         <a onclick="location='<?php echo $back_action; ?>'" class="btn btn-default"><span><!---<?php echo "Back"; ?>--><i class="fa fa-angle-left"></i></span></a>
-                         <a onclick="$('#form').submit();" class="btn btn-default"><span><!--Next--><i class="fa fa-angle-right"></i></span></a>
+            <a onclick="location='<?php echo $back_action; ?>'" class="btn btn-default" data-original-title="Back"  data-toggle="tooltip"><i class="fa fa-reply"></i></a>
+                         <a onclick="$('#form').submit();" class="btn btn-default" data-original-title="Next"  data-toggle="tooltip"><i class="fa fa-angle-right"></i></a>
             <?php }  elseif ($params['step'] == 3) {  ?> 
 
                     <div class="buttons" id="buttons_in_progress">
@@ -714,7 +714,7 @@ function clearTplProduct() {
           <li><a href="#otab-extended_format">Extended format</a></li>
         </ul>
 	<div class="tab-content">
-      <div id="otab-simple_format" class="tab-pane">
+      <div id="otab-simple_format" class="tab-pane active">
 
         Select the columns containg simple option values (without weight, price, etc.). New options should be created beforehand at <a href="<?php echo $option_page_url; ?>">the options page</a>.
         You can import multiple values from one cell if you define the 'options separataor' on the extension settings page. <a href="javascript: void(0)" onclick="javascript: $('#simple_options_example').show()">See example</a>
@@ -752,7 +752,7 @@ function clearTplProduct() {
         </table>
       </div>        
 
-      <div id="otab-extended_format" class="tab-pane active">
+      <div id="otab-extended_format" class="tab-pane">
 
         If you need to import extra option properties like weight, price, quantity please use <a href="javascript: void(0)" onclick="javascript: $('#option_format').show()">reserved columns</a>. Options from <b>the resered columns</b> are pre-selected automatically.<br />
 
@@ -924,10 +924,17 @@ Product Reward Points.<br /><br />
 
 <script type="text/javascript"><!--
 
-$(document).ready(function() {
-  //$('#tabs a').tabs();
-  //$('#option_tabs a').tabs();
-});
+$(document).ready(function(){
+
+        $("#tab-options a").click(function(e){
+
+            e.preventDefault();
+
+            $(this).tab('show');
+
+        });
+
+    });
 
 function saveProfile() {
 

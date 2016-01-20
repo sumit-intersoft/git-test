@@ -4,9 +4,85 @@
 	<vqmver>2.3.0</vqmver>
 	<author>Intersoft (info@intersoftprofessional.com)</author>
         
-        <file name="system/startup.php,system/engine/*.php,system/library/*.php,admin/controller/extension/*.php">
-		
+        <file name="admin/view/template/catalog/product_form.tpl">
+            <operation error="log">
+		<search position="before"><![CDATA[
+                        <li><a href="#tab-attribute" data-toggle="tab"><?php echo $tab_attribute; ?></a></li>
+                ]]></search>
+		<add><![CDATA[
+                    <li><a href="#tab-custom" data-toggle="tab"><?php echo $tab_custom; ?></a></li>
+                ]]></add>
+            </operation>
+	
+            <operation error="log">
+		<search position="before"><![CDATA[
+                        <div class="tab-pane" id="tab-attribute">
+                ]]></search>
+		<add><![CDATA[
+                            <div class="tab-pane" id="tab-custom">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" for="input-manufacturer"><?php echo $entry_msrp; ?></label>
+                                    <div class="col-sm-10">
+                                          <input type="text" name="msrp" value="<?php echo $msrp; ?>" placeholder="<?php echo $entry_msrp; ?>" id="input-msrp" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" for="input-manufacturer"><?php echo $entry_item_type; ?></label>
+                                    <div class="col-sm-10">
+                                          <input type="text" name="item_type" value="<?php echo $item_type; ?>" placeholder="<?php echo $entry_item_type; ?>" id="input-item_type" class="form-control" />
+                                    </div>
+                                </div>
+
+                            </div>
+                    ]]></add>
+            </operation>
 	</file>
-	
-	
+        
+        <file name="admin/controller/catalog/product.php">
+            <operation error="log">
+		<search position="before"><![CDATA[
+                        $data['tab_attribute'] = $this->language->get('tab_attribute');
+                ]]></search>
+		<add><![CDATA[
+                    $data['tab_custom'] = "Custom Field";
+                ]]></add>
+            </operation>
+            <operation error="log">
+		<search position="before"><![CDATA[
+                        $data['entry_attribute'] = $this->language->get('entry_attribute');
+                ]]></search>
+		<add><![CDATA[
+                    $data['entry_msrp'] = "MSRP";
+                    $data['entry_item_type'] = "Item Type";
+                ]]></add>
+            </operation>
+            <operation error="log">
+		<search position="before"><![CDATA[
+                        $this->load->model('catalog/attribute');
+                ]]></search>
+		<add><![CDATA[
+                        $this->load->model('catalog/product_custom');
+                        if (isset($this->request->get['product_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {
+                            $product_custom_info = $this->model_catalog_product_custom->getProduct($this->request->get['product_id']);
+                        }
+                    
+                        if (isset($this->request->post['msrp'])) {
+                            $data['msrp'] = $this->request->post['msrp'];
+                        } elseif (!empty($product_custom_info)) {
+                            $data['msrp'] = $product_custom_info['msrp'];
+                        } else {
+                                $data['msrp'] = '';
+                        }
+                    
+                        if (isset($this->request->post['item_type'])) {
+                            $data['item_type'] = $this->request->post['item_type'];
+                        } elseif (!empty($product_custom_info)) {
+                            $data['item_type'] = $product_custom_info['item_type'];
+                        } else {
+                                $data['item_type'] = '';
+                        }
+                ]]></add>
+            </operation>
+	</file>
+ 
 </modification>

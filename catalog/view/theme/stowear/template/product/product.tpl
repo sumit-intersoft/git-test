@@ -620,12 +620,17 @@ $('#button-cart').on('click', function() {
 			}
 			
 			if (json['success']) {
-				$("#notification .modal-footer").show();
+                            
+                                if (json['redirect']) {
+					location = json['redirect'];
+				}
+                            
+				/*$("#notification .modal-footer").show();
 				$("#notification").modal('show');
 				$("#notification .modal-body p").html(json['success']);	
 				
 				$('#cart_block #cart_content').load('index.php?route=common/cart/info #cart_content_ajax');
-				$('#cart_block #total_price_ajax').load('index.php?route=common/cart/info #total_price');
+				$('#cart_block #total_price_ajax').load('index.php?route=common/cart/info #total_price');*/
 			}
 		},
         error: function(xhr, ajaxOptions, thrownError) {
