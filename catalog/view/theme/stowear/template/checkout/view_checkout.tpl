@@ -57,6 +57,13 @@ $session = $registry->get('session');
        
        
 ?>
+<style type="text/css">
+    .payment-methods input[name="payment_method"], #get-cart-content  {
+        display: none;
+    }
+    
+    
+</style>
 <div class="sc-page">
     
     <?php //echo $content_top; ?>
@@ -291,29 +298,41 @@ $session = $registry->get('session');
             <div class="clear"></div>
         </div>
         
-        <div class="payment">
+        <div class="payment-methods">
             <h5><?php echo $text_payment_info; ?></h5>
             <?php
            if($payment_methods) { ?>
             <div class="" >
-                <ul class="clearfix">
+                <ul class="nav nav-tabs">
                     <?php 
                     $i = 1;
-                    foreach ($payment_methods as $payment_method) { ?>
-                        <li class="payments_method">
-                            <a href="javascript:void(0);"><?php echo $payment_method['title'] ;//$text_credit_cart;  ?>
-                                <?php
-                                  if($i == 1){                ?>
-                                <input type="radio" class="payment_methods" name="payment_method" value="<?php echo $payment_method['code']; ?>" id="<?php echo $payment_method['code']; ?>" checked="checked" />
-                                <?php } else { ?>
-                                <input type="radio" class="payment_methods" name="payment_method" value="<?php echo $payment_method['code']; ?>" id="<?php echo $payment_method['code']; ?>" />
-                                <?php }  
-                                $i++;
-                                ?>
-                            </a>
-                        </li>
-                    <?php } ?>
+                    $payment_content_html = '';
+                    foreach ($payment_methods as $payment_method) { 
+                            if($i == 1){ 
+                                $payment_content_html .= '<div id="payment-content-'.$payment_method['code'].'" class="tab-pane fade in active">'.$payment_method['payment_form'].'</div>';
+                            ?>
+                                <li class="active">
+                                    <a data-toggle="tab" href="#payment-content-<?php echo $payment_method['code']; ?>" data-val="<?php echo $payment_method['code']; ?>"><?php echo $payment_method['title'];?>
+                                                
+                                    </a>
+                                    <input type="text" class="" name="payment_method" value="<?php echo $payment_method['code']; ?>"/>
+                                </li>
+                            <?php } else {
+                                        $payment_content_html .= '<div id="payment-content-'.$payment_method['code'].'" class="tab-pane fade">'.$payment_method['payment_form'].'</div>';
+                            ?>
+                                <li>
+                                    <a data-toggle="tab" href="#payment-content-<?php echo $payment_method['code']; ?>" data-val="<?php echo $payment_method['code']; ?>"><?php echo $payment_method['title'];?>
+                                           
+                                    </a>
+                                </li>
+                            <?php }  
+                            $i++;
+                    } ?>
                 </ul>
+                <div class="tab-content">
+                    <?php echo $payment_content_html; ?>
+                </div>
+                
             </div>
 
             <?php } else{ ?>
@@ -387,9 +406,11 @@ $('#billing-information select[name=\'zone_id\']').bind('change', function() {
                 $('.order-buttons').attr('disabled', true);
             },
             complete: function() {
-                $('.' + ($('.payments_method:not(".active")').data('place_order'))).attr('disabled', false);
+               // $('.' + ($('.payments_method:not(".active")').data('place_order'))).attr('disabled', false);
+                $('.place-order-btn').attr('disabled', false);
             },
             success: function(html) {
+                 
                 $('#put-cart').trigger('click');
 
             }
@@ -462,7 +483,8 @@ $('#shipping-information select[name=\'shipping_zone_id\']').bind('change', func
                 $('.order-buttons').attr('disabled', true);
             },
             complete: function() {
-                $('.' + ($('.payments_method:not(".active")').data('place_order'))).attr('disabled', false);
+               // $('.' + ($('.payments_method:not(".active")').data('place_order'))).attr('disabled', false);
+                $('.place-order-btn').attr('disabled', false);
             },
             success: function(html) {
                 $('#put-cart').trigger('click');
@@ -497,11 +519,10 @@ $('#shipping-information select[name=\'shipping_country_id\']').trigger('change'
             async: true,
             beforeSend: function() {
                 order_payment_method.attr('disabled', true);
-               // cur_loader.append('<span class="custom-wait">&nbsp;<img src="catalog/view/theme/default/image/loading.gif" alt="" /></span>');
+                loader.show();
             },
             complete: function() {
-
-
+                
             },
             success: function(json) {
                 $('.success, .warning, .attention, .error').remove();
@@ -509,7 +530,7 @@ $('#shipping-information select[name=\'shipping_country_id\']').trigger('change'
                 if (json['redirect']) {
                     location = json['redirect'];
                 } else if (json['error']) {
-                    $('.custom-wait').remove();
+                    loader.hide();
                     order_payment_method.attr('disabled', false);
                     if (json['error']['warning']) {
                         $('#payment-address .checkout-content').prepend('<div class="warning" style="display: none;">' + json['error']['warning'] + '<img src="catalog/view/theme/default/image/close.png" alt="" class="close" /></div>');
@@ -534,23 +555,24 @@ $('#shipping-information select[name=\'shipping_country_id\']').trigger('change'
                     $.ajax({
                         url: 'index.php?route=checkout/custom_validation/registerValidate',
                         type: 'post',
-                        data: $('.login-sign-up input[type=\'text\'],.login-sign-up input[type=\'password\'],.payment-form input[type=\'text\'],.payment-form select,input[name=\'payment_method\']:checked,input[name=\'custom_payment_method\'] ,.coupon-code input[type=\'radio\']:checked,.coupon-code input[type=\'checkbox\']:checked,#cart-2-Formbox input[type=\'text\'], #cart-2-Formbox input[type=\'checkbox\']:checked, #cart-2-Formbox input[type=\'radio\']:checked, #cart-2-Formbox select, #cart-2-Formbox input[type=\'hidden\'], .comment textarea'),
+                        data: $('.login-sign-up input[type=\'text\'],.login-sign-up input[type=\'password\'],.payment-form input[type=\'text\'],.payment-form select,input[name=\'payment_method\'],.coupon-code input[type=\'radio\']:checked,.coupon-code input[type=\'checkbox\']:checked,#cart-2-Formbox input[type=\'text\'], #cart-2-Formbox input[type=\'checkbox\']:checked, #cart-2-Formbox input[type=\'radio\']:checked, #cart-2-Formbox select, #cart-2-Formbox input[type=\'hidden\'], .comment textarea, .payment-methods input, .payment-methods select'),
                         dataType: 'json',
                         async: true,
                         beforeSend: function() {
                             order_payment_method.attr('disabled', true);
-                            //cur_loader.html('<span class="custom-wait">&nbsp;<img src="catalog/view/theme/default/image/loading.gif" alt="" /></span>');
+                            loader.show();
                         },
                         complete: function() {
-
+                             
                         },
                         success: function(json) {
                             $('.success, .warning, .attention, .error').remove();
                             if (json['redirect']) {
+                                
                                 location = json['redirect'];
+                                
                             } else if (json['error']) {
-
-                                $('.custom-wait').remove();
+                                loader.hide();
                                 order_payment_method.attr('disabled', false);
                                 if (json['error']['warning']) {
                                     $('#content').prepend('<div class="warning" style="display: none;">' + json['error']['warning'] + '<img src="catalog/view/theme/default/image/close.png" alt="" class="close" /></div>');
@@ -616,19 +638,15 @@ $('#shipping-information select[name=\'shipping_country_id\']').trigger('change'
                                 if (json['error']['shipping_address_1']) {
                                     $('#shipping-information input[name=\'shipping_address_1\']').after('<span class="error">' + json['error']['shipping_address_1'] + '</span>');
                                 }
-                                $('.payment-error-div').html('');
-                                if (json['error']['card']) {
-                                    $('#credit_cart_number').append('<span class="error" id="error-card">' + json['error']['card'] + '</span>');
-                                }
-                                if (json['error']['cvv']) {
-                                    $('#cvv').append('&nbsp;<span class="error" id="error-cvv">' + json['error']['cvv'] + '</span>');
-                                }
-                                if (json['error']['validity']) {
-                                    $('#validity').append('&nbsp;<span class="error" id="error-validity">' + json['error']['validity'] + '</span>');
-                                }
-                                if (json['error']['password']) {
-                                    location = 'index.php?route=checkout/view_checkout';
-
+                                
+                                if (json['error']['payment_method']) {
+                                    if(typeof  json['error']['payment_method'] == "string")
+                                        $('.payment-methods .tab-content div.active').prepend('<span class="error" id="error-"'+json['error']['payment_method']+'>' + json['error']['payment_method'] + '</span>');
+                                    else {
+                                        $.each(json['error']['payment_method'], function(index,value) {
+                                            $('.payment-methods .tab-content div.active').prepend('<span class="error" id="error-"'+value+'>' + value + '</span>');
+                                        })
+                                    }
                                 }
                                 var el = $('.error');
                                 if (el.length)
@@ -646,7 +664,7 @@ $('#shipping-information select[name=\'shipping_country_id\']').trigger('change'
                                     async: false,
                                     beforeSend: function() {
                                         order_payment_method.attr('disabled', true);
-                                       // cur_loader.html('<span class="custom-wait">&nbsp;<img src="catalog/view/theme/default/image/loading.gif" alt="" /> </span>');
+                                         loader.show();
                                     },
                                     complete: function() {
 
@@ -656,23 +674,8 @@ $('#shipping-information select[name=\'shipping_country_id\']').trigger('change'
                                         if (json['redirect']) {
                                             location = json['redirect'];
                                         } else {
-                                           
-                                            //if (order_payment_method.hasClass('place-order-btn'))
-                                            //{
-                                               // location = 'index.php?route=checkout/custom_success';
-                                                $('#get-cart-content').prepend(json);
-                                                $('#button-confirm').trigger('click');
-                                            //}
-                                            /*if (order_payment_method.hasClass('paypal-place-order-btn'))
-                                            {
-                                                $('.pay-pall').append(json['payment']);
-                                                $('.pay-pall .button').trigger('click');
-                                            }
-                                            if (order_payment_method.hasClass('afirm-submit_btn'))
-                                            {
-                                                $('.affirm').append(json['payment']);
-                                                affirm.checkout.post();
-                                            } */
+                                            $('#get-cart-content').prepend(json);
+                                            $('#button-confirm').trigger('click');
                                         }
                                     }
                                 });
@@ -712,7 +715,6 @@ $('#shipping-information select[name=\'shipping_country_id\']').trigger('change'
             dataType: 'html',
             beforeSend: function() {
 
-                //$('#put-cart').html('<span class="custom-wait">&nbsp;<img src="catalog/view/theme/default/image/loading.gif" alt="" /></span>');
             },
             success: function(html) {
                 $('#get-cart-content').html(html);
@@ -838,6 +840,9 @@ $('input[name=\'shipping_address\']').on('change', function() {
             }
         }); 
     });
+    $('.payment-methods .nav-tabs a').on('shown.bs.tab', function(event){
+        $('.payment-methods input[name=\'payment_method\']').val($(event.target).data('val'));
+   });
     
  </script>
 <?php echo $footer; ?>
