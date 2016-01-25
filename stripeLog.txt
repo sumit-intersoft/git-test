@@ -26,3 +26,156 @@ Exp_year =
 Cvv = 
 Stripe Token = Missing required param: exp_month.
 **********************************************************************
+Order No = 38
+Card no = 
+Exp_month = 
+Exp_year = 
+Cvv = 
+Stripe Token = Missing required param: exp_month.
+**********************************************************************
+Order No = 38
+Card no = 
+Exp_month = 
+Exp_year = 
+Cvv = 
+Stripe Token = Missing required param: exp_month.
+**********************************************************************
+Order No = 38
+Card no = 
+Exp_month = 
+Exp_year = 
+Cvv = 
+Stripe Token = Missing required param: exp_month.
+**********************************************************************
+Order No = 38
+Card no = 4242424242424242
+Exp_month = 
+Exp_year = 
+Cvv = 
+Stripe Token = Missing required param: exp_month.
+**********************************************************************
+Order No = 38
+Card no = 4242424242424242
+Exp_month = 
+Exp_year = 
+Cvv = 
+Stripe Token = Missing required param: exp_month.
+**********************************************************************
+Order No = 38
+Card no = 4242424242424242
+Exp_month = 9
+Exp_year = 2017
+Cvv = 2017
+Customer Emial = testuser@localhost.com
+Stripe Token = tok_17VLlPEEGSV3EFW9d3jeq4xD
+Stripe Customer = cus_7krUIvpbquPFz6
+amount = 
+currency = USD
+Stripe Response = Invalid integer: 
+**********************************************************************
+Order No = 57
+Card no = 4232332322323232
+Exp_month = 01
+Exp_year = 2016
+Stripe Token = Your card number is incorrect.
+**********************************************************************
+Order No = 59
+Card no = 4242424242424242
+Exp_month = 01
+Exp_year = 2016
+Stripe Token = Your card's security code is invalid.
+**********************************************************************
+Order No = 60
+Card no = 4242424242424242
+Exp_month = 01
+Exp_year = 2016
+Stripe Token = Your card's security code is invalid.
+**********************************************************************
+Order No = 61
+Card no = 4242424242424242
+Exp_month = 01
+Exp_year = 2016
+Customer Emial = testuser@localhost.com
+Stripe Token = tok_17Vi0oEEGSV3EFW93grCtfgq
+Stripe Customer = cus_7lETrMKu2WyBp0
+amount = $867,450.00
+currency = USD
+Stripe Response = Invalid integer: $867,450.00
+**********************************************************************
+Order No = 62
+Card no = 4242424242424242
+Exp_month = 01
+Exp_year = 2016
+Customer Emial = testuser@localhost.com
+Stripe Token = tok_17Vi3vEEGSV3EFW9ssiWpzxU
+Stripe Customer = cus_7lEXjKzPx8ElLh
+amount = $867,450.00
+currency = USD
+Stripe Response = Invalid integer: $867,450.00
+**********************************************************************
+Order No = 63
+Card no = 4242424242424242
+Exp_month = 01
+Exp_year = 2016
+Customer Emial = testuser@localhost.com
+Stripe Token = tok_17Vi7qEEGSV3EFW9mEdZn1BP
+Stripe Customer = cus_7lEbpBLcy4j11s
+amount = 86.75
+currency = USD
+Stripe Response = Invalid integer: 86.75
+**********************************************************************
+Order No = 64
+Card no = 4242424242424242
+Exp_month = 01
+Exp_year = 2016
+Customer Emial = testuser@localhost.com
+Stripe Token = tok_17ViADEEGSV3EFW92b4gKbYa
+Stripe Customer = cus_7lEdpzJbz3diON
+amount = 86.75
+currency = USD
+Stripe Response = Invalid integer: 86.75
+**********************************************************************
+Order No = 68
+Card no = 4242424242424242
+Exp_month = 01
+Exp_year = 2016
+Customer Emial = testuser@localhost.com
+Stripe Token = tok_17ViFAEEGSV3EFW916andOnl
+Stripe Customer = cus_7lEipbJPq8VjDh
+amount = 8675
+currency = USD
+Stripe Response ----------------------- 
+id = ch_17ViFEEEGSV3EFW9Aw2yYYHc
+Paid = 1
+livemode = 
+amount = 8675
+currency = usd
+refunded = 
+**********************************************************************
+Order No = 69
+Card no = 4242424242424242
+Exp_month = 01
+Exp_year = 2016
+Customer Emial = testuser@localhost.com
+Stripe Token = tok_17ViI0EEGSV3EFW9dOBOdi2f
+Stripe Customer = cus_7lElZaGLeRWouU
+amount = 8675
+currency = USD
+Stripe Response ----------------------- 
+id = ch_17ViI5EEGSV3EFW9fAGrGZWL
+Paid = 1
+livemode = 
+amount = 8675
+currency = usd
+refunded = 
+**********************************************************************
+Customer Emial = 
+Stripe Token = tok_17W0LuEEGSV3EFW9j8JGS4Qn
+Stripe Response ----------------------- 
+id = ch_17W0LyEEGSV3EFW9cODD3jhz
+Paid = 1
+livemode = 
+amount = 17007
+currency = usd
+refunded = 
+**********************************************************************

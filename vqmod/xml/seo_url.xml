@@ -1,0 +1,26 @@
+<modification>
+	<id>Url Related Changes</id>
+	<version>1.0.0</version>
+	<author>ISP</author>
+	<code>SUMIT</code>
+	<file path="catalog/controller/common/seo_url.php"> 
+            <operation info="Remove common/home">
+                    <search position="before"><![CDATA[} elseif ($key == 'path') {]]></search>
+                    <add><![CDATA[				} elseif ($data['route'] == 'common/home') {
+                                                $url .= '/'; 
+                                                unset($data[$key]);]]>
+                    </add>
+            </operation>
+            <operation info="Add / to cateogyr URL's except those with .html at the end">
+                <search position="after"><![CDATA[if ($url) {]]></search>
+                <add><![CDATA[
+                               if(isset($data['route'])  && ($data['route']=='product/category')) {
+                                    if(substr($url, -5) != '.html') {
+                                         $url = rtrim($url, '/') . '/';
+                                    }
+                                }
+                        ]]>
+                </add>
+            </operation> 
+        </file>
+</modification>
