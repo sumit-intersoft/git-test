@@ -1331,42 +1331,6 @@ $modules = new Modules($this->registry);
         </div>
     </div>
 </div>
-<div id="loader" class="fade" >
-    <style type="text/css">
-        #loader .loaderimg { 
-            text-align:center;
-            position:fixed;
-            width:100%;
-            height: 100%;
-            margin: auto;
-            top:40%;
-            z-index:9999;
-        }
-        .fade.in .bg {
-            background: #000000 none repeat scroll 0 0;
-            height: 100%;
-            z-index:999;
-            opacity:0.8;
-            position: fixed;
-            top: 0;
-            width: 100%;
-        }
-        
-    </style>
- 
- <div class="loaderimg"><img src="catalog/view/theme/<?php echo $config->get( 'config_template' )?>/img/ajax-loader.gif" alt=""/></div>
- <div class="bg"></div>
-    
- 
- <script type="text/javascript">
-// Cart add remove functions	
-
-</script>
- 
- 
- 
- 
-</div>
 
 <?php if($theme_options->get( 'quick_view' ) == 1) { ?>
 <link rel="stylesheet" type="text/css" href="catalog/view/javascript/jquery/magnific/magnific-popup.css" media="screen" />

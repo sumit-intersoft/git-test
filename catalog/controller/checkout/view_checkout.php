@@ -20,8 +20,6 @@ class ControllerCheckoutViewCheckout extends Controller {
         $this->document->setTitle($this->language->get('heading_title'));
         $data['breadcrumbs'] = array();
 
-        $this->document->addScript('catalog/view/javascript/jquery/autotab/jquery.autotab.js');
-         
         $data['breadcrumbs'][] = array(
             'href' => $this->url->link('common/home'),
             'text' => $this->language->get('text_home'),
@@ -208,11 +206,6 @@ class ControllerCheckoutViewCheckout extends Controller {
                     $method = $this->{'model_payment_' . $result['code']}->getMethod($data['payment_address'], $total);
                     
                     if ($method) {
-                        if($result['code'] == 'stripe') {
-                            $method['payment_form'] = $this->load->controller('payment/stripe/payment_form');
-                        } else {
-                            $method['payment_form'] = '';
-                        }
                         if ($cart_has_recurring > 0) {
                             if (method_exists($this->{'model_payment_' . $result['code']}, 'recurringPayments')) {
                                 if ($this->{'model_payment_' . $result['code']}->recurringPayments() == true) {
@@ -245,6 +238,9 @@ class ControllerCheckoutViewCheckout extends Controller {
         $data['content_bottom'] = $this->load->controller('common/content_bottom');
         $data['footer'] = $this->load->controller('common/footer');
         $data['header'] = $this->load->controller('common/header');
+        
+        //echo '<pre>'; print_r($this->session->data['shipping_method']); echo '</pre>';
+        //echo '<pre>'; print_r($this->session->data['shipping_methods']); echo '</pre>';
         
         if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/checkout/checkout.tpl')) {
             $this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/checkout/view_checkout.tpl', $data));

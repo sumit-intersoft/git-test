@@ -1,0 +1,15 @@
+<modification>
+	<id>Remove common/home</id>
+	<version>1.0.0</version>
+	<link>https://www.qualityworks.eu/</link>
+	<author>Quality Works</author>
+	<code>QWRCH</code>
+	<file path="catalog/controller/common/seo_url.php"> 
+	  <operation>
+        <search position="before"><![CDATA[} elseif ($key == 'path') {]]></search>
+        <add><![CDATA[				} elseif ($data['route'] == 'common/home') {
+                                    $url .= '/'; 
+                                    unset($data[$key]);]]></add>
+	  </operation> 
+    </file>
+</modification>

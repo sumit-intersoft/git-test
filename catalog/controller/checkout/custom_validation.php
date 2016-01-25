@@ -235,22 +235,6 @@ class ControllerCheckoutCustomValidation extends Controller {
                      }    
                 }
                 
-                
-                if (!$json){
-                    
-                    require_once(DIR_APPLICATION . 'controller/payment/' . $this->request->post['payment_method'] . '.php');
-
-                    $class = 'ControllerPayment' . str_replace('_', '', $this->request->post['payment_method']);
-                    $class = new $class($this->registry);
-
-                    if (method_exists($class, 'validate')) {
-                        $validate =$class->validate();
-                        if(isset($validate['error']) &&  $validate['error']) {
-                            $json['error']['payment_method'] =$validate['error'];
-                        }
-                    }
-                }
-                
                 if(!$json){
 
                     if (isset($this->request->post['comment'])) {
