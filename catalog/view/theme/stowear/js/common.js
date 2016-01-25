@@ -311,6 +311,16 @@ var compare = {
 	}
 }
 
+var loader = {
+     'selector' : '#loader',
+	'show': function() {
+            $(this.selector).addClass('in');
+	},
+	'hide': function(key) {
+            $(this.selector).removeClass('in');
+	}
+}
+
 /* Agree to Terms */
 $(document).delegate('.agree', 'click', function(e) {
 	e.preventDefault();
