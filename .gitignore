@@ -1,8 +1,7 @@
 .htaccess
 /config.php
 /info.php
-
-setting.json
+catalog/view/theme/stowear/skins/store_default/*/settings.json
 
 admin/config.php
 
