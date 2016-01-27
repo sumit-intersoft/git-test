@@ -3224,7 +3224,7 @@ class ModelToolKaImport extends Model {
                                     if(count($product_custom_field)) {
                         
                                         $product_custom_field['product_id'] = $product_id;
-                                        $this->kadb->queryInsert('product_custom_field', $product_custom_field, '', true);
+                                        $this->kadb->queryInsert('product_custom_field', $product_custom_field, true);
                                         
                                     }
                                 }

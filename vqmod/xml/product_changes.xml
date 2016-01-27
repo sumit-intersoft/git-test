@@ -21,9 +21,15 @@
 		<add><![CDATA[
                             <div class="tab-pane" id="tab-custom">
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label" for="input-manufacturer"><?php echo $entry_msrp; ?></label>
+                                    <label class="col-sm-2 control-label" for="input-msrp"><?php echo $entry_msrp; ?></label>
                                     <div class="col-sm-10">
                                           <input type="text" name="msrp" value="<?php echo $msrp; ?>" placeholder="<?php echo $entry_msrp; ?>" id="input-msrp" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" for="input-metal_price"><?php echo $entry_metal_price; ?></label>
+                                    <div class="col-sm-10">
+                                          <input type="text" name="metal_price" value="<?php echo $metal_price; ?>" placeholder="<?php echo $entry_metal_price; ?>" id="input-metal_price" class="form-control" />
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -53,6 +59,7 @@
                 ]]></search>
 		<add><![CDATA[
                     $data['entry_msrp'] = "MSRP";
+                    $data['entry_metal_price'] = "Metal Price";
                     $data['entry_item_type'] = "Item Type";
                 ]]></add>
             </operation>
@@ -72,6 +79,14 @@
                             $data['msrp'] = $product_custom_info['msrp'];
                         } else {
                                 $data['msrp'] = '';
+                        }
+                    
+                        if (isset($this->request->post['metal_price'])) {
+                            $data['metal_price'] = $this->request->post['metal_price'];
+                        } elseif (!empty($product_custom_info)) {
+                            $data['metal_price'] = $product_custom_info['metal_price'];
+                        } else {
+                                $data['metal_price'] = '';
                         }
                     
                         if (isset($this->request->post['item_type'])) {

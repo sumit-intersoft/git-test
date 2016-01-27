@@ -1356,16 +1356,6 @@ $modules = new Modules($this->registry);
  
  <div class="loaderimg"><img src="catalog/view/theme/<?php echo $config->get( 'config_template' )?>/img/ajax-loader.gif" alt=""/></div>
  <div class="bg"></div>
-    
- 
- <script type="text/javascript">
-// Cart add remove functions	
-
-</script>
- 
- 
- 
- 
 </div>
 
 <?php if($theme_options->get( 'quick_view' ) == 1) { ?>
