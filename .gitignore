@@ -13,5 +13,3 @@ system/*
 vqmod/*
 !vqmod/xml/
 *.log
-info.php
-info.php
